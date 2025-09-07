@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Certano</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .retry-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .retry-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .features {
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .feature::before {
+            content: "✓";
+            margin-right: 0.5rem;
+            color: #4ade80;
+            font-weight: bold;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1>Keine Internetverbindung</h1>
+        <p>
+            Du bist offline, aber keine Sorge! Du kannst trotzdem Quiz spielen und 
+            deinen Lernfortschritt verfolgen. Deine Ergebnisse werden automatisch 
+            synchronisiert, sobald du wieder online bist.
+        </p>
+        
+        <a href="/" class="retry-button" onclick="window.location.reload()">
+            Erneut versuchen
+        </a>
+        
+        <div class="features">
+            <div class="feature">Quiz offline spielen</div>
+            <div class="feature">Lernfortschritt verfolgen</div>
+            <div class="feature">Automatische Synchronisation</div>
+            <div class="feature">Alle Funktionen verfügbar</div>
+        </div>
+    </div>
+    
+    <script>
+        // Automatisch neu laden wenn wieder online
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+        
+        // Retry-Button Funktionalität
+        document.querySelector('.retry-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (navigator.onLine) {
+                window.location.href = '/';
+            } else {
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

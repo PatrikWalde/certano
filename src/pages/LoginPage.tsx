@@ -1,0 +1,266 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [city, setCity] = useState('');
+  const [evu, setEvu] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    console.log('LoginPage: Attempting login for:', email);
+
+    try {
+      if (isLogin) {
+        await login(email, password);
+        console.log('LoginPage: Login successful, navigating to dashboard');
+        setIsLoading(false); // Reset loading state
+        navigate('/dashboard');
+      } else {
+        // Validate required fields for registration
+        if (!firstName.trim() || !lastName.trim() || !city.trim()) {
+          setError('Bitte fülle alle Pflichtfelder aus.');
+          setIsLoading(false);
+          return;
+        }
+        
+        await register(email, password, {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          city: city.trim(),
+          evu: evu.trim() || undefined
+        });
+        setError('Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.');
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      console.error('LoginPage: Exception during auth:', error);
+      
+      // Handle specific Supabase errors
+      let errorMessage = 'Ein Fehler ist aufgetreten';
+      
+      if (error.message) {
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Ungültige E-Mail oder Passwort';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Bitte bestätige zuerst deine E-Mail-Adresse';
+        } else if (error.message.includes('Too many requests')) {
+          errorMessage = 'Zu viele Versuche. Bitte warte einen Moment';
+        } else if (error.message.includes('User already registered')) {
+          errorMessage = 'Diese E-Mail-Adresse ist bereits registriert';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center">
+            <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-4 4v8m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+            </svg>
+          </div>
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+            {isLogin ? 'Anmelden' : 'Registrieren'}
+          </h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            {isLogin ? (
+              <>
+                Oder{' '}
+                <button
+                  onClick={() => setIsLogin(false)}
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                >
+                  erstelle ein neues Konto
+                </button>
+              </>
+            ) : (
+              <>
+                Oder{' '}
+                <button
+                  onClick={() => setIsLogin(true)}
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+                >
+                  melde dich an
+                </button>
+              </>
+            )}
+          </p>
+        </div>
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                E-Mail-Adresse
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                placeholder="E-Mail-Adresse eingeben"
+              />
+            </div>
+            
+            {!isLogin && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Vorname <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      autoComplete="given-name"
+                      required={!isLogin}
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                      placeholder="Vorname"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Nachname <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      autoComplete="family-name"
+                      required={!isLogin}
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                      placeholder="Nachname"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Ort <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    type="text"
+                    autoComplete="address-level2"
+                    required={!isLogin}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                    placeholder="Ihr Wohnort"
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="evu" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    EVU (optional)
+                  </label>
+                  <input
+                    id="evu"
+                    name="evu"
+                    type="text"
+                    value={evu}
+                    onChange={(e) => setEvu(e.target.value)}
+                    className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                    placeholder="Ihr Energieversorger (optional)"
+                  />
+                </div>
+              </>
+            )}
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Passwort
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete={isLogin ? "current-password" : "new-password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                placeholder="Passwort eingeben"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  {isLogin ? 'Anmelden...' : 'Registrieren...'}
+                </div>
+              ) : (
+                isLogin ? 'Anmelden' : 'Registrieren'
+              )}
+            </button>
+          </div>
+
+          <div className="text-center">
+            <Link
+              to="/"
+              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+            >
+              Zurück zur Startseite
+            </Link>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default LoginPage;
