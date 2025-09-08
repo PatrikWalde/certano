@@ -187,8 +187,18 @@ const useQuizStatsStore = create<QuizStatsStore>()(
           const { data: { user } } = await supabase.auth.getUser();
           
           if (user) {
+            console.log('Saving quiz attempt to database:', {
+              user_id: user.id,
+              questions_answered: newAttempt.questionsAnswered,
+              correct_answers: newAttempt.correctAnswers,
+              accuracy_rate: newAttempt.accuracyRate,
+              xp_earned: newAttempt.xpEarned,
+              chapters: newAttempt.chapters,
+              time_spent: Math.round(newAttempt.timeSpent)
+            });
+            
             // Save quiz attempt to database
-            await supabase.from('quiz_attempts').insert({
+            const { data, error } = await supabase.from('quiz_attempts').insert({
               user_id: user.id,
               questions_answered: newAttempt.questionsAnswered,
               correct_answers: newAttempt.correctAnswers,
@@ -196,9 +206,14 @@ const useQuizStatsStore = create<QuizStatsStore>()(
               xp_earned: newAttempt.xpEarned,
               chapters: newAttempt.chapters,
               time_spent: Math.round(newAttempt.timeSpent),
-              questions: [], // Could store question details here
-              completed_at: new Date().toISOString()
+              questions: [] // Could store question details here
             });
+            
+            if (error) {
+              console.error('Error saving quiz attempt:', error);
+            } else {
+              console.log('Quiz attempt saved successfully:', data);
+            }
             
             // Update user stats in database
             const { data: existingStats } = await supabase
