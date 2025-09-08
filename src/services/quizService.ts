@@ -151,7 +151,7 @@ const updateChapterStats = async (userId: string, sessionData: QuizSessionData) 
     
     sessionData.answers.forEach(answer => {
       // Verwende das Kapitel aus der Antwort oder fallback zum Session-Kapitel
-      const chapter = answer.chapter || sessionData.chapterName || 'Unbekannt';
+      const chapter = (answer as any).chapter || sessionData.chapterName || 'Unbekannt';
       if (!chapterAnswers[chapter]) {
         chapterAnswers[chapter] = { correct: 0, total: 0 };
       }
@@ -163,7 +163,7 @@ const updateChapterStats = async (userId: string, sessionData: QuizSessionData) 
 
     // Aktualisiere jedes Kapitel
     for (const [chapterName, stats] of Object.entries(chapterAnswers)) {
-      const { data: currentChapterStats, error: fetchError } = await supabase
+      const { data: currentChapterStats, error: _fetchError } = await supabase
         .from('chapter_stats')
         .select('*')
         .eq('user_id', userId)

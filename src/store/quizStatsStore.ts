@@ -697,7 +697,7 @@ const useQuizStatsStore = create<QuizStatsStore>()(
           },
         ];
         
-        set((state) => ({
+        set((_state) => ({
           badges: initialBadges,
         }));
       },
