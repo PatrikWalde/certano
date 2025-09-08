@@ -158,27 +158,27 @@ const QuizPage: React.FC = () => {
   };
 
   // const handleSkip = () => {
-    const currentQuestion = questions && questions.length > 0 ? questions[currentQuestionIndex] : null;
-    if (!currentQuestion) return;
-    
-    const answer = {
-      questionId: currentQuestion.id,
-      selectedOptions: [],
-      userAnswer: '',
-      fillBlankAnswers: [],
-      isCorrect: false,
-      timeSpent: 0,
-      answeredAt: new Date().toISOString()
-    };
+  //   const currentQuestion = questions && questions.length > 0 ? questions[currentQuestionIndex] : null;
+  //   if (!currentQuestion) return;
+  //   
+  //   const answer = {
+  //     questionId: currentQuestion.id,
+  //     selectedOptions: [],
+  //     userAnswer: '',
+  //     fillBlankAnswers: [],
+  //     isCorrect: false,
+  //     timeSpent: 0,
+  //     answeredAt: new Date().toISOString()
+  //   };
 
-    setAnswers(prev => [...prev, answer]);
+  //   setAnswers(prev => [...prev, answer]);
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      completeQuiz();
-    }
-  };
+  //   if (currentQuestionIndex < questions.length - 1) {
+  //     setCurrentQuestionIndex(prev => prev + 1);
+  //   } else {
+  //     completeQuiz();
+  //   }
+  // };
 
   const completeQuiz = async () => {
     try {

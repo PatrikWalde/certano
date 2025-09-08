@@ -311,16 +311,16 @@ const AdminPage: React.FC = () => {
 
 
   // const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      // This is a new topic
-      const newTopic = await createTopic(topicData);
-      if (newTopic) {
-        setTopics(prev => [...prev, newTopic]);
-      }
-    } catch (error) {
-      console.error('Error saving topic:', error);
-    }
-  };
+  //   try {
+  //     // This is a new topic
+  //     const newTopic = await createTopic(topicData);
+  //     if (newTopic) {
+  //       setTopics(prev => [...prev, newTopic]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving topic:', error);
+  //   }
+  // };
 
   const handleUpdateTopic = async (topic: Topic) => {
     try {
@@ -360,16 +360,16 @@ const AdminPage: React.FC = () => {
   };
 
   // const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      // This is a new chapter
-      const newChapter = await createChapter(chapterData);
-      if (newChapter) {
-        setChapters(prev => [...prev, newChapter]);
-      }
-    } catch (error) {
-      console.error('Error saving chapter:', error);
-    }
-  };
+  //   try {
+  //     // This is a new chapter
+  //     const newChapter = await createChapter(chapterData);
+  //     if (newChapter) {
+  //       setChapters(prev => [...prev, newChapter]);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving chapter:', error);
+  //   }
+  // };
 
   const handleUpdateChapter = async (chapter: ChapterData) => {
     try {
