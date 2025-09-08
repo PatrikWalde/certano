@@ -304,8 +304,8 @@ const ProfilePage: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={!!formData.showOnLeaderboard}
-                    onChange={(e) => setFormData({ ...formData, showOnLeaderboard: e.target.checked })}
+                    checked={formData.showOnLeaderboard}
+                    onChange={(e) => setFormData({ ...formData, showOnLeaderboard: e.target.checked as any })}
                     disabled={!isEditing}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded disabled:opacity-50"
                   />
@@ -322,8 +322,8 @@ const ProfilePage: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={!!formData.allowAnalytics}
-                    onChange={(e) => setFormData({ ...formData, allowAnalytics: e.target.checked })}
+                    checked={formData.allowAnalytics}
+                    onChange={(e) => setFormData({ ...formData, allowAnalytics: e.target.checked as any })}
                     disabled={!isEditing}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded disabled:opacity-50"
                   />
