@@ -21,16 +21,16 @@ export const usePWA = () => {
   });
 
   useEffect(() => {
-    // Service Worker registrieren (nur einmal)
-    if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered:', registration);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
+    // Service Worker temporär deaktiviert für Performance
+    // if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+    //   navigator.serviceWorker.register('/sw.js')
+    //     .then((registration) => {
+    //       console.log('Service Worker registered:', registration);
+    //     })
+    //     .catch((error) => {
+    //       console.error('Service Worker registration failed:', error);
+    //     });
+    // }
 
     // Install Prompt abfangen
     const handleBeforeInstallPrompt = (e: Event) => {

@@ -40,7 +40,7 @@ const ProfilePage: React.FC = () => {
         
         // Load user statistics, chapter stats, and recent quiz sessions with timeout
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile data timeout')), 8000)
+          setTimeout(() => reject(new Error('Profile data timeout')), 5000)
         );
         
         const dataPromise = Promise.all([
@@ -96,7 +96,7 @@ const ProfilePage: React.FC = () => {
     // };
 
     loadUserData();
-  }, [user?.id, user?.role]);
+  }, [user?.id]); // Removed user?.role to prevent duplicate calls
 
   // Update formData when user data changes
   React.useEffect(() => {

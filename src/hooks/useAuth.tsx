@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session?.user?.email);
-        if (event === 'SIGNED_IN' && session) {
+        if (event === 'SIGNED_IN' && session && !user) {
           await handleUserSession(session);
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .single();
       
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 5000)
+        setTimeout(() => reject(new Error('Database query timeout')), 3000)
       );
       
       const { data: userProfile, error: usersError } = await Promise.race([
