@@ -21,8 +21,8 @@ export const usePWA = () => {
   });
 
   useEffect(() => {
-    // Service Worker registrieren
-    if ('serviceWorker' in navigator) {
+    // Service Worker registrieren (nur einmal)
+    if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
           console.log('Service Worker registered:', registration);

@@ -38,12 +38,21 @@ const ProfilePage: React.FC = () => {
         setIsLoading(true);
         console.log('Loading user profile data...');
         
-        // Load user statistics, chapter stats, and recent quiz sessions
-        const [userStatsData, chapterStatsData, quizSessionsData] = await Promise.all([
+        // Load user statistics, chapter stats, and recent quiz sessions with timeout
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile data timeout')), 8000)
+        );
+        
+        const dataPromise = Promise.all([
           getUserStats(),
           getChapterStats(),
           getQuizSessions(10) // Letzte 10 Sessions
         ]);
+        
+        const [userStatsData, chapterStatsData, quizSessionsData] = await Promise.race([
+          dataPromise,
+          timeoutPromise
+        ]) as any;
         
         console.log('User stats loaded:', userStatsData);
         console.log('Chapter stats loaded:', chapterStatsData);
@@ -60,6 +69,10 @@ const ProfilePage: React.FC = () => {
         }
       } catch (error) {
         console.error('Error loading user data:', error);
+        // Set fallback data to prevent empty state
+        setUserStats({});
+        setChapterStats([]);
+        setQuizSessions([]);
       } finally {
         setIsLoading(false);
       }
