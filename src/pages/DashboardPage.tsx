@@ -83,15 +83,25 @@ const DashboardPage: React.FC = () => {
 
   // Get chapter progress from real data or create defaults
   const getChapterProgress = () => {
+    console.log('getChapterProgress - dashboardData:', dashboardData);
+    console.log('getChapterProgress - realChapterStats:', realChapterStats);
+    console.log('getChapterProgress - chapters:', chapters);
+    
     if (dashboardData?.chapters && dashboardData.chapters.length > 0) {
       return dashboardData.chapters.map((chapter: any) => {
         // Finde die Statistiken für dieses Kapitel
         const stats = realChapterStats.find(stat => stat.chapter === chapter.name);
+        const progress = stats?.progress || 0;
+        const totalQuestions = stats?.total_questions || 0;
+        const correctAnswers = stats?.correct_answers || 0;
+        
+        console.log(`Chapter ${chapter.name}:`, { progress, totalQuestions, correctAnswers, stats });
+        
         return {
           name: chapter.name,
-          progress: stats?.progress || 0,
-          totalQuestions: stats?.total_questions || 0,
-          correctAnswers: stats?.correct_answers || 0,
+          progress: progress,
+          totalQuestions: totalQuestions,
+          correctAnswers: correctAnswers,
         };
       });
     }
@@ -101,11 +111,17 @@ const DashboardPage: React.FC = () => {
       .filter(chapter => chapter.isActive)
       .map(chapter => {
         const stats = realChapterStats.find(stat => stat.chapter === chapter.name);
+        const progress = stats?.progress || 0;
+        const totalQuestions = stats?.total_questions || 0;
+        const correctAnswers = stats?.correct_answers || 0;
+        
+        console.log(`Fallback Chapter ${chapter.name}:`, { progress, totalQuestions, correctAnswers, stats });
+        
         return {
           name: chapter.name,
-          progress: stats?.progress || 0,
-          totalQuestions: stats?.total_questions || 0,
-          correctAnswers: stats?.correct_answers || 0,
+          progress: progress,
+          totalQuestions: totalQuestions,
+          correctAnswers: correctAnswers,
         };
       });
   };
@@ -114,13 +130,18 @@ const DashboardPage: React.FC = () => {
 
   // Get recent activity from real quiz sessions
   const getRecentActivity = () => {
+    console.log('getRecentActivity - quizSessions:', quizSessions);
+    
     if (quizSessions.length === 0) {
+      console.log('No quiz sessions found, returning default message');
       return [
-        { date: 'Noch keine Aktivität', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
+        { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
       ];
     }
     
-    return quizSessions.slice(0, 3).map(session => {
+    const activities = quizSessions.slice(0, 3).map(session => {
+      console.log('Processing session:', session);
+      
       const sessionDate = new Date(session.created_at);
       const today = new Date();
       const yesterday = new Date(today);
@@ -138,13 +159,19 @@ const DashboardPage: React.FC = () => {
         });
       }
       
-      return {
+      const activity = {
         date: dateLabel,
         questionsAnswered: session.questions_answered || 0,
         accuracyRate: session.accuracy_rate ? Math.round(session.accuracy_rate) : 0,
         xpEarned: session.xp_earned || 0,
       };
+      
+      console.log('Created activity:', activity);
+      return activity;
     });
+    
+    console.log('Final activities:', activities);
+    return activities;
   };
 
   const recentActivity = getRecentActivity();
