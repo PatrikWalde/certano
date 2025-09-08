@@ -10,12 +10,12 @@ const AdminPage: React.FC = () => {
   const { isAdmin, loading } = useAuth();
   const { 
     getTopics, 
-    createTopic, 
+    // createTopic, 
     updateTopic, 
     deleteTopic, 
     reorderTopics,
     getChapters, 
-    createChapter, 
+    // createChapter, 
     updateChapter, 
     deleteChapter, 
     reorderChapters,
@@ -85,7 +85,7 @@ const AdminPage: React.FC = () => {
 
     // Apply status filter (assuming all questions are active for now)
     if (questionFilters.status) {
-      filtered = filtered.filter((question: any) => {
+      filtered = filtered.filter((q: any) => {
         // For now, all questions are considered "active"
         // You can extend this when you add status field to questions
         return questionFilters.status === 'active';
