@@ -131,18 +131,18 @@ export const usePWA = () => {
           badge: '/badge-72x72.png',
           tag: 'quiz-reminder',
           requireInteraction: true,
-          actions: [
-            {
-              action: 'quiz',
-              title: 'Quiz starten',
-              icon: '/icon-192x192.png'
-            },
-            {
-              action: 'later',
-              title: 'Später',
-              icon: '/icon-192x192.png'
-            }
-          ]
+          // actions: [
+          //   {
+          //     action: 'quiz',
+          //     title: 'Quiz starten',
+          //     icon: '/icon-192x192.png'
+          //   },
+          //   {
+          //     action: 'later',
+          //     title: 'Später',
+          //     icon: '/icon-192x192.png'
+          //   }
+          // ]
         });
       });
     }

@@ -123,7 +123,7 @@ export const useOfflineStorage = () => {
       const store = transaction.objectStore('quizResults');
       const index = store.index('synced');
 
-      const request = index.getAll(false); // Nur nicht-synchronisierte
+      const request = index.getAll(false as any); // Nur nicht-synchronisierte
       
       request.onsuccess = () => {
         setState(prev => ({
