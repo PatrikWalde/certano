@@ -109,7 +109,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
       const dataToSave = {
         ...formData,
         questionNumber: formData.questionNumber || generateQuestionNumber(),
-        difficulty: formData.difficulty || 'medium'
+        difficulty: (formData.difficulty as 'easy' | 'medium' | 'hard') || 'medium'
       };
       
       await onSave(dataToSave);

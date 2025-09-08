@@ -41,7 +41,7 @@ interface SortableChapterRowProps {
 
 const SortableChapterRow: React.FC<SortableChapterRowProps> = ({ 
   chapter, 
-  topics,
+  // topics,
   onEdit, 
   onDelete, 
   getChapterIcon,
@@ -219,7 +219,7 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
     return topic ? topic.icon : '📚';
   };
 
-  const getColorClasses = (colorValue: string) => {
+  // const getColorClasses = (colorValue: string) => {
     const colorMap: Record<string, string> = {
       '#3b82f6': 'bg-blue-100 text-blue-800',
       '#ef4444': 'bg-red-100 text-red-800',

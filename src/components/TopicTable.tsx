@@ -266,7 +266,7 @@ const TopicTable: React.FC<TopicTableProps> = ({ topics, onEdit, onDelete, onReo
       {/* Topic Editor Modal */}
       {(editingTopic || showAddForm) && (
         <TopicEditor
-          topic={editingTopic}
+          topic={editingTopic || undefined}
           existingTopics={topics}
           onClose={() => {
             setEditingTopic(null);
