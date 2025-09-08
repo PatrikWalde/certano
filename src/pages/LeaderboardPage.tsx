@@ -13,6 +13,7 @@ interface LeaderboardUser {
 }
 
 const LeaderboardPage: React.FC = () => {
+  // Force Vercel rebuild
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
