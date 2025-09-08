@@ -224,6 +224,34 @@ const DashboardPage: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             
+            {/* Bestenliste Card */}
+            <Link
+              to="/leaderboard"
+              className="group relative overflow-hidden bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300 transform hover:scale-102 hover:-translate-y-1"
+            >
+              {/* Animated Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 dark:from-yellow-900/20 dark:via-amber-900/20 dark:to-orange-900/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              {/* Floating Particles */}
+              <div className="absolute top-3 right-3 w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-all duration-300 delay-100"></div>
+              <div className="absolute top-6 right-6 w-1 h-1 bg-amber-400 rounded-full opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-all duration-300 delay-200"></div>
+              
+              {/* Content */}
+              <div className="relative z-10 text-center">
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 rounded-lg mb-3 group-hover:scale-105 transition-transform duration-300 mx-auto">
+                  <span className="text-2xl">🏆</span>
+                </div>
+                
+                <h3 className="text-base font-bold text-gray-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-all duration-300">
+                  Bestenliste
+                </h3>
+                
+                <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm leading-relaxed">
+                  Vergleiche dich mit anderen Lernenden
+                </p>
+              </div>
+            </Link>
+            
             {/* Schnell-Quiz Card */}
             <button
               onClick={handleQuickQuiz}

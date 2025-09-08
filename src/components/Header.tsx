@@ -85,12 +85,20 @@ const Header: React.FC = () => {
               Quiz starten
             </Link>
             {user && (
-              <Link
-                to="/dashboard"
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-4 py-3 rounded-md text-sm font-medium transition-colors touch-manipulation"
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-4 py-3 rounded-md text-sm font-medium transition-colors touch-manipulation"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/leaderboard"
+                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-4 py-3 rounded-md text-sm font-medium transition-colors touch-manipulation"
+                >
+                  🏆 Bestenliste
+                </Link>
+              </>
             )}
           </nav>
 
@@ -281,6 +289,13 @@ const Header: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Profil
+                  </Link>
+                  <Link
+                    to="/leaderboard"
+                    className="block px-4 py-3 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors touch-manipulation"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    🏆 Bestenliste
                   </Link>
                   {isAdmin && (
                     <Link

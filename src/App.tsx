@@ -13,6 +13,7 @@ import AdminPage from './pages/AdminPage';
 import ActivityPage from './pages/ActivityPage';
 import ChaptersPage from './pages/ChaptersPage';
 import ErrorReviewPage from './pages/ErrorReviewPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 
 // Components
 import Layout from './components/Layout';
@@ -77,6 +78,11 @@ function App() {
                 <Route path="errors" element={
                   <ProtectedRoute>
                     <ErrorReviewPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="leaderboard" element={
+                  <ProtectedRoute>
+                    <LeaderboardPage />
                   </ProtectedRoute>
                 } />
               </Route>
