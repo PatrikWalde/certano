@@ -26,7 +26,7 @@ const LeaderboardPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch all users (we'll filter by privacy settings later)
+      // Fetch all users with stats
       const { data: profiles, error: profilesError } = await supabase
         .from('user_profiles')
         .select('*');
@@ -37,23 +37,23 @@ const LeaderboardPage: React.FC = () => {
       const { data: stats, error: statsError } = await supabase
         .from('user_stats')
         .select('user_id, total_xp, current_level')
-        .in('user_id', profiles?.map(p => p.id) || []);
+        .in('user_id', profiles?.map(p => p.auth_user_id) || []);
 
       if (statsError) throw statsError;
 
-      // Combine profile and stats data, filter by privacy settings
+      // Combine profile and stats data
       const leaderboardData = profiles?.map(profile => {
-        const userStats = stats?.find(s => s.user_id === profile.id);
+        const userStats = stats?.find(s => s.user_id === profile.auth_user_id);
         return {
-          id: profile.id,
-          firstName: profile.first_name || profile.full_name?.split(' ')[0] || 'Unbekannt',
-          lastName: profile.last_name || profile.full_name?.split(' ').slice(1).join(' ') || '',
+          id: profile.auth_user_id,
+          firstName: profile.first_name || 'Unbekannt',
+          lastName: profile.last_name || '',
           totalXp: userStats?.total_xp || 0,
           level: userStats?.current_level || 1,
           avatar: profile.avatar,
-          showOnLeaderboard: true // For now, show all users until we add privacy settings
+          showOnLeaderboard: true // Show all users for now
         };
-      }).filter(user => user.showOnLeaderboard && user.totalXp > 0) || [];
+      }).filter(user => user.totalXp > 0) || [];
 
       // Sort by XP descending
       leaderboardData.sort((a, b) => b.totalXp - a.totalXp);
