@@ -220,22 +220,22 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
   };
 
   // const getColorClasses = (colorValue: string) => {
-    const colorMap: Record<string, string> = {
-      '#3b82f6': 'bg-blue-100 text-blue-800',
-      '#ef4444': 'bg-red-100 text-red-800',
-      '#10b981': 'bg-green-100 text-green-800',
-      '#f59e0b': 'bg-yellow-100 text-yellow-800',
-      '#8b5cf6': 'bg-purple-100 text-purple-800',
-      '#f97316': 'bg-orange-100 text-orange-800',
-      '#ec4899': 'bg-pink-100 text-pink-800',
-      '#6366f1': 'bg-indigo-100 text-indigo-800',
-      '#06b6d4': 'bg-cyan-100 text-cyan-800',
-      '#84cc16': 'bg-lime-100 text-lime-800',
-      '#f43f5e': 'bg-rose-100 text-rose-800',
-      '#a855f7': 'bg-violet-100 text-violet-800',
-    };
-    return colorMap[colorValue] || 'bg-gray-100 text-gray-800';
-  };
+  //   const colorMap: Record<string, string> = {
+  //     '#3b82f6': 'bg-blue-100 text-blue-800',
+  //     '#ef4444': 'bg-red-100 text-red-800',
+  //     '#10b981': 'bg-green-100 text-green-800',
+  //     '#f59e0b': 'bg-yellow-100 text-yellow-800',
+  //     '#8b5cf6': 'bg-purple-100 text-purple-800',
+  //     '#f97316': 'bg-orange-100 text-orange-800',
+  //     '#ec4899': 'bg-pink-100 text-pink-800',
+  //     '#6366f1': 'bg-indigo-100 text-indigo-800',
+  //     '#06b6d4': 'bg-cyan-100 text-cyan-800',
+  //     '#84cc16': 'bg-lime-100 text-lime-800',
+  //     '#f43f5e': 'bg-rose-100 text-rose-800',
+  //     '#a855f7': 'bg-violet-100 text-violet-800',
+  //   };
+  //   return colorMap[colorValue] || 'bg-gray-100 text-gray-800';
+  // };
 
   return (
     <div className="space-y-6">
