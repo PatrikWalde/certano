@@ -415,26 +415,26 @@ const ProfilePage: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-300">Gesamt Quiz</span>
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {userStats?.totalQuizzes || 0}
+                      {userStats?.total_questions_answered || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-300">Richtige Antworten</span>
                     <span className="font-semibold text-green-600 dark:text-green-400">
-                      {userStats?.correctAnswers || 0}
+                      {userStats?.total_correct_answers || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-300">Falsche Antworten</span>
                     <span className="font-semibold text-red-600 dark:text-red-400">
-                      {userStats?.incorrectAnswers || 0}
+                      {(userStats?.total_questions_answered || 0) - (userStats?.total_correct_answers || 0)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600 dark:text-gray-300">Erfolgsrate</span>
                     <span className="font-semibold text-primary-600 dark:text-primary-400">
-                      {userStats?.totalQuizzes > 0 
-                        ? Math.round((userStats.correctAnswers / (userStats.correctAnswers + userStats.incorrectAnswers)) * 100) 
+                      {userStats?.total_questions_answered > 0 
+                        ? Math.round((userStats.total_correct_answers / userStats.total_questions_answered) * 100) 
                         : 0}%
                     </span>
                   </div>
