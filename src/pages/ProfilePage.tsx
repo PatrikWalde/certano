@@ -19,6 +19,14 @@ const ProfilePage: React.FC = () => {
     evu: user?.evu || '',
     showOnLeaderboard: user?.privacySettings.showOnLeaderboard || true,
     allowAnalytics: user?.privacySettings.allowAnalytics || true,
+  } as {
+    email: string;
+    firstName: string;
+    lastName: string;
+    city: string;
+    evu: string;
+    showOnLeaderboard: true;
+    allowAnalytics: true;
   });
 
   // Load user statistics and data
