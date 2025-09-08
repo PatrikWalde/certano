@@ -153,7 +153,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
 
 
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // Clear any pending auto-advance timer
     if (autoAdvanceTimer) {
       clearTimeout(autoAdvanceTimer);
