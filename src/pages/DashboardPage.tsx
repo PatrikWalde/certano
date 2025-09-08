@@ -83,9 +83,6 @@ const DashboardPage: React.FC = () => {
 
   // Get chapter progress from real data or create defaults
   const getChapterProgress = () => {
-    console.log('getChapterProgress - dashboardData:', dashboardData);
-    console.log('getChapterProgress - realChapterStats:', realChapterStats);
-    console.log('getChapterProgress - chapters:', chapters);
     
     if (dashboardData?.chapters && dashboardData.chapters.length > 0) {
       return dashboardData.chapters.map((chapter: any) => {
@@ -95,7 +92,6 @@ const DashboardPage: React.FC = () => {
         const totalQuestions = stats?.total_questions || 0;
         const correctAnswers = stats?.correct_answers || 0;
         
-        console.log(`Chapter ${chapter.name}:`, { progress, totalQuestions, correctAnswers, stats });
         
         return {
           name: chapter.name,
@@ -115,7 +111,6 @@ const DashboardPage: React.FC = () => {
         const totalQuestions = stats?.total_questions || 0;
         const correctAnswers = stats?.correct_answers || 0;
         
-        console.log(`Fallback Chapter ${chapter.name}:`, { progress, totalQuestions, correctAnswers, stats });
         
         return {
           name: chapter.name,
@@ -126,21 +121,20 @@ const DashboardPage: React.FC = () => {
       });
   };
 
-  const chapterProgress = getChapterProgress();
+  // Memoize chapter progress to prevent multiple calculations
+  const chapterProgress = React.useMemo(() => {
+    return getChapterProgress();
+  }, [dashboardData, realChapterStats, chapters]);
 
-  // Get recent activity from real quiz sessions
-  const getRecentActivity = () => {
-    console.log('getRecentActivity - quizSessions:', quizSessions);
-    
+  // Memoize recent activity to prevent multiple calculations
+  const recentActivity = React.useMemo(() => {
     if (quizSessions.length === 0) {
-      console.log('No quiz sessions found, returning default message');
       return [
         { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
       ];
     }
     
     const activities = quizSessions.slice(0, 3).map(session => {
-      console.log('Processing session:', session);
       
       const sessionDate = new Date(session.created_at);
       const today = new Date();
@@ -166,15 +160,11 @@ const DashboardPage: React.FC = () => {
         xpEarned: session.xp_earned || 0,
       };
       
-      console.log('Created activity:', activity);
       return activity;
     });
     
-    console.log('Final activities:', activities);
     return activities;
-  };
-
-  const recentActivity = getRecentActivity();
+  }, [quizSessions]);
 
   // Schnell-Quiz Funktion
   const handleQuickQuiz = async () => {
