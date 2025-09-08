@@ -33,10 +33,10 @@ const LeaderboardPage: React.FC = () => {
 
       if (profilesError) throw profilesError;
 
-      // Fetch quiz stats for each user
+      // Fetch user stats for each user
       const { data: stats, error: statsError } = await supabase
-        .from('quiz_stats')
-        .select('user_id, total_xp, level')
+        .from('user_stats')
+        .select('user_id, total_xp, current_level')
         .in('user_id', profiles?.map(p => p.id) || []);
 
       if (statsError) throw statsError;
@@ -49,7 +49,7 @@ const LeaderboardPage: React.FC = () => {
           firstName: profile.first_name || profile.full_name?.split(' ')[0] || 'Unbekannt',
           lastName: profile.last_name || profile.full_name?.split(' ').slice(1).join(' ') || '',
           totalXp: userStats?.total_xp || 0,
-          level: userStats?.level || 1,
+          level: userStats?.current_level || 1,
           avatar: profile.avatar,
           showOnLeaderboard: true // For now, show all users until we add privacy settings
         };
