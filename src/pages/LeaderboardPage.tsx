@@ -13,7 +13,7 @@ interface LeaderboardUser {
 }
 
 const LeaderboardPage: React.FC = () => {
-  // Force Vercel rebuild - Safari cache fix
+  // Force Vercel rebuild - Fix white page and 404 JavaScript
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
