@@ -186,9 +186,9 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         .filter(chapter => chapter !== 'all')
     )];
     
-    // Use requestAnimationFrame to avoid blocking the main thread
-    requestAnimationFrame(() => {
-      addAttempt({
+    // Save quiz attempt to database and local store
+    try {
+      await addAttempt({
         date: new Date().toISOString(),
         questionsAnswered: answers.length,
         correctAnswers,
@@ -197,7 +197,9 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         chapters,
         timeSpent: totalTime / 1000, // Convert to seconds
       });
-    });
+    } catch (error) {
+      console.error('Error saving quiz attempt:', error);
+    }
     
     onComplete(answers);
   };

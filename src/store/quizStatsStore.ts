@@ -82,7 +82,7 @@ interface QuizStatsStore {
   badges: Badge[];
   
   // Actions
-  addAttempt: (attempt: Omit<QuizAttempt, 'id'>) => void;
+  addAttempt: (attempt: Omit<QuizAttempt, 'id'>) => Promise<void>;
   updateChapterStats: (chapterName: string, correct: boolean) => void;
   updateUserStats: (correct: boolean, xpEarned: number, timeSpent: number) => void;
   trackQuestionError: (questionId: string, chapter: string, isCorrect: boolean) => void;
@@ -175,11 +175,66 @@ const useQuizStatsStore = create<QuizStatsStore>()(
         weeklyProgress: 0,
       },
       
-      addAttempt: (attemptData) => {
+      addAttempt: async (attemptData) => {
         const newAttempt: QuizAttempt = {
           ...attemptData,
           id: Date.now().toString(),
         };
+        
+        // Save to database
+        try {
+          const { supabase } = await import('../lib/supabase');
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            // Save quiz attempt to database
+            await supabase.from('quiz_attempts').insert({
+              user_id: user.id,
+              questions_answered: newAttempt.questionsAnswered,
+              correct_answers: newAttempt.correctAnswers,
+              accuracy_rate: newAttempt.accuracyRate,
+              xp_earned: newAttempt.xpEarned,
+              chapters: newAttempt.chapters,
+              time_spent: Math.round(newAttempt.timeSpent),
+              questions: [], // Could store question details here
+              completed_at: new Date().toISOString()
+            });
+            
+            // Update user stats in database
+            const { data: existingStats } = await supabase
+              .from('user_stats')
+              .select('*')
+              .eq('user_id', user.id)
+              .single();
+            
+            if (existingStats) {
+              // Update existing stats
+              await supabase
+                .from('user_stats')
+                .update({
+                  total_questions_answered: existingStats.total_questions_answered + newAttempt.questionsAnswered,
+                  total_correct_answers: existingStats.total_correct_answers + newAttempt.correctAnswers,
+                  total_xp: existingStats.total_xp + newAttempt.xpEarned,
+                  total_time_spent: existingStats.total_time_spent + Math.round(newAttempt.timeSpent),
+                  current_level: calculateLevel(existingStats.total_xp + newAttempt.xpEarned),
+                  updated_at: new Date().toISOString()
+                })
+                .eq('user_id', user.id);
+            } else {
+              // Create new stats
+              await supabase.from('user_stats').insert({
+                user_id: user.id,
+                total_questions_answered: newAttempt.questionsAnswered,
+                total_correct_answers: newAttempt.correctAnswers,
+                total_xp: newAttempt.xpEarned,
+                total_time_spent: Math.round(newAttempt.timeSpent),
+                current_level: calculateLevel(newAttempt.xpEarned)
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error saving quiz attempt to database:', error);
+        }
         
         set((state) => {
           const newAttempts = [newAttempt, ...state.attempts];
