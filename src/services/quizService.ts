@@ -218,10 +218,10 @@ export const getQuizSessions = async (limit: number = 10) => {
     }
 
     const { data, error } = await supabase
-      .from('quiz_sessions')
+      .from('quiz_attempts')
       .select('*')
       .eq('user_id', user.id)
-      .order('completed_at', { ascending: false })
+      .order('created_at', { ascending: false })
       .limit(limit);
 
     if (error) {

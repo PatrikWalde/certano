@@ -121,7 +121,7 @@ const DashboardPage: React.FC = () => {
     }
     
     return quizSessions.slice(0, 3).map(session => {
-      const sessionDate = new Date(session.completed_at);
+      const sessionDate = new Date(session.created_at);
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
@@ -140,7 +140,7 @@ const DashboardPage: React.FC = () => {
       
       return {
         date: dateLabel,
-        questionsAnswered: session.total_questions || 0,
+        questionsAnswered: session.questions_answered || 0,
         accuracyRate: session.accuracy_rate ? Math.round(session.accuracy_rate) : 0,
         xpEarned: session.xp_earned || 0,
       };
