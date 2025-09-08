@@ -7,7 +7,7 @@ import SortableChapterTable from '../components/SortableChapterTable';
 import QuestionEditor from '../components/QuestionEditor';
 
 const AdminPage: React.FC = () => {
-  const { user, isAdmin, loading } = useAuth();
+  const { isAdmin, loading } = useAuth();
   const { 
     getTopics, 
     createTopic, 

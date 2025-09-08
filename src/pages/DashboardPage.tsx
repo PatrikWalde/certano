@@ -7,7 +7,7 @@ import { useSupabase } from '../hooks/useSupabase';
 import { getUserStats, getChapterStats, getQuizSessions } from '../services/quizService';
 import ProgressRing from '../components/ProgressRing';
 import StatsCard from '../components/StatsCard';
-import MetricCard from '../components/MetricCard';
+// import MetricCard from '../components/MetricCard';
 import RecentActivity from '../components/RecentActivity';
 import ErrorReviewSection from '../components/ErrorReviewSection';
 import QuestsSection from '../components/QuestsSection';

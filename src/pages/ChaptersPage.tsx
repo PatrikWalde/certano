@@ -5,7 +5,7 @@ import { useQuizStatsStore } from '../store/quizStatsStore';
 
 const ChaptersPage: React.FC = () => {
   const { chapters } = useChapterStore();
-  const { chapterStats, userStats } = useQuizStatsStore();
+  const { chapterStats } = useQuizStatsStore();
 
   const getChapterProgress = (chapterName: string) => {
     return chapterStats.find(c => c.name === chapterName);

@@ -75,7 +75,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
 
     // Update statistics
     const currentQuestion = questions[currentQuestionIndex];
-    const timeSpent = Date.now() - (startTime as number);
+    const timeSpent = Date.now() - (startTime as unknown as number);
     
     // Update user stats (XP calculation: 10 for correct, 5 for incorrect)
     const xpEarned = answer.isCorrect ? 10 : 5;
@@ -173,7 +173,7 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     setIsCompleted(true);
     
     // Save complete quiz attempt to statistics
-    const totalTime = Date.now() - (startTime as number);
+    const totalTime = Date.now() - (startTime as unknown as number);
     const correctAnswers = answers.filter(a => a.isCorrect).length;
     const accuracyRate = Math.round((correctAnswers / answers.length) * 100);
     const totalXp = answers.reduce((sum, answer) => sum + (answer.isCorrect ? 10 : 5), 0);
