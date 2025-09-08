@@ -85,7 +85,7 @@ const AdminPage: React.FC = () => {
 
     // Apply status filter (assuming all questions are active for now)
     if (questionFilters.status) {
-      filtered = filtered.filter((q: any) => {
+      filtered = filtered.filter((_q: any) => {
         // For now, all questions are considered "active"
         // You can extend this when you add status field to questions
         return questionFilters.status === 'active';
