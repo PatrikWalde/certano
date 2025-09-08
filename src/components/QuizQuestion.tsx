@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Question, SessionAnswer, MatchingPair, FillBlankOption } from '../types';
+import { Question, SessionAnswer, FillBlankOption } from '../types';
 
 interface QuizQuestionProps {
   question: Question;
@@ -19,7 +19,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   totalQuestions,
   onAnswer,
   onNextQuestion,
-  onSkip,
   shuffleOptions,
   showExplanations,
   onOptionSelected,
@@ -96,7 +95,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   const handleOptionSelect = (optionId: string) => {
     if (showResult) return;
 
-    if (question.type === 'multiple_choice' || question.type === 'multiple-choice') {
+    if (question.type === 'multiple_choice') {
       // For multiple choice, allow multiple selections
       setSelectedOptions(prev => {
         const newOptions = prev.includes(optionId) 

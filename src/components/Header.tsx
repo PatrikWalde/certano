@@ -21,7 +21,7 @@ const Header: React.FC = () => {
   }
   
   const { userStats: localUserStats } = useQuizStatsStore();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

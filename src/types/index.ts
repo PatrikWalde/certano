@@ -130,6 +130,8 @@ export interface FillBlankOption {
   text: string;
   correctAnswer: string;
   wrongAnswers?: WrongAnswer[];
+  isCorrect?: boolean;
+  blankIndex?: number;
 }
 
 export interface WrongAnswer {

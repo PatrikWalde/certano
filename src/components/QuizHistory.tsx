@@ -25,7 +25,7 @@ const QuizHistory: React.FC = () => {
     try {
       const data = await getQuizSessions(5); // Letzte 5 Sessions
       setSessions(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Fehler beim Laden der Quiz-Historie:', error);
       // Wenn die Tabelle noch nicht existiert, zeige leere Liste
       if (error.code === 'PGRST205') {

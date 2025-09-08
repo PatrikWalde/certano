@@ -43,7 +43,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
       }
       
       // If no options found and it's a multiple choice question, create default options
-      if (convertedOptions.length === 0 && (question.type === 'multiple_choice' || question.type === 'multiple-choice')) {
+      if (convertedOptions.length === 0 && question.type === 'multiple_choice') {
         convertedOptions = [
           { id: '1', text: 'Option 1', isCorrect: true },
           { id: '2', text: 'Option 2', isCorrect: false },
@@ -106,7 +106,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
       // Ensure question number is set
       const dataToSave = {
         ...formData,
-        questionNumber: formData.questionNumber || generateQuestionNumber()
+        questionNumber: formData.questionNumber || generateQuestionNumber(),
+        difficulty: formData.difficulty || 'medium'
       };
       
       await onSave(dataToSave);
@@ -382,7 +383,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
 
 
           {/* Multiple Choice Options */}
-          {(formData.type === 'multiple_choice' || formData.type === 'multiple-choice') && (
+          {formData.type === 'multiple_choice' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Antwortoptionen * ({formData.options.length} Optionen)
