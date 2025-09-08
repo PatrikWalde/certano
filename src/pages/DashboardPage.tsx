@@ -140,9 +140,9 @@ const DashboardPage: React.FC = () => {
       
       return {
         date: dateLabel,
-        questionsAnswered: session.total_questions,
-        accuracyRate: Math.round(session.accuracy_rate),
-        xpEarned: session.xp_earned,
+        questionsAnswered: session.total_questions || 0,
+        accuracyRate: session.accuracy_rate ? Math.round(session.accuracy_rate) : 0,
+        xpEarned: session.xp_earned || 0,
       };
     });
   };
