@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-// import { useSupabase } from '../hooks/useSupabase';
+import { useSupabase } from '../hooks/useSupabase';
 import { getUserStats, getChapterStats, getQuizSessions } from '../services/quizService';
 
 const ProfilePage: React.FC = () => {
   const { user, updateUser } = useAuth();
-  // const { supabase } = useSupabase();
+  const { supabase } = useSupabase();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userStats, setUserStats] = useState<any>(null);
@@ -296,7 +296,7 @@ const ProfilePage: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={formData.showOnLeaderboard as true}
+                    checked={formData.showOnLeaderboard}
                     onChange={(e) => setFormData({ ...formData, showOnLeaderboard: e.target.checked })}
                     disabled={!isEditing}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded disabled:opacity-50"
@@ -314,7 +314,7 @@ const ProfilePage: React.FC = () => {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    checked={formData.allowAnalytics as true}
+                    checked={formData.allowAnalytics}
                     onChange={(e) => setFormData({ ...formData, allowAnalytics: e.target.checked })}
                     disabled={!isEditing}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded disabled:opacity-50"

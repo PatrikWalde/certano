@@ -157,7 +157,7 @@ const QuizPage: React.FC = () => {
     }
   };
 
-  const handleSkip = () => {
+  // const handleSkip = () => {
     const currentQuestion = questions && questions.length > 0 ? questions[currentQuestionIndex] : null;
     if (!currentQuestion) return;
     

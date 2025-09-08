@@ -85,7 +85,7 @@ const AdminPage: React.FC = () => {
 
     // Apply status filter (assuming all questions are active for now)
     if (questionFilters.status) {
-      filtered = filtered.filter(question => {
+      filtered = filtered.filter((question: any) => {
         // For now, all questions are considered "active"
         // You can extend this when you add status field to questions
         return questionFilters.status === 'active';
@@ -130,7 +130,7 @@ const AdminPage: React.FC = () => {
   const loadAdminStats = async () => {
     try {
       // Import the quiz service functions
-      const { getQuizSessions, getUserStats } = await import('../services/quizService');
+      const { getQuizSessions } = await import('../services/quizService');
       
       // Get quiz sessions for statistics
       const quizSessions = await getQuizSessions(100); // Get more sessions for stats
@@ -140,7 +140,7 @@ const AdminPage: React.FC = () => {
       
       // Calculate recent activity (last 7 days)
       const now = new Date();
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      // const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       
       const recentActivity = [];
       for (let i = 0; i < 7; i++) {
@@ -310,7 +310,7 @@ const AdminPage: React.FC = () => {
   };
 
 
-  const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
+  // const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       // This is a new topic
       const newTopic = await createTopic(topicData);
@@ -359,7 +359,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
+  // const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       // This is a new chapter
       const newChapter = await createChapter(chapterData);
