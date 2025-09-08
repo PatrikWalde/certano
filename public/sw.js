@@ -162,7 +162,10 @@ self.addEventListener('fetch', (event) => {
           const responseClone = response.clone();
           caches.open(DYNAMIC_CACHE)
             .then((cache) => {
-              cache.put(request, responseClone);
+              // Only cache non-chrome-extension requests
+              if (!request.url.startsWith('chrome-extension://')) {
+                cache.put(request, responseClone);
+              }
             })
             .catch((error) => {
               console.error('Service Worker: Error caching response', error);
