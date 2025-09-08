@@ -64,7 +64,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         blankCount: question.blankCount || 1,
         media: question.media || '',
         isOpenQuestion: question.isOpenQuestion || false,
-        questionNumber: question.questionNumber || ''
+        questionNumber: question.questionNumber || '',
+        difficulty: question.difficulty || 'medium'
       };
     } else {
       // Default form data for new question
@@ -83,7 +84,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         blankCount: 1,
         media: '',
         isOpenQuestion: false,
-        questionNumber: generateQuestionNumber()
+        questionNumber: generateQuestionNumber(),
+        difficulty: 'medium'
       };
     }
   };

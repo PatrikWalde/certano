@@ -182,8 +182,8 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
       // Check if selected options match correct answers
       const convertedOptions = convertOldOptions(question.options);
       const correctOptionIds = convertedOptions
-        .filter(option => option.isCorrect)
-        .map(option => option.id);
+        .filter((option: any) => option.isCorrect)
+        .map((option: any) => option.id);
       
       correct = optionsToUse.length === correctOptionIds.length &&
         optionsToUse.every(id => correctOptionIds.includes(id));
@@ -516,7 +516,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {shuffledFillBlankOptions.map((option) => {
                 const isUsed = fillBlankAnswers.includes(option.id);
-                const isSelected = !isUsed;
                 
                 let optionClass = "p-3 border-2 rounded-lg transition-all text-center font-medium";
                 if (showResult) {

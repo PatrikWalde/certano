@@ -37,12 +37,7 @@ const LoginPage: React.FC = () => {
           return;
         }
         
-        await register(email, password, {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          city: city.trim(),
-          evu: evu.trim() || undefined
-        });
+        await register(email, password);
         setError('Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.');
         setIsLoading(false);
       }
