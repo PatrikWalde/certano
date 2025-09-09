@@ -210,11 +210,12 @@ const useQuizStatsStore = create<QuizStatsStore>()(
             });
             
             if (error) {
-              console.error('Error saving quiz attempt:', error);
-              console.error('Error details:', error.message, error.code);
-              console.error('Table might not exist or have wrong schema');
+              console.error('❌ Error saving quiz attempt:', error);
+              console.error('❌ Error details:', error.message, error.code);
+              console.error('❌ Table might not exist or have wrong schema');
+              console.error('❌ Full error object:', error);
             } else {
-              console.log('Quiz attempt saved successfully:', data);
+              console.log('✅ Quiz attempt saved successfully:', data);
             }
             
             // Update user stats in database
