@@ -143,7 +143,17 @@ export const db = {
       const cleanData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined)
       );
-      return supabase.from('chapters').update(cleanData).eq('id', id).select();
+      
+      console.log('🔧 Supabase chapters.update called with:');
+      console.log('  - ID:', id);
+      console.log('  - Original data:', data);
+      console.log('  - Clean data:', cleanData);
+      
+      const result = supabase.from('chapters').update(cleanData).eq('id', id).select();
+      
+      console.log('🔧 Supabase chapters.update result:', result);
+      
+      return result;
     },
     delete: (id: string) => supabase.from('chapters').delete().eq('id', id),
     reorder: async (updates: { id: string; order: number }[]) => {

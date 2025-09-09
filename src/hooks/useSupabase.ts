@@ -277,6 +277,8 @@ export const useSupabase = (): UseSupabaseReturn => {
     setLoading(true);
     setError(null);
     try {
+      console.log('🔄 Updating chapter:', id, 'with data:', chapterData);
+      
       const updateData: any = {};
       if (chapterData.name !== undefined) updateData.name = chapterData.name;
       if (chapterData.description !== undefined) updateData.description = chapterData.description;
@@ -288,9 +290,22 @@ export const useSupabase = (): UseSupabaseReturn => {
       
       updateData.updated_at = new Date().toISOString();
 
+      console.log('📝 Update data prepared:', updateData);
+
       const { data, error } = await db.chapters.update(id, updateData);
-      if (error) throw error;
-      if (!data || data.length === 0) throw new Error('Keine Daten zurückgegeben');
+      
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        console.error('❌ Error details:', error.message, error.code, error.details);
+        throw error;
+      }
+      
+      if (!data || data.length === 0) {
+        console.error('❌ No data returned from update');
+        throw new Error('Keine Daten zurückgegeben');
+      }
+      
+      console.log('✅ Chapter updated successfully:', data[0]);
       
       const updatedChapter = data[0];
       return {
@@ -306,6 +321,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         updatedAt: updatedChapter.updated_at
       };
     } catch (err) {
+      console.error('❌ Error in updateChapter:', err);
       setError(err instanceof Error ? err.message : 'Fehler beim Aktualisieren des Kapitels');
       return null;
     } finally {
