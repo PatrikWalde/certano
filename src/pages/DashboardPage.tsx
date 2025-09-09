@@ -8,13 +8,13 @@ import { getUserStats, getChapterStats, getQuizSessions } from '../services/quiz
 import ProgressRing from '../components/ProgressRing';
 import StatsCard from '../components/StatsCard';
 // import MetricCard from '../components/MetricCard';
-// import RecentActivity from '../components/RecentActivity';
+import RecentActivity from '../components/RecentActivity';
 import ErrorReviewSection from '../components/ErrorReviewSection';
 import QuestsSection from '../components/QuestsSection';
 import CompetenceRadar from '../components/CompetenceRadar';
 import BadgesSection from '../components/BadgesSection';
-// import ChapterProgress from '../components/ChapterProgress';
-// import QuizHistory from '../components/QuizHistory';
+import ChapterProgress from '../components/ChapterProgress';
+import QuizHistory from '../components/QuizHistory';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -130,49 +130,49 @@ const DashboardPage: React.FC = () => {
       });
   };
 
-  // Temporarily removed chapter progress and recent activity due to data issues
-  // const chapterProgress = React.useMemo(() => {
-  //   return getChapterProgress();
-  // }, [dashboardData, realChapterStats, chapters]);
+  // Memoize chapter progress to prevent multiple calculations
+  const chapterProgress = React.useMemo(() => {
+    return getChapterProgress();
+  }, [dashboardData, realChapterStats, chapters]);
 
-  // const recentActivity = React.useMemo(() => {
-  //   if (quizSessions.length === 0) {
-  //     return [
-  //       { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
-  //     ];
-  //   }
-  //   
-  //   const activities = quizSessions.slice(0, 3).map(session => {
-  //     
-  //     const sessionDate = new Date(session.created_at);
-  //     const today = new Date();
-  //     const yesterday = new Date(today);
-  //     yesterday.setDate(yesterday.getDate() - 1);
-  //     
-  //     let dateLabel = '';
-  //     if (sessionDate.toDateString() === today.toDateString()) {
-  //       dateLabel = 'Heute';
-  //     } else if (sessionDate.toDateString() === yesterday.toDateString()) {
-  //       dateLabel = 'Gestern';
-  //     } else {
-  //       dateLabel = sessionDate.toLocaleDateString('de-DE', { 
-  //         day: '2-digit', 
-  //         month: '2-digit' 
-  //       });
-  //     }
-  //     
-  //     const activity = {
-  //       date: dateLabel,
-  //       questionsAnswered: session.questions_answered || 0,
-  //       accuracyRate: session.accuracy_rate ? Math.round(session.accuracy_rate) : 0,
-  //       xpEarned: session.xp_earned || 0,
-  //     };
-  //     
-  //     return activity;
-  //   });
-  //   
-  //   return activities;
-  // }, [quizSessions]);
+  // Memoize recent activity to prevent multiple calculations
+  const recentActivity = React.useMemo(() => {
+    if (quizSessions.length === 0) {
+      return [
+        { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
+      ];
+    }
+    
+    const activities = quizSessions.slice(0, 3).map(session => {
+      const sessionDate = new Date(session.created_at);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      let dateLabel = '';
+      if (sessionDate.toDateString() === today.toDateString()) {
+        dateLabel = 'Heute';
+      } else if (sessionDate.toDateString() === yesterday.toDateString()) {
+        dateLabel = 'Gestern';
+      } else {
+        dateLabel = sessionDate.toLocaleDateString('de-DE', { 
+          day: '2-digit', 
+          month: '2-digit' 
+        });
+      }
+      
+      const activity = {
+        date: dateLabel,
+        questionsAnswered: session.questions_answered || 0,
+        accuracyRate: session.accuracy_rate ? Math.round(session.accuracy_rate) : 0,
+        xpEarned: session.xp_earned || 0,
+      };
+      
+      return activity;
+    });
+    
+    return activities;
+  }, [quizSessions]);
 
   // Schnell-Quiz Funktion
   const handleQuickQuiz = async () => {
@@ -664,17 +664,17 @@ const DashboardPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Chapter Progress - Temporarily removed due to data issues */}
-            {/* <ChapterProgress chapters={chapterProgress} /> */}
+            {/* Chapter Progress */}
+            <ChapterProgress chapters={chapterProgress} />
 
-            {/* Recent Activity - Temporarily removed due to data issues */}
-            {/* <RecentActivity activities={recentActivity} /> */}
+            {/* Recent Activity */}
+            <RecentActivity activities={recentActivity} />
           </div>
 
           {/* Right Column */}
           <div className="space-y-8">
-            {/* Quiz History - Temporarily removed due to data issues */}
-            {/* <QuizHistory /> */}
+            {/* Quiz History */}
+            <QuizHistory />
 
             {/* Error Review Section */}
             <ErrorReviewSection />
