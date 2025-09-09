@@ -53,12 +53,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Double-check: If user is loaded but isAdmin is still false and admin is required, redirect
-  if (requireAdmin && user && !isAdmin) {
-    console.log('ProtectedRoute: User loaded but not admin, redirecting to dashboard');
-    return <Navigate to="/dashboard" replace />;
-  }
-
   console.log('ProtectedRoute: Access granted');
   return <>{children}</>;
 };

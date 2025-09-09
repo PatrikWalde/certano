@@ -252,12 +252,13 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
 
       {/* Chapters Table */}
       <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md transition-colors duration-300">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="overflow-x-auto">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -295,6 +296,7 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
             </SortableContext>
           </table>
         </DndContext>
+        </div>
 
         {chapters.length === 0 && (
           <div className="text-center py-12">
