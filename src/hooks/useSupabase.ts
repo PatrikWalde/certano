@@ -279,6 +279,18 @@ export const useSupabase = (): UseSupabaseReturn => {
     try {
       console.log('🔄 Updating chapter:', id, 'with data:', chapterData);
       
+      // Get the old chapter name before update (for questions update)
+      let oldChapterName: string | null = null;
+      if (chapterData.name !== undefined) {
+        try {
+          const { data: oldChapter } = await db.chapters.getById(id);
+          oldChapterName = oldChapter?.name || null;
+          console.log('📝 Old chapter name:', oldChapterName);
+        } catch (err) {
+          console.warn('⚠️ Could not get old chapter name:', err);
+        }
+      }
+      
       const updateData: any = {};
       if (chapterData.name !== undefined) updateData.name = chapterData.name;
       if (chapterData.description !== undefined) updateData.description = chapterData.description;
@@ -287,30 +299,6 @@ export const useSupabase = (): UseSupabaseReturn => {
       if (chapterData.isActive !== undefined) updateData.is_active = chapterData.isActive;
       if (chapterData.topicId !== undefined) updateData.topic_id = chapterData.topicId;
       if (chapterData.order !== undefined) updateData.order = chapterData.order;
-      
-      // Update all questions that reference this chapter by name
-      if (chapterData.name !== undefined) {
-        console.log('🔄 Updating questions that reference chapter:', chapterData.name);
-        try {
-          // Get current chapter name first
-          const { data: currentChapter } = await db.chapters.getById(id);
-          if (currentChapter) {
-            // Update all questions that reference the old chapter name
-            const { error: questionsError } = await supabase
-              .from('questions')
-              .update({ chapter: chapterData.name })
-              .eq('chapter', currentChapter.name);
-            
-            if (questionsError) {
-              console.warn('⚠️ Could not update questions:', questionsError);
-            } else {
-              console.log('✅ Updated questions to reference new chapter name');
-            }
-          }
-        } catch (err) {
-          console.warn('⚠️ Error updating questions:', err);
-        }
-      }
       
       updateData.updated_at = new Date().toISOString();
 
@@ -330,6 +318,26 @@ export const useSupabase = (): UseSupabaseReturn => {
       }
       
       console.log('✅ Chapter updated successfully:', data[0]);
+      
+      // Update all questions that reference this chapter by name (after successful chapter update)
+      if (chapterData.name !== undefined && oldChapterName) {
+        console.log('🔄 Updating questions that reference chapter:', oldChapterName, '->', chapterData.name);
+        try {
+          // Update all questions that reference the old chapter name
+          const { error: questionsError } = await supabase
+            .from('questions')
+            .update({ chapter: chapterData.name })
+            .eq('chapter', oldChapterName);
+          
+          if (questionsError) {
+            console.warn('⚠️ Could not update questions:', questionsError);
+          } else {
+            console.log('✅ Updated questions to reference new chapter name');
+          }
+        } catch (err) {
+          console.warn('⚠️ Error updating questions:', err);
+        }
+      }
       
       const updatedChapter = data[0];
       return {
