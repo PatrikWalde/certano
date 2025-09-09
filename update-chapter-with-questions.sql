@@ -17,13 +17,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  -- Use a different approach: update questions first with a temporary value
-  -- Step 1: Update questions to use a temporary chapter name
-  UPDATE questions 
-  SET chapter = 'TEMP_' || old_chapter_name || '_' || EXTRACT(EPOCH FROM NOW())::TEXT
-  WHERE chapter = old_chapter_name;
-  
-  -- Step 2: Update the chapter itself
+  -- Step 1: Update the chapter itself first
   UPDATE chapters 
   SET 
     name = COALESCE(new_chapter_name, name),
@@ -36,10 +30,10 @@ BEGIN
     updated_at = NOW()
   WHERE id = chapter_id;
   
-  -- Step 3: Update questions to use the new chapter name
+  -- Step 2: Update all questions that reference the old chapter name
   UPDATE questions 
   SET chapter = new_chapter_name
-  WHERE chapter LIKE 'TEMP_' || old_chapter_name || '_%';
+  WHERE chapter = old_chapter_name;
 END;
 $$;
 
