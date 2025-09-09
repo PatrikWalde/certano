@@ -17,12 +17,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  -- First, update all questions that reference the old chapter name
-  UPDATE questions 
-  SET chapter = new_chapter_name
-  WHERE chapter = old_chapter_name;
-  
-  -- Then update the chapter itself
+  -- First, update the chapter itself
   UPDATE chapters 
   SET 
     name = COALESCE(new_chapter_name, name),
@@ -34,6 +29,11 @@ BEGIN
     "order" = COALESCE(new_order, "order"),
     updated_at = NOW()
   WHERE id = chapter_id;
+  
+  -- Then update all questions that reference the old chapter name
+  UPDATE questions 
+  SET chapter = new_chapter_name
+  WHERE chapter = old_chapter_name;
 END;
 $$;
 
