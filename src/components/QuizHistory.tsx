@@ -3,14 +3,21 @@ import { getQuizSessions } from '../services/quizService';
 
 interface QuizSession {
   id: string;
-  session_type: string;
-  chapter_name?: string;
-  total_questions: number;
+  user_id?: string;
+  questions_answered?: number;
   correct_answers: number;
   accuracy_rate: number;
-  total_time_seconds: number;
   xp_earned: number;
-  completed_at: string;
+  chapters?: string[];
+  time_spent?: number;
+  total_time_seconds?: number;
+  created_at: string;
+  questions?: any[];
+  // Legacy fields for compatibility
+  session_type?: string;
+  chapter_name?: string;
+  total_questions?: number;
+  completed_at?: string;
 }
 
 const QuizHistory: React.FC = () => {
@@ -132,7 +139,7 @@ const QuizHistory: React.FC = () => {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {getSessionTypeLabel(session.session_type)}
+                  {getSessionTypeLabel(session.session_type || 'quiz')}
                 </span>
                 {session.chapter_name && (
                   <>
@@ -144,7 +151,7 @@ const QuizHistory: React.FC = () => {
                 )}
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(session.completed_at)}
+                {formatDate(session.completed_at || session.created_at)}
               </div>
             </div>
             
@@ -173,11 +180,11 @@ const QuizHistory: React.FC = () => {
                       cx={32}
                       cy={32}
                       r={28}
-                      stroke={getAccuracyStrokeColor((session.correct_answers / session.total_questions) * 100)}
+                      stroke={getAccuracyStrokeColor((session.correct_answers / (session.total_questions || session.questions_answered || 1)) * 100)}
                       strokeWidth={6}
                       fill="transparent"
                       strokeDasharray={175.9}
-                      strokeDashoffset={175.9 - (session.correct_answers / session.total_questions) * 175.9}
+                      strokeDashoffset={175.9 - (session.correct_answers / (session.total_questions || session.questions_answered || 1)) * 175.9}
                       strokeLinecap="round"
                       className="transition-all duration-500 ease-in-out"
                     />
@@ -191,7 +198,7 @@ const QuizHistory: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                  von {session.total_questions}<br />richtig
+                  von {session.total_questions || session.questions_answered || 0}<br />richtig
                 </div>
               </div>
 
