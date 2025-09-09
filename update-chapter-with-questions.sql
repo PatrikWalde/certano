@@ -31,9 +31,12 @@ BEGIN
   WHERE id = chapter_id;
   
   -- Step 2: Update all questions that reference the old chapter name
-  UPDATE questions 
-  SET chapter = new_chapter_name
-  WHERE chapter = old_chapter_name;
+  -- Only update if the chapter name is actually changing
+  IF new_chapter_name IS NOT NULL AND new_chapter_name != old_chapter_name THEN
+    UPDATE questions 
+    SET chapter = new_chapter_name
+    WHERE chapter = old_chapter_name;
+  END IF;
 END;
 $$;
 
