@@ -114,7 +114,12 @@ export const db = {
     getAll: () => supabase.from('questions').select('*'),
     getByChapter: (chapter: string) => supabase.from('questions').select('*').eq('chapter', chapter),
     getById: (id: string) => supabase.from('questions').select('*').eq('id', id).single(),
-    create: (data: any) => supabase.from('questions').insert(data).select().single(),
+    create: (data: any) => {
+      console.log('🔧 Supabase questions.create called with:', data);
+      const result = supabase.from('questions').insert(data).select();
+      console.log('🔧 Supabase questions.create result:', result);
+      return result;
+    },
     update: (id: string, data: any) => {
       // Remove any undefined values to avoid conflicts
       const cleanData = Object.fromEntries(

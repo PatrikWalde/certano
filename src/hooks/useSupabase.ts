@@ -459,6 +459,8 @@ export const useSupabase = (): UseSupabaseReturn => {
     setLoading(true);
     setError(null);
     try {
+      console.log('🔄 Creating question with data:', questionData);
+      
       const { data, error } = await db.questions.create({
         question_number: questionData.questionNumber,
         prompt: questionData.prompt,
@@ -475,10 +477,19 @@ export const useSupabase = (): UseSupabaseReturn => {
         tags: questionData.tags
       });
       
-      if (error) throw error;
-      if (!data) throw new Error('Keine Daten zurückgegeben');
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
       
-      const newQuestion = data;
+      if (!data || data.length === 0) {
+        console.error('❌ No data returned from create');
+        throw new Error('Keine Daten zurückgegeben');
+      }
+      
+      console.log('✅ Question created successfully:', data[0]);
+      
+      const newQuestion = data[0];
       return {
         id: newQuestion.id,
         questionNumber: newQuestion.question_number,
