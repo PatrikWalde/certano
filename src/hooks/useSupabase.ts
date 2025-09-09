@@ -291,6 +291,28 @@ export const useSupabase = (): UseSupabaseReturn => {
         }
       }
       
+      // Update questions FIRST if chapter name is changing (to avoid foreign key constraint)
+      if (chapterData.name !== undefined && oldChapterName) {
+        console.log('🔄 Updating questions FIRST that reference chapter:', oldChapterName, '->', chapterData.name);
+        try {
+          // Update all questions that reference the old chapter name
+          const { error: questionsError } = await supabase
+            .from('questions')
+            .update({ chapter: chapterData.name })
+            .eq('chapter', oldChapterName);
+          
+          if (questionsError) {
+            console.warn('⚠️ Could not update questions:', questionsError);
+            throw new Error(`Fragen konnten nicht aktualisiert werden: ${questionsError.message}`);
+          } else {
+            console.log('✅ Updated questions to reference new chapter name');
+          }
+        } catch (err) {
+          console.error('❌ Error updating questions:', err);
+          throw err;
+        }
+      }
+      
       const updateData: any = {};
       if (chapterData.name !== undefined) updateData.name = chapterData.name;
       if (chapterData.description !== undefined) updateData.description = chapterData.description;
@@ -318,26 +340,6 @@ export const useSupabase = (): UseSupabaseReturn => {
       }
       
       console.log('✅ Chapter updated successfully:', data[0]);
-      
-      // Update all questions that reference this chapter by name (after successful chapter update)
-      if (chapterData.name !== undefined && oldChapterName) {
-        console.log('🔄 Updating questions that reference chapter:', oldChapterName, '->', chapterData.name);
-        try {
-          // Update all questions that reference the old chapter name
-          const { error: questionsError } = await supabase
-            .from('questions')
-            .update({ chapter: chapterData.name })
-            .eq('chapter', oldChapterName);
-          
-          if (questionsError) {
-            console.warn('⚠️ Could not update questions:', questionsError);
-          } else {
-            console.log('✅ Updated questions to reference new chapter name');
-          }
-        } catch (err) {
-          console.warn('⚠️ Error updating questions:', err);
-        }
-      }
       
       const updatedChapter = data[0];
       return {
