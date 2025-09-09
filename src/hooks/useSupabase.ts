@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { db } from '../lib/supabase';
+import { db, supabase } from '../lib/supabase';
 import { ChapterData, Question, Topic } from '../types';
 
 interface UseSupabaseReturn {
@@ -287,6 +287,30 @@ export const useSupabase = (): UseSupabaseReturn => {
       if (chapterData.isActive !== undefined) updateData.is_active = chapterData.isActive;
       if (chapterData.topicId !== undefined) updateData.topic_id = chapterData.topicId;
       if (chapterData.order !== undefined) updateData.order = chapterData.order;
+      
+      // Update all questions that reference this chapter by name
+      if (chapterData.name !== undefined) {
+        console.log('🔄 Updating questions that reference chapter:', chapterData.name);
+        try {
+          // Get current chapter name first
+          const { data: currentChapter } = await db.chapters.getById(id);
+          if (currentChapter) {
+            // Update all questions that reference the old chapter name
+            const { error: questionsError } = await supabase
+              .from('questions')
+              .update({ chapter: chapterData.name })
+              .eq('chapter', currentChapter.name);
+            
+            if (questionsError) {
+              console.warn('⚠️ Could not update questions:', questionsError);
+            } else {
+              console.log('✅ Updated questions to reference new chapter name');
+            }
+          }
+        } catch (err) {
+          console.warn('⚠️ Error updating questions:', err);
+        }
+      }
       
       updateData.updated_at = new Date().toISOString();
 
