@@ -214,7 +214,7 @@ const QuizPage: React.FC = () => {
           const { addAttempt } = useQuizStatsStore.getState();
           const chapters = [...new Set(questions.map(q => q.chapter).filter(chapter => chapter !== 'all'))];
           
-          console.log('💾 About to save quiz attempt to quiz_attempts:', {
+          console.log('💾 About to save quiz attempt to quiz_attempts (v2):', {
             date: new Date().toISOString(),
             questionsAnswered: questions.length,
             correctAnswers,
