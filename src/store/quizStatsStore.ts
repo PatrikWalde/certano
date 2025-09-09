@@ -211,6 +211,7 @@ const useQuizStatsStore = create<QuizStatsStore>()(
             
             if (error) {
               console.error('Error saving quiz attempt:', error);
+              console.error('Error details:', error.message, error.code);
             } else {
               console.log('Quiz attempt saved successfully:', data);
             }
