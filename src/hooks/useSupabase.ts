@@ -122,9 +122,9 @@ export const useSupabase = (): UseSupabaseReturn => {
 
       const { data, error } = await db.topics.update(id, updateData);
       if (error) throw error;
-      if (!data) throw new Error('Keine Daten zurückgegeben');
+      if (!data || data.length === 0) throw new Error('Keine Daten zurückgegeben');
       
-      const updatedTopic = data;
+      const updatedTopic = data[0];
       return {
         id: updatedTopic.id,
         name: updatedTopic.name,
@@ -290,9 +290,9 @@ export const useSupabase = (): UseSupabaseReturn => {
 
       const { data, error } = await db.chapters.update(id, updateData);
       if (error) throw error;
-      if (!data) throw new Error('Keine Daten zurückgegeben');
+      if (!data || data.length === 0) throw new Error('Keine Daten zurückgegeben');
       
-      const updatedChapter = data;
+      const updatedChapter = data[0];
       return {
         id: updatedChapter.id,
         name: updatedChapter.name,
@@ -458,9 +458,9 @@ export const useSupabase = (): UseSupabaseReturn => {
 
       const { data, error } = await db.questions.update(id, updateData);
       if (error) throw error;
-      if (!data) throw new Error('Keine Daten zurückgegeben');
+      if (!data || data.length === 0) throw new Error('Keine Daten zurückgegeben');
       
-      const updatedQuestion = data;
+      const updatedQuestion = data[0];
       return {
         id: updatedQuestion.id,
         questionNumber: updatedQuestion.question_number,
