@@ -295,20 +295,40 @@ export const useSupabase = (): UseSupabaseReturn => {
       if (chapterData.name !== undefined && oldChapterName) {
         console.log('🔄 Updating questions FIRST that reference chapter:', oldChapterName, '->', chapterData.name);
         try {
-          // Update all questions that reference the old chapter name
-          const { error: questionsError } = await supabase
-            .from('questions')
-            .update({ chapter: chapterData.name })
-            .eq('chapter', oldChapterName);
+          // Use a custom SQL function to update questions and chapter in one transaction
+          const { error: updateError } = await supabase.rpc('update_chapter_with_questions', {
+            chapter_id: id,
+            old_chapter_name: oldChapterName,
+            new_chapter_name: chapterData.name,
+            new_description: chapterData.description,
+            new_color: chapterData.color,
+            new_icon: chapterData.icon,
+            new_is_active: chapterData.isActive,
+            new_topic_id: chapterData.topicId,
+            new_order: chapterData.order
+          });
           
-          if (questionsError) {
-            console.warn('⚠️ Could not update questions:', questionsError);
-            throw new Error(`Fragen konnten nicht aktualisiert werden: ${questionsError.message}`);
+          if (updateError) {
+            console.warn('⚠️ Could not update chapter with questions:', updateError);
+            throw new Error(`Kapitel konnte nicht aktualisiert werden: ${updateError.message}`);
           } else {
-            console.log('✅ Updated questions to reference new chapter name');
+            console.log('✅ Updated chapter and questions successfully');
+            // Return early since the SQL function handled everything
+            return {
+              id: id,
+              name: chapterData.name || '',
+              description: chapterData.description || '',
+              color: chapterData.color || '#3b82f6',
+              icon: chapterData.icon || '📚',
+              isActive: chapterData.isActive || true,
+              topicId: chapterData.topicId || '',
+              order: chapterData.order || 0,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
           }
         } catch (err) {
-          console.error('❌ Error updating questions:', err);
+          console.error('❌ Error updating chapter with questions:', err);
           throw err;
         }
       }
