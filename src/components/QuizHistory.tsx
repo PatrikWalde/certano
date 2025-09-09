@@ -24,12 +24,15 @@ const QuizHistory: React.FC = () => {
   const loadQuizSessions = async () => {
     try {
       const data = await getQuizSessions(5); // Letzte 5 Sessions
-      setSessions(data);
+      console.log('QuizHistory - Loaded sessions:', data);
+      setSessions(data || []);
     } catch (error: any) {
       console.error('Fehler beim Laden der Quiz-Historie:', error);
       // Wenn die Tabelle noch nicht existiert, zeige leere Liste
       if (error.code === 'PGRST205') {
         console.log('Quiz-Sessions Tabelle noch nicht erstellt. Zeige leere Historie.');
+        setSessions([]);
+      } else {
         setSessions([]);
       }
     } finally {

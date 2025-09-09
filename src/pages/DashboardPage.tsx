@@ -38,11 +38,20 @@ const DashboardPage: React.FC = () => {
         
         // Load chapters, user stats, chapter stats, and quiz sessions
         console.log('Loading dashboard data...');
-        const [chaptersData, realUserStats, realChapterStats, realQuizSessions] = await Promise.all([
+        
+        // Load quiz sessions separately to handle errors gracefully
+        let realQuizSessions = [];
+        try {
+          realQuizSessions = await getQuizSessions(5);
+        } catch (error) {
+          console.error('Error loading quiz sessions:', error);
+          realQuizSessions = [];
+        }
+        
+        const [chaptersData, realUserStats, realChapterStats] = await Promise.all([
           getChapters(),
           getUserStats(),
-          getChapterStats(),
-          getQuizSessions(5) // Letzte 5 Sessions für Aktivität
+          getChapterStats()
         ]);
         
         console.log('Chapters loaded successfully:', chaptersData);
