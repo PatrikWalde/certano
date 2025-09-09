@@ -8,6 +8,7 @@ import QuizQuestion from '../components/QuizQuestion';
 import QuizResults from '../components/QuizResults';
 import QuizTimer from '../components/QuizTimer';
 import { saveQuizSession, QuizSessionData } from '../services/quizService';
+import { useQuizStatsStore } from '../store/quizStatsStore';
 
 interface QuizConfigData {
   questionCount: number;
