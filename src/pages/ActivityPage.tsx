@@ -23,6 +23,8 @@ const ActivityPage: React.FC = () => {
         ]);
         
         console.log('Activity data loaded successfully:', { quizSessions, userStats });
+        console.log('Quiz sessions count:', quizSessions?.length || 0);
+        console.log('First quiz session:', quizSessions?.[0]);
         
         setRealQuizSessions(quizSessions || []);
         setRealUserStats(userStats || {});
@@ -52,7 +54,7 @@ const ActivityPage: React.FC = () => {
     }
     
     return sessionsToFilter.filter(session => {
-      const sessionDate = new Date(session.completed_at || session.date);
+      const sessionDate = new Date(session.completed_at || session.created_at || session.date);
       return sessionDate >= filterDate;
     });
   };
@@ -223,14 +225,14 @@ const ActivityPage: React.FC = () => {
             <div className="space-y-4">
               {filteredAttempts.map((attempt) => {
                 // Handle both real quiz sessions and mock attempts
-                const isRealSession = attempt.completed_at;
-                const sessionDate = isRealSession ? attempt.completed_at : attempt.date;
-                const questionsAnswered = isRealSession ? attempt.total_questions : attempt.questionsAnswered;
+                const isRealSession = attempt.created_at || attempt.completed_at;
+                const sessionDate = isRealSession ? (attempt.created_at || attempt.completed_at) : attempt.date;
+                const questionsAnswered = isRealSession ? (attempt.questions_answered || attempt.total_questions) : attempt.questionsAnswered;
                 const correctAnswers = isRealSession ? attempt.correct_answers : attempt.correctAnswers;
                 const accuracyRate = isRealSession ? attempt.accuracy_rate : attempt.accuracyRate;
                 const xpEarned = isRealSession ? attempt.xp_earned : attempt.xpEarned;
-                const timeSpent = isRealSession ? attempt.total_time_seconds : attempt.timeSpent;
-                const chapterName = isRealSession ? attempt.chapter_name : attempt.chapter;
+                const timeSpent = isRealSession ? (attempt.time_spent || attempt.total_time_seconds) : attempt.timeSpent;
+                const chapterName = isRealSession ? (attempt.chapter_name || (attempt.chapters && attempt.chapters[0])) : attempt.chapter;
                 
                 return (
                   <div
