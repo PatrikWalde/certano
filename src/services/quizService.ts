@@ -284,6 +284,7 @@ const createMockQuizSessions = async (userId: string, limit: number) => {
       xp_earned: Math.round((stat.correct_answers || 0) * 10), // 10 XP per correct answer
       chapters: [stat.chapter],
       time_spent: Math.round((stat.total_questions || 0) * 30), // 30 seconds per question
+      total_time_seconds: Math.round((stat.total_questions || 0) * 30), // Also set total_time_seconds for compatibility
       created_at: new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).toISOString(), // Spread over days
       questions: []
     }));

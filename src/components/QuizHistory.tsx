@@ -41,8 +41,13 @@ const QuizHistory: React.FC = () => {
   };
 
   const formatTime = (seconds: number) => {
+    // Handle NaN, undefined, or invalid values
+    if (!seconds || isNaN(seconds) || seconds < 0) {
+      return '0:00';
+    }
+    
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
@@ -239,7 +244,7 @@ const QuizHistory: React.FC = () => {
             {/* Bottom row */}
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
               <div className="text-sm text-gray-600 dark:text-gray-300">
-                ⏱️ {formatTime(session.total_time_seconds)}
+                ⏱️ {formatTime(session.total_time_seconds || session.time_spent || 0)}
               </div>
               <div className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
                 +{session.xp_earned} XP
