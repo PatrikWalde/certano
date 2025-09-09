@@ -324,7 +324,17 @@ const AdminPage: React.FC = () => {
 
   const handleUpdateTopic = async (topic: Topic) => {
     try {
-      const updatedTopic = await updateTopic(topic.id, topic);
+      // Only pass the fields that can be updated, excluding id, createdAt, updatedAt
+      const updateData = {
+        name: topic.name,
+        description: topic.description,
+        icon: topic.icon,
+        color: topic.color,
+        orderIndex: topic.orderIndex,
+        isActive: topic.isActive
+      };
+      
+      const updatedTopic = await updateTopic(topic.id, updateData);
       if (updatedTopic) {
         setTopics(prev => prev.map(t => t.id === updatedTopic.id ? updatedTopic : t));
       }
@@ -373,7 +383,18 @@ const AdminPage: React.FC = () => {
 
   const handleUpdateChapter = async (chapter: ChapterData) => {
     try {
-      const updatedChapter = await updateChapter(chapter.id, chapter);
+      // Only pass the fields that can be updated, excluding id, createdAt, updatedAt
+      const updateData = {
+        name: chapter.name,
+        description: chapter.description,
+        color: chapter.color,
+        icon: chapter.icon,
+        isActive: chapter.isActive,
+        topicId: chapter.topicId,
+        order: chapter.order
+      };
+      
+      const updatedChapter = await updateChapter(chapter.id, updateData);
       if (updatedChapter) {
         setChapters(prev => prev.map(c => c.id === updatedChapter.id ? updatedChapter : c));
       }
