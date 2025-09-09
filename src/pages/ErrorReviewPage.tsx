@@ -1,12 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuizStatsStore } from '../store/quizStatsStore';
-import { useQuestionStore } from '../store/questionStore';
+import { useSupabase } from '../hooks/useSupabase';
 import { Link } from 'react-router-dom';
+import { Question } from '../types';
 
 const ErrorReviewPage: React.FC = () => {
   const { getErrorQuestions } = useQuizStatsStore();
-  const { questions } = useQuestionStore();
+  const { getQuestions } = useSupabase();
   const [selectedChapter, setSelectedChapter] = useState<string>('all');
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load real questions from database
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        setIsLoading(true);
+        const realQuestions = await getQuestions();
+        setQuestions(realQuestions);
+        console.log('ErrorReviewPage: Loaded questions from database:', realQuestions.length);
+      } catch (error) {
+        console.error('Error loading questions for ErrorReviewPage:', error);
+        setQuestions([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [getQuestions]);
   
   const errorQuestions = getErrorQuestions(selectedChapter === 'all' ? undefined : selectedChapter);
   const chapters = [...new Set(errorQuestions.map(e => e.chapter))];
@@ -20,6 +42,17 @@ const ErrorReviewPage: React.FC = () => {
   const averageSuccessRate = errorQuestions.length > 0 
     ? Math.round(errorQuestions.reduce((sum, e) => sum + e.successRate, 0) / errorQuestions.length)
     : 0;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Lade Fragen...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
