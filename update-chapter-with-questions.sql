@@ -17,6 +17,9 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
+  -- Temporarily disable the foreign key constraint
+  ALTER TABLE questions DISABLE TRIGGER ALL;
+  
   -- First, update the chapter itself
   UPDATE chapters 
   SET 
@@ -34,6 +37,9 @@ BEGIN
   UPDATE questions 
   SET chapter = new_chapter_name
   WHERE chapter = old_chapter_name;
+  
+  -- Re-enable the foreign key constraint
+  ALTER TABLE questions ENABLE TRIGGER ALL;
 END;
 $$;
 
