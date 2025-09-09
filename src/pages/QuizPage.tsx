@@ -208,6 +208,32 @@ const QuizPage: React.FC = () => {
         try {
           await saveQuizSession(sessionData);
           console.log('Quiz-Ergebnisse online gespeichert:', sessionData);
+          
+          // Zusätzlich: Speichere in quiz_attempts Tabelle für "Letzte Aktivität"
+          const { addAttempt } = useQuizStatsStore.getState();
+          const chapters = [...new Set(questions.map(q => q.chapter).filter(chapter => chapter !== 'all'))];
+          
+          console.log('💾 About to save quiz attempt to quiz_attempts:', {
+            date: new Date().toISOString(),
+            questionsAnswered: questions.length,
+            correctAnswers,
+            accuracyRate,
+            xpEarned,
+            chapters,
+            timeSpent: totalTimeSeconds,
+          });
+          
+          await addAttempt({
+            date: new Date().toISOString(),
+            questionsAnswered: questions.length,
+            correctAnswers,
+            accuracyRate,
+            xpEarned,
+            chapters,
+            timeSpent: totalTimeSeconds,
+          });
+          
+          console.log('✅ Quiz attempt saved to quiz_attempts successfully');
         } catch (error) {
           console.error('Online-Speicherung fehlgeschlagen, speichere offline:', error);
           // Fallback: Offline speichern
