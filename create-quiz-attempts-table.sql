@@ -20,17 +20,17 @@ CREATE INDEX IF NOT EXISTS idx_quiz_attempts_created_at ON quiz_attempts(created
 ALTER TABLE quiz_attempts ENABLE ROW LEVEL SECURITY;
 
 -- Create policy for users to see only their own quiz attempts
-CREATE POLICY "Users can view their own quiz attempts" ON quiz_attempts
+CREATE POLICY IF NOT EXISTS "Users can view their own quiz attempts" ON quiz_attempts
   FOR SELECT USING (auth.uid() = user_id);
 
 -- Create policy for users to insert their own quiz attempts
-CREATE POLICY "Users can insert their own quiz attempts" ON quiz_attempts
+CREATE POLICY IF NOT EXISTS "Users can insert their own quiz attempts" ON quiz_attempts
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Create policy for users to update their own quiz attempts
-CREATE POLICY "Users can update their own quiz attempts" ON quiz_attempts
+CREATE POLICY IF NOT EXISTS "Users can update their own quiz attempts" ON quiz_attempts
   FOR UPDATE USING (auth.uid() = user_id);
 
 -- Create policy for users to delete their own quiz attempts
-CREATE POLICY "Users can delete their own quiz attempts" ON quiz_attempts
+CREATE POLICY IF NOT EXISTS "Users can delete their own quiz attempts" ON quiz_attempts
   FOR DELETE USING (auth.uid() = user_id);

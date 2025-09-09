@@ -188,6 +188,16 @@ const QuizSession: React.FC<QuizSessionProps> = ({
     
     // Save quiz attempt to database and local store
     try {
+      console.log('💾 About to save quiz attempt:', {
+        date: new Date().toISOString(),
+        questionsAnswered: answers.length,
+        correctAnswers,
+        accuracyRate,
+        xpEarned: totalXp,
+        chapters,
+        timeSpent: totalTime / 1000,
+      });
+      
       await addAttempt({
         date: new Date().toISOString(),
         questionsAnswered: answers.length,
@@ -197,8 +207,10 @@ const QuizSession: React.FC<QuizSessionProps> = ({
         chapters,
         timeSpent: totalTime / 1000, // Convert to seconds
       });
+      
+      console.log('✅ Quiz attempt saved successfully');
     } catch (error) {
-      console.error('Error saving quiz attempt:', error);
+      console.error('❌ Error saving quiz attempt:', error);
     }
     
     onComplete(answers);

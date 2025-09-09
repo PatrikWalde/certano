@@ -176,10 +176,14 @@ const useQuizStatsStore = create<QuizStatsStore>()(
       },
       
       addAttempt: async (attemptData) => {
+        console.log('🚀 addAttempt called with data:', attemptData);
+        
         const newAttempt: QuizAttempt = {
           ...attemptData,
           id: Date.now().toString(),
         };
+        
+        console.log('📝 New attempt object:', newAttempt);
         
         // Save to database
         try {
