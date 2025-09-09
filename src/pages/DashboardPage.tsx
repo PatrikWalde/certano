@@ -138,61 +138,9 @@ const DashboardPage: React.FC = () => {
   // Memoize recent activity to prevent multiple calculations
   const recentActivity = React.useMemo(() => {
     if (quizSessions.length === 0) {
-      // Create some sample data based on user stats to show activity
-      const sampleActivities = [];
-      
-      // If user has stats, create sample activities
-      if (dashboardData?.userStats?.total_questions_answered > 0) {
-        const totalQuestions = dashboardData.userStats.total_questions_answered;
-        const correctAnswers = dashboardData.userStats.total_correct_answers;
-        const accuracyRate = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-        const totalXp = dashboardData.userStats.total_xp;
-        
-        // Create 2-3 sample activities based on real stats
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const twoDaysAgo = new Date(today);
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
-        
-        // Distribute the stats across sample activities
-        const questionsPerDay = Math.max(1, Math.floor(totalQuestions / 3));
-        const xpPerDay = Math.max(1, Math.floor(totalXp / 3));
-        
-        sampleActivities.push({
-          date: 'Heute',
-          questionsAnswered: Math.min(questionsPerDay, totalQuestions),
-          accuracyRate: accuracyRate,
-          xpEarned: Math.min(xpPerDay, totalXp)
-        });
-        
-        if (totalQuestions > questionsPerDay) {
-          sampleActivities.push({
-            date: 'Gestern',
-            questionsAnswered: Math.min(questionsPerDay, totalQuestions - questionsPerDay),
-            accuracyRate: accuracyRate,
-            xpEarned: Math.min(xpPerDay, totalXp - xpPerDay)
-          });
-        }
-        
-        if (totalQuestions > questionsPerDay * 2) {
-          sampleActivities.push({
-            date: twoDaysAgo.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }),
-            questionsAnswered: totalQuestions - (questionsPerDay * 2),
-            accuracyRate: accuracyRate,
-            xpEarned: totalXp - (xpPerDay * 2)
-          });
-        }
-      }
-      
-      // If no real stats, show the default message
-      if (sampleActivities.length === 0) {
-        return [
-          { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
-        ];
-      }
-      
-      return sampleActivities;
+      return [
+        { date: 'Noch keine Quiz-Sessions', questionsAnswered: 0, accuracyRate: 0, xpEarned: 0 },
+      ];
     }
     
     const activities = quizSessions.slice(0, 3).map(session => {
