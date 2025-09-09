@@ -74,6 +74,9 @@ export const saveQuizSession = async (sessionData: QuizSessionData) => {
 
     // 3. Aktualisiere Benutzer-Statistiken
     await updateUserStats(user.id, sessionData);
+    
+    // Clear cache after updating stats
+    clearUserStatsCache(user.id);
 
     return session;
   } catch (error) {
@@ -237,12 +240,30 @@ export const getQuizSessions = async (limit: number = 10) => {
 };
 
 
+// Simple cache for getUserStats to prevent multiple API calls
+let userStatsCache: { [userId: string]: { data: any; timestamp: number } } = {};
+let chapterStatsCache: { [userId: string]: { data: any; timestamp: number } } = {};
+const CACHE_DURATION = 30000; // 30 seconds
+
+// Function to clear cache when data is updated
+const clearUserStatsCache = (userId: string) => {
+  delete userStatsCache[userId];
+  delete chapterStatsCache[userId];
+};
+
 export const getUserStats = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       throw new Error('Benutzer nicht angemeldet');
+    }
+
+    // Check cache first
+    const cached = userStatsCache[user.id];
+    if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+      console.log('Using cached user stats for:', user.id);
+      return cached.data;
     }
 
     console.log('Lade Statistiken für Benutzer:', user.id);
@@ -294,6 +315,13 @@ export const getUserStats = async () => {
     }
 
     console.log('Statistiken erfolgreich geladen:', data);
+    
+    // Cache the result
+    userStatsCache[user.id] = {
+      data: data,
+      timestamp: Date.now()
+    };
+    
     return data;
   } catch (error) {
     console.error('Fehler beim Laden der Benutzer-Statistiken:', error);
@@ -323,6 +351,13 @@ export const getChapterStats = async () => {
       throw new Error('Benutzer nicht angemeldet');
     }
 
+    // Check cache first
+    const cached = chapterStatsCache[user.id];
+    if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+      console.log('Using cached chapter stats for:', user.id);
+      return cached.data;
+    }
+
     console.log('Lade Kapitel-Statistiken für Benutzer:', user.id);
 
     const { data, error } = await supabase
@@ -340,6 +375,13 @@ export const getChapterStats = async () => {
     }
 
     console.log('Kapitel-Statistiken erfolgreich geladen:', data);
+    
+    // Cache the result
+    chapterStatsCache[user.id] = {
+      data: data || [],
+      timestamp: Date.now()
+    };
+    
     return data || [];
   } catch (error) {
     console.error('Fehler beim Laden der Kapitel-Statistiken:', error);

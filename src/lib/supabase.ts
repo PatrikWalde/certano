@@ -12,6 +12,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true
+  },
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'certano-app'
+    }
   }
 })
 
@@ -79,7 +87,7 @@ export const db = {
     },
     getById: (id: string) => supabase.from('topics').select('*').eq('id', id).single(),
     create: (data: any) => supabase.from('topics').insert(data).select().single(),
-    update: (id: string, data: any) => supabase.from('topics').update(data).eq('id', id).select().single(),
+    update: (id: string, data: any) => supabase.from('topics').update(data).eq('id', id).select(),
     delete: (id: string) => supabase.from('topics').delete().eq('id', id),
     reorder: async (updates: { id: string; order_index: number }[]) => {
       // Update each topic individually to avoid upsert issues
@@ -101,7 +109,7 @@ export const db = {
     getByChapter: (chapter: string) => supabase.from('questions').select('*').eq('chapter', chapter),
     getById: (id: string) => supabase.from('questions').select('*').eq('id', id).single(),
     create: (data: any) => supabase.from('questions').insert(data).select().single(),
-    update: (id: string, data: any) => supabase.from('questions').update(data).eq('id', id).select().single(),
+    update: (id: string, data: any) => supabase.from('questions').update(data).eq('id', id).select(),
     delete: (id: string) => supabase.from('questions').delete().eq('id', id),
     getRandom: (count: number, chapter?: string) => {
       let query = supabase.from('questions').select('*').limit(count)
@@ -118,7 +126,7 @@ export const db = {
     getByTopic: (topicId: string) => supabase.from('chapters').select('*').eq('topic_id', topicId).order('order'),
     getById: (id: string) => supabase.from('chapters').select('*').eq('id', id).single(),
     create: (data: any) => supabase.from('chapters').insert(data).select().single(),
-    update: (id: string, data: any) => supabase.from('chapters').update(data).eq('id', id).select().single(),
+    update: (id: string, data: any) => supabase.from('chapters').update(data).eq('id', id).select(),
     delete: (id: string) => supabase.from('chapters').delete().eq('id', id),
     reorder: async (updates: { id: string; order: number }[]) => {
       // Update each chapter individually to avoid upsert issues
