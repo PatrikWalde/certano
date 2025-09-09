@@ -17,34 +17,23 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  -- Start transaction
-  BEGIN
-    -- First, update all questions that reference the old chapter name
-    UPDATE questions 
-    SET chapter = new_chapter_name
-    WHERE chapter = old_chapter_name;
-    
-    -- Then update the chapter itself
-    UPDATE chapters 
-    SET 
-      name = COALESCE(new_chapter_name, name),
-      description = COALESCE(new_description, description),
-      color = COALESCE(new_color, color),
-      icon = COALESCE(new_icon, icon),
-      is_active = COALESCE(new_is_active, is_active),
-      topic_id = COALESCE(new_topic_id, topic_id),
-      "order" = COALESCE(new_order, "order"),
-      updated_at = NOW()
-    WHERE id = chapter_id;
-    
-    -- Commit transaction
-    COMMIT;
-  EXCEPTION
-    WHEN OTHERS THEN
-      -- Rollback on error
-      ROLLBACK;
-      RAISE;
-  END;
+  -- First, update all questions that reference the old chapter name
+  UPDATE questions 
+  SET chapter = new_chapter_name
+  WHERE chapter = old_chapter_name;
+  
+  -- Then update the chapter itself
+  UPDATE chapters 
+  SET 
+    name = COALESCE(new_chapter_name, name),
+    description = COALESCE(new_description, description),
+    color = COALESCE(new_color, color),
+    icon = COALESCE(new_icon, icon),
+    is_active = COALESCE(new_is_active, is_active),
+    topic_id = COALESCE(new_topic_id, topic_id),
+    "order" = COALESCE(new_order, "order"),
+    updated_at = NOW()
+  WHERE id = chapter_id;
 END;
 $$;
 
