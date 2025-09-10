@@ -467,9 +467,9 @@ export const useSupabase = (): UseSupabaseReturn => {
         type: questionData.type,
         chapter: questionData.chapter,
         // difficulty: questionData.difficulty, // Removed - difficulty column no longer exists
-        options: questionData.options,
-        matching_pairs: questionData.matchingPairs,
-        fill_blank_options: questionData.fillBlankOptions,
+        options: JSON.stringify(questionData.options || []),
+        matching_pairs: JSON.stringify(questionData.matchingPairs || []),
+        fill_blank_options: JSON.stringify(questionData.fillBlankOptions || []),
         blank_count: questionData.blankCount,
         explanation: questionData.explanation,
         media: questionData.media || null,
