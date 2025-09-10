@@ -141,6 +141,7 @@ const QuizPage: React.FC = () => {
     timeSpent: number;
     answeredAt: string;
   }) => {
+    console.log('🔍 QuizPage handleAnswer called with:', answer);
     // Finde das Kapitel für diese Frage
     const currentQuestion = questions[currentQuestionIndex];
     const answerWithChapter = {
