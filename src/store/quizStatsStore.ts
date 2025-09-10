@@ -83,6 +83,7 @@ interface QuizStatsStore {
   
   // Actions
   addAttempt: (attempt: Omit<QuizAttempt, 'id'>) => Promise<void>;
+  setChapterStats: (stats: ChapterStats[]) => void;
   updateChapterStats: (chapterName: string, correct: boolean) => void;
   updateUserStats: (correct: boolean, xpEarned: number, timeSpent: number) => void;
   trackQuestionError: (questionId: string, chapter: string, isCorrect: boolean) => void;
@@ -320,6 +321,10 @@ const useQuizStatsStore = create<QuizStatsStore>()(
             badges: newBadges,
           };
         });
+      },
+      
+      setChapterStats: (stats) => {
+        set({ chapterStats: stats });
       },
       
       updateChapterStats: (chapterName, correct) => {

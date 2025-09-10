@@ -3,30 +3,37 @@ import { Link } from 'react-router-dom';
 import { useQuizStatsStore } from '../store/quizStatsStore';
 import { useSupabase } from '../hooks/useSupabase';
 import { Chapter } from '../store/chapterStore';
+import { getChapterStats } from '../services/quizService';
 
 const ChaptersPage: React.FC = () => {
-  const { chapterStats } = useQuizStatsStore();
+  const { chapterStats, setChapterStats } = useQuizStatsStore();
   const { getChapters } = useSupabase();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadChapters = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
         console.log('ChaptersPage: Loading chapters from database...');
         const realChapters = await getChapters();
         console.log('ChaptersPage: Loaded chapters:', realChapters);
         setChapters(realChapters);
+
+        console.log('ChaptersPage: Loading chapter stats from database...');
+        const realChapterStats = await getChapterStats();
+        console.log('ChaptersPage: Loaded chapter stats:', realChapterStats);
+        setChapterStats(realChapterStats);
       } catch (error) {
-        console.error('ChaptersPage: Error loading chapters:', error);
+        console.error('ChaptersPage: Error loading data:', error);
         setChapters([]);
+        setChapterStats([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    loadChapters();
+    loadData();
   }, []); // Leere dependency array - lädt nur einmal beim Mount
 
   const getChapterProgress = (chapterName: string) => {
