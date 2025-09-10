@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useChapterStore } from '../store/chapterStore';
 import { useQuizStatsStore } from '../store/quizStatsStore';
+import { useSupabase } from '../hooks/useSupabase';
+import { Chapter } from '../store/chapterStore';
 
 const ChaptersPage: React.FC = () => {
-  const { chapters } = useChapterStore();
   const { chapterStats } = useQuizStatsStore();
+  const { getChapters } = useSupabase();
+  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadChapters = async () => {
+      try {
+        setIsLoading(true);
+        const realChapters = await getChapters();
+        setChapters(realChapters);
+      } catch (error) {
+        console.error('Error loading chapters:', error);
+        setChapters([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadChapters();
+  }, [getChapters]);
 
   const getChapterProgress = (chapterName: string) => {
     return chapterStats.find(c => c.name === chapterName);
@@ -44,6 +64,17 @@ const ChaptersPage: React.FC = () => {
   };
 
   // getDifficultyLevel function removed - difficulty feature no longer used
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Lade Kapitel...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
