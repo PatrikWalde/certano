@@ -6,7 +6,7 @@ import { Chapter } from '../store/chapterStore';
 import { getChapterStats } from '../services/quizService';
 
 const ChaptersPage: React.FC = () => {
-  const { chapterStats, setChapterStats } = useQuizStatsStore();
+  const { setChapterStats } = useQuizStatsStore();
   const { getChapters } = useSupabase();
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [chapterStatsData, setChapterStatsData] = useState<any[]>([]);
