@@ -436,7 +436,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         type: question.type,
         prompt: question.prompt,
         explanation: question.explanation || '',
-        difficulty: question.difficulty || 'easy',
+        // difficulty: question.difficulty || 'easy', // Removed - difficulty column no longer exists
         tags: question.tags || [],
         media: question.media?.url || '',
         isOpenQuestion: question.is_open_question || false,
@@ -466,7 +466,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         prompt: questionData.prompt,
         type: questionData.type,
         chapter: questionData.chapter,
-        difficulty: questionData.difficulty,
+        // difficulty: questionData.difficulty, // Removed - difficulty column no longer exists
         options: questionData.options,
         matching_pairs: questionData.matchingPairs,
         fill_blank_options: questionData.fillBlankOptions,
@@ -497,7 +497,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         type: newQuestion.type,
         prompt: newQuestion.prompt,
         explanation: newQuestion.explanation || '',
-        difficulty: newQuestion.difficulty || 'easy',
+        // difficulty: newQuestion.difficulty || 'easy', // Removed - difficulty column no longer exists
         tags: newQuestion.tags || [],
         media: newQuestion.media?.url || '',
         isOpenQuestion: newQuestion.is_open_question || false,
@@ -525,7 +525,7 @@ export const useSupabase = (): UseSupabaseReturn => {
       if (questionData.prompt !== undefined) updateData.prompt = questionData.prompt;
       if (questionData.type !== undefined) updateData.type = questionData.type;
       if (questionData.chapter !== undefined) updateData.chapter = questionData.chapter;
-      if (questionData.difficulty !== undefined) updateData.difficulty = questionData.difficulty;
+      // if (questionData.difficulty !== undefined) updateData.difficulty = questionData.difficulty; // Removed - difficulty column no longer exists
       if (questionData.options !== undefined) updateData.options = questionData.options;
       if (questionData.matchingPairs !== undefined) updateData.matching_pairs = questionData.matchingPairs;
       if (questionData.fillBlankOptions !== undefined) updateData.fill_blank_options = questionData.fillBlankOptions;
@@ -549,7 +549,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         type: updatedQuestion.type,
         prompt: updatedQuestion.prompt,
         explanation: updatedQuestion.explanation || '',
-        difficulty: updatedQuestion.difficulty || 'easy',
+        // difficulty: updatedQuestion.difficulty || 'easy', // Removed - difficulty column no longer exists
         tags: updatedQuestion.tags || [],
         media: updatedQuestion.media?.url || '',
         isOpenQuestion: updatedQuestion.is_open_question || false,
