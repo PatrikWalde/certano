@@ -503,6 +503,9 @@ const useQuizStatsStore = create<QuizStatsStore>()(
         const state = get();
         let errors = state.questionErrors;
         
+        // Nur Fragen mit tatsächlichen Fehlern anzeigen (errorCount > 0)
+        errors = errors.filter(e => e.errorCount > 0);
+        
         if (chapter) {
           errors = errors.filter(e => e.chapter === chapter);
         }
