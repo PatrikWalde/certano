@@ -71,12 +71,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const supabaseUser = session.user;
       console.log('Handling user session:', supabaseUser.email);
       
-      // Load user profile from database - query specific user
-      const { data: userProfile, error: usersError } = await supabase
+      // Load user profile from database - query specific user with timeout
+      const profilePromise = supabase
         .from('user_profiles')
         .select('*')
         .eq('auth_user_id', supabaseUser.id)
         .single();
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database query timeout')), 3000)
+      );
+      
+      const { data: userProfile, error: usersError } = await Promise.race([
+        profilePromise,
+        timeoutPromise
+      ]) as any;
       
       if (!usersError && userProfile) {
         console.log('✅ User profile found in database:', userProfile);
