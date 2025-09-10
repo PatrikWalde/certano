@@ -673,6 +673,8 @@ const DashboardPage: React.FC = () => {
           <div className="space-y-8">
             {/* Quiz History */}
             <QuizHistory />
+            
+            {/* Quests Section removed - was not working properly */}
 
             {/* Error Review Section */}
 
