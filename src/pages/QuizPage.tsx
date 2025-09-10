@@ -23,6 +23,7 @@ interface QuizConfigData {
 const QuizPage: React.FC = () => {
   const { getQuestions, loading, error } = useSupabase();
   const { saveQuizResult, isOnline, loadOfflineQuestions, saveOfflineQuestions } = useOfflineStorage();
+  const { trackQuestionError } = useQuizStatsStore();
   const location = useLocation();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -147,6 +148,15 @@ const QuizPage: React.FC = () => {
       chapter: currentQuestion?.chapter || 'Unbekannt'
     };
     setAnswers(prev => [...prev, answerWithChapter]);
+    
+    // Track question errors for spaced repetition
+    console.log('🔍 QuizPage: About to call trackQuestionError:', { 
+      questionId: currentQuestion.id, 
+      chapter: currentQuestion.chapter, 
+      isCorrect: answer.isCorrect 
+    });
+    trackQuestionError(currentQuestion.id, currentQuestion.chapter, answer.isCorrect);
+    
     // Don't automatically go to next question - let the user see the result first
   };
 
