@@ -161,6 +161,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         updatedAt: session.user.created_at,
       };
       setUser(fallbackUser);
+      setIsLoading(false);
       console.log('Emergency fallback user set:', fallbackUser);
     }
   };
