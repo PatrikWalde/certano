@@ -1,8 +1,9 @@
 # 🔒 Verbleibende Security-Warnungen beheben
 
-## 1. Function Search Path Mutable ✅
-**Script:** `fix-function-search-path.sql`
-- Behebt die 3 Function Search Path Warnungen
+## 1. Function Search Path Mutable ⚠️
+**Scripts:** 
+- `fix-function-search-path.sql` (behebt handle_user_update und handle_new_user)
+- `fix-update-chapter-function.sql` (behebt update_chapter_with_questions)
 - Setzt `search_path = public` für alle Functions
 
 ## 2. Leaked Password Protection ⚠️
@@ -25,4 +26,5 @@
 
 ## Ausführung:
 1. **Zuerst:** `fix-function-search-path.sql` in SQL Editor ausführen
-2. **Dann:** Die anderen 3 Warnungen manuell im Dashboard beheben
+2. **Dann:** `fix-update-chapter-function.sql` in SQL Editor ausführen
+3. **Dann:** Die anderen 3 Warnungen manuell im Dashboard beheben
