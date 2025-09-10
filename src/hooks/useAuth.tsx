@@ -67,105 +67,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const handleUserSession = async (session: Session) => {
-    try {
-      const supabaseUser = session.user;
-      console.log('Handling user session:', supabaseUser.email);
-      
-      // Create fallback user immediately to prevent infinite loading
-      const fallbackUser: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        firstName: '',
-        lastName: '',
-        city: '',
-        evu: '',
-        role: supabaseUser.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
-        level: 1,
-        xp: 0,
-        streak: 0,
-        privacySettings: {
-          showOnLeaderboard: true,
-          allowAnalytics: true,
-        },
-        createdAt: supabaseUser.created_at,
-        updatedAt: supabaseUser.created_at,
-      };
-      
-      // Set user immediately
-      setUser(fallbackUser);
-      setIsLoading(false);
-      console.log('Fallback user set immediately:', fallbackUser);
-      
-      // Force re-render by setting loading to false again
-      setTimeout(() => {
-        setIsLoading(false);
-        console.log('Loading set to false again');
-      }, 100);
-      
-      // Try to load user profile from database (non-blocking)
-      try {
-        const { data: userProfile, error: usersError } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('auth_user_id', supabaseUser.id)
-          .single();
-      
-        if (!usersError && userProfile) {
-          console.log('✅ User profile found in database:', userProfile);
-          
-          // Update user with database profile
-          const user: User = {
-            id: supabaseUser.id,
-            email: supabaseUser.email || '',
-            firstName: userProfile.first_name || '',
-            lastName: userProfile.last_name || '',
-            city: userProfile.city || '',
-            evu: userProfile.evu || '',
-            role: userProfile.role as 'user' | 'editor' | 'admin',
-            level: 1,
-            xp: 0,
-            streak: 0,
-            privacySettings: {
-              showOnLeaderboard: true,
-              allowAnalytics: true,
-            },
-            createdAt: supabaseUser.created_at,
-            updatedAt: userProfile.updated_at || supabaseUser.created_at,
-          };
-          
-          setUser(user);
-          console.log('User profile loaded from database successfully:', user);
-        } else {
-          console.log('No profile found in database, keeping fallback user');
-        }
-      } catch (dbError) {
-        console.log('Database error, keeping fallback user:', dbError);
-      }
-    } catch (error) {
-      console.error('Error handling user session:', error);
-      // Even on error, set a basic user to prevent infinite loading
-      const fallbackUser: User = {
-        id: session.user.id,
-        email: session.user.email || '',
-        firstName: '',
-        lastName: '',
-        city: '',
-        evu: '',
-        role: session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
-        level: 1,
-        xp: 0,
-        streak: 0,
-        privacySettings: {
-          showOnLeaderboard: true,
-          allowAnalytics: true,
-        },
-        createdAt: session.user.created_at,
-        updatedAt: session.user.created_at,
-      };
-      setUser(fallbackUser);
-      setIsLoading(false);
-      console.log('Emergency fallback user set:', fallbackUser);
-    }
+    console.log('Handling user session:', session.user.email);
+    
+    // Create user immediately - no database calls
+    const user: User = {
+      id: session.user.id,
+      email: session.user.email || '',
+      firstName: '',
+      lastName: '',
+      city: '',
+      evu: '',
+      role: session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
+      level: 1,
+      xp: 0,
+      streak: 0,
+      privacySettings: {
+        showOnLeaderboard: true,
+        allowAnalytics: true,
+      },
+      createdAt: session.user.created_at,
+      updatedAt: session.user.created_at,
+    };
+    
+    // Set user and stop loading immediately
+    setUser(user);
+    setIsLoading(false);
+    console.log('User set immediately:', user);
   };
 
   const login = async (email: string, password: string) => {
