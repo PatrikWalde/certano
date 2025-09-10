@@ -14,10 +14,12 @@ const ChaptersPage: React.FC = () => {
     const loadChapters = async () => {
       try {
         setIsLoading(true);
+        console.log('ChaptersPage: Loading chapters from database...');
         const realChapters = await getChapters();
+        console.log('ChaptersPage: Loaded chapters:', realChapters);
         setChapters(realChapters);
       } catch (error) {
-        console.error('Error loading chapters:', error);
+        console.error('ChaptersPage: Error loading chapters:', error);
         setChapters([]);
       } finally {
         setIsLoading(false);
