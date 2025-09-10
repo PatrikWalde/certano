@@ -40,24 +40,24 @@ const ChaptersPage: React.FC = () => {
   const getChapterProgress = (chapterName: string) => {
     console.log('ChaptersPage: Looking for progress for chapter:', chapterName);
     console.log('ChaptersPage: Available chapterStats:', chapterStats);
-    console.log('ChaptersPage: Chapter names in stats:', chapterStats.map(c => c.name));
-    const progress = chapterStats.find(c => c.name === chapterName);
+    console.log('ChaptersPage: Chapter names in stats:', chapterStats.map(c => c.chapter || c.name));
+    const progress = chapterStats.find(c => (c.chapter || c.name) === chapterName);
     console.log('ChaptersPage: Found progress:', progress);
     return progress;
   };
 
   const getOverallProgress = () => {
     if (chapterStats.length === 0) return 0;
-    const totalProgress = chapterStats.reduce((sum, c) => sum + c.progress, 0);
+    const totalProgress = chapterStats.reduce((sum, c) => sum + (c.progress || 0), 0);
     return Math.round(totalProgress / chapterStats.length);
   };
 
   const getTotalQuestions = () => {
-    return chapterStats.reduce((sum, c) => sum + c.totalQuestions, 0);
+    return chapterStats.reduce((sum, c) => sum + (c.total_questions || c.totalQuestions || 0), 0);
   };
 
   const getTotalCorrect = () => {
-    return chapterStats.reduce((sum, c) => sum + c.correctAnswers, 0);
+    return chapterStats.reduce((sum, c) => sum + (c.correct_answers || c.correctAnswers || 0), 0);
   };
 
   const formatDate = (dateString: string) => {
@@ -154,10 +154,10 @@ const ChaptersPage: React.FC = () => {
             .map((chapter) => {
               const progress = getChapterProgress(chapter.name);
               const progressData = progress || {
-                totalQuestions: 0,
-                correctAnswers: 0,
+                total_questions: 0,
+                correct_answers: 0,
                 progress: 0,
-                lastPracticed: null,
+                last_practiced: null,
               };
               
               // const difficulty = getDifficultyLevel(progressData.progress); // Removed - difficulty feature no longer used
@@ -205,22 +205,22 @@ const ChaptersPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div className="text-lg font-bold text-gray-900 dark:text-white">
-                        {progressData.totalQuestions}
+                        {progressData.total_questions || progressData.totalQuestions || 0}
                       </div>
                       <div className="text-xs text-gray-600 dark:text-gray-300">Fragen</div>
                     </div>
                     <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div className="text-lg font-bold text-gray-900 dark:text-white">
-                        {progressData.correctAnswers}
+                        {progressData.correct_answers || progressData.correctAnswers || 0}
                       </div>
                       <div className="text-xs text-gray-600 dark:text-gray-300">Richtig</div>
                     </div>
                   </div>
 
                   {/* Last Practiced */}
-                  {progressData.lastPracticed && (
+                  {(progressData.last_practiced || progressData.lastPracticed) && (
                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                      Zuletzt geübt: {formatDate(progressData.lastPracticed)}
+                      Zuletzt geübt: {formatDate(progressData.last_practiced || progressData.lastPracticed)}
                     </div>
                   )}
 
