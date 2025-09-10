@@ -9,6 +9,7 @@ const ChaptersPage: React.FC = () => {
   const { chapterStats, setChapterStats } = useQuizStatsStore();
   const { getChapters } = useSupabase();
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [chapterStatsData, setChapterStatsData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const ChaptersPage: React.FC = () => {
         const realChapterStats = await getChapterStats();
         console.log('ChaptersPage: Loaded chapter stats:', realChapterStats);
         console.log('ChaptersPage: First chapter stat structure:', realChapterStats[0]);
+        setChapterStatsData(realChapterStats);
         setChapterStats(realChapterStats);
       } catch (error) {
         console.error('ChaptersPage: Error loading data:', error);
@@ -39,25 +41,25 @@ const ChaptersPage: React.FC = () => {
 
   const getChapterProgress = (chapterName: string) => {
     console.log('ChaptersPage: Looking for progress for chapter:', chapterName);
-    console.log('ChaptersPage: Available chapterStats:', chapterStats);
-    console.log('ChaptersPage: Chapter names in stats:', chapterStats.map(c => c.chapter || c.name));
-    const progress = chapterStats.find(c => (c.chapter || c.name) === chapterName);
+    console.log('ChaptersPage: Available chapterStatsData:', chapterStatsData);
+    console.log('ChaptersPage: Chapter names in stats:', chapterStatsData.map(c => c.chapter || c.name));
+    const progress = chapterStatsData.find(c => (c.chapter || c.name) === chapterName);
     console.log('ChaptersPage: Found progress:', progress);
     return progress;
   };
 
   const getOverallProgress = () => {
-    if (chapterStats.length === 0) return 0;
-    const totalProgress = chapterStats.reduce((sum, c) => sum + (c.progress || 0), 0);
-    return Math.round(totalProgress / chapterStats.length);
+    if (chapterStatsData.length === 0) return 0;
+    const totalProgress = chapterStatsData.reduce((sum, c) => sum + (c.progress || 0), 0);
+    return Math.round(totalProgress / chapterStatsData.length);
   };
 
   const getTotalQuestions = () => {
-    return chapterStats.reduce((sum, c) => sum + (c.total_questions || c.totalQuestions || 0), 0);
+    return chapterStatsData.reduce((sum, c) => sum + (c.total_questions || c.totalQuestions || 0), 0);
   };
 
   const getTotalCorrect = () => {
-    return chapterStats.reduce((sum, c) => sum + (c.correct_answers || c.correctAnswers || 0), 0);
+    return chapterStatsData.reduce((sum, c) => sum + (c.correct_answers || c.correctAnswers || 0), 0);
   };
 
   const formatDate = (dateString: string) => {
