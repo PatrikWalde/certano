@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .single();
       
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 3000)
+        setTimeout(() => reject(new Error('Database query timeout')), 10000)
       );
       
       const { data: userProfile, error: usersError } = await Promise.race([
@@ -149,7 +149,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         lastName: '',
         city: '',
         evu: '',
-        role: 'user',
+        role: session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
         level: 1,
         xp: 0,
         streak: 0,
@@ -271,7 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated: !!user,
     isLoading,
-    isAdmin: user?.role === 'admin' && !isLoading,
+    isAdmin: user?.role === 'admin',
     loading: isLoading,
     login,
     register,
