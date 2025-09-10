@@ -69,7 +69,8 @@ const ErrorReviewPage: React.FC = () => {
               </p>
             </div>
             <Link
-              to="/quiz?review=true"
+              to="/quiz"
+              state={{ isReviewMode: true }}
               className="btn-primary"
             >
               Fehlerwiederholung starten
