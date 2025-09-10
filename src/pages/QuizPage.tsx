@@ -42,6 +42,7 @@ const QuizPage: React.FC = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [isQuickQuiz, setIsQuickQuiz] = useState(false);
+  const [isReviewMode, setIsReviewMode] = useState(false);
   const [quizConfig, setQuizConfig] = useState<QuizConfigData | null>(null);
 
   useEffect(() => {
@@ -57,9 +58,18 @@ const QuizPage: React.FC = () => {
       setCurrentQuestionIndex(0);
       setAnswers([]);
     } else {
-      loadData();
+      // Prüfe ob es sich um eine Fehlerwiederholung handelt
+      const urlParams = new URLSearchParams(location.search);
+      const isReviewMode = urlParams.get('review') === 'true';
+      
+      if (isReviewMode) {
+        setIsReviewMode(true);
+        loadErrorReviewQuestions();
+      } else {
+        loadData();
+      }
     }
-  }, [location.state]);
+  }, [location.state, location.search]);
 
   const loadData = async () => {
     try {
@@ -97,6 +107,50 @@ const QuizPage: React.FC = () => {
           console.error('Error loading offline questions:', offlineErr);
         }
       }
+    }
+  };
+
+  const loadErrorReviewQuestions = async () => {
+    try {
+      const { getErrorQuestionsForQuiz } = useQuizStatsStore.getState();
+      
+      // Lade alle falsch beantworteten Fragen
+      const errorQuestionIds = getErrorQuestionsForQuiz();
+      
+      if (errorQuestionIds.length === 0) {
+        alert('Keine falsch beantworteten Fragen gefunden. Du hast alle Fragen richtig beantwortet! 🎉');
+        return;
+      }
+      
+      // Lade die vollständigen Fragen-Details
+      let allQuestions: Question[] = [];
+      
+      if (isOnline) {
+        allQuestions = await getQuestions();
+        await saveOfflineQuestions(allQuestions);
+      } else {
+        allQuestions = await loadOfflineQuestions();
+      }
+      
+      // Filtere nur die falsch beantworteten Fragen
+      const errorQuestions = allQuestions.filter(q => errorQuestionIds.includes(q.id));
+      
+      if (errorQuestions.length === 0) {
+        alert('Keine falsch beantworteten Fragen gefunden. Du hast alle Fragen richtig beantwortet! 🎉');
+        return;
+      }
+      
+      console.log('Fehlerwiederholung: Lade', errorQuestions.length, 'falsch beantwortete Fragen');
+      
+      setQuestions(errorQuestions);
+      setQuizStarted(true);
+      setStartTime(new Date());
+      setCurrentQuestionIndex(0);
+      setAnswers([]);
+      
+    } catch (err) {
+      console.error('Error loading error review questions:', err);
+      alert('Fehler beim Laden der falsch beantworteten Fragen. Bitte versuche es erneut.');
     }
   };
 
@@ -381,17 +435,21 @@ const QuizPage: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            {isQuickQuiz ? 'Schnell-Quiz' : 'Quiz starten'}
+            {isQuickQuiz ? 'Schnell-Quiz' : 
+             isReviewMode ? '🎯 Fehlerwiederholung' : 
+             'Quiz starten'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
             {isQuickQuiz 
               ? '10 zufällige Fragen aus allen Kapiteln' 
+              : isReviewMode
+              ? 'Übe deine falsch beantworteten Fragen für bessere Ergebnisse'
               : 'Konfiguriere dein Quiz und starte mit dem Lernen'
             }
           </p>
         </div>
 
-        {!isQuickQuiz && <QuizConfig onConfigSubmit={handleConfigSubmit} />}
+        {!isQuickQuiz && !isReviewMode && <QuizConfig onConfigSubmit={handleConfigSubmit} />}
       </div>
     </div>
   );
