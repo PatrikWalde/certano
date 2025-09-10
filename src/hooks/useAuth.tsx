@@ -71,60 +71,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const supabaseUser = session.user;
       console.log('Handling user session:', supabaseUser.email);
       
-      // Load user profile from database - query specific user with timeout
-      const profilePromise = supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('auth_user_id', supabaseUser.id)
-        .single();
-      
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 10000)
-      );
-      
-      const { data: userProfile, error: usersError } = await Promise.race([
-        profilePromise,
-        timeoutPromise
-      ]) as any;
-      
-      if (!usersError && userProfile) {
-        console.log('✅ User profile found in database:', userProfile);
-        
-        // Create user from database profile
-        const user: User = {
-          id: supabaseUser.id,
-          email: supabaseUser.email || '',
-          firstName: userProfile.first_name || '',
-          lastName: userProfile.last_name || '',
-          city: userProfile.city || '',
-          evu: userProfile.evu || '',
-          role: userProfile.role as 'user' | 'editor' | 'admin',
-          level: 1,
-          xp: 0,
-          streak: 0,
-          privacySettings: {
-            showOnLeaderboard: true,
-            allowAnalytics: true,
-          },
-          createdAt: supabaseUser.created_at,
-          updatedAt: userProfile.updated_at || supabaseUser.created_at,
-        };
-        
-        setUser(user);
-        console.log('User profile loaded from database successfully:', user);
-        return;
-      }
-      
-      console.log('No profile found in database or timeout, using fallback');
-      
-      // Fallback: Set user with basic data
-      const user: User = {
+      // Create fallback user immediately to prevent infinite loading
+      const fallbackUser: User = {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        firstName: supabaseUser.user_metadata?.first_name || '',
-        lastName: supabaseUser.user_metadata?.last_name || '',
-        city: supabaseUser.user_metadata?.city || '',
-        evu: supabaseUser.user_metadata?.evu || '',
+        firstName: '',
+        lastName: '',
+        city: '',
+        evu: '',
         role: supabaseUser.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
         level: 1,
         xp: 0,
@@ -134,11 +88,53 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           allowAnalytics: true,
         },
         createdAt: supabaseUser.created_at,
-        updatedAt: supabaseUser.updated_at || supabaseUser.created_at,
+        updatedAt: supabaseUser.created_at,
       };
       
-      setUser(user);
-      console.log('Fallback user set successfully:', user);
+      // Set user immediately
+      setUser(fallbackUser);
+      setIsLoading(false);
+      console.log('Fallback user set immediately:', fallbackUser);
+      
+      // Try to load user profile from database (non-blocking)
+      try {
+        const { data: userProfile, error: usersError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('auth_user_id', supabaseUser.id)
+          .single();
+      
+        if (!usersError && userProfile) {
+          console.log('✅ User profile found in database:', userProfile);
+          
+          // Update user with database profile
+          const user: User = {
+            id: supabaseUser.id,
+            email: supabaseUser.email || '',
+            firstName: userProfile.first_name || '',
+            lastName: userProfile.last_name || '',
+            city: userProfile.city || '',
+            evu: userProfile.evu || '',
+            role: userProfile.role as 'user' | 'editor' | 'admin',
+            level: 1,
+            xp: 0,
+            streak: 0,
+            privacySettings: {
+              showOnLeaderboard: true,
+              allowAnalytics: true,
+            },
+            createdAt: supabaseUser.created_at,
+            updatedAt: userProfile.updated_at || supabaseUser.created_at,
+          };
+          
+          setUser(user);
+          console.log('User profile loaded from database successfully:', user);
+        } else {
+          console.log('No profile found in database, keeping fallback user');
+        }
+      } catch (dbError) {
+        console.log('Database error, keeping fallback user:', dbError);
+      }
     } catch (error) {
       console.error('Error handling user session:', error);
       // Even on error, set a basic user to prevent infinite loading
