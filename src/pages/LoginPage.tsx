@@ -27,7 +27,7 @@ const LoginPage: React.FC = () => {
       if (isLogin) {
         await login(email, password);
         console.log('LoginPage: Login successful, navigating to dashboard');
-        setIsLoading(false); // Reset loading state
+        // Don't set loading to false here - let useAuth handle it
         navigate('/dashboard');
       } else {
         // Validate required fields for registration
