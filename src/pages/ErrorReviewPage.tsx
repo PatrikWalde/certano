@@ -134,10 +134,10 @@ const ErrorReviewPage: React.FC = () => {
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Keine Fehler mehr!
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 mb-6">
                 Du hast alle Fragen richtig beantwortet. Mach ein neues Quiz um neue Herausforderungen zu finden!
               </p>
-              <Link to="/quiz" className="btn-primary mt-4">
+              <Link to="/quiz" className="btn-primary">
                 Quiz starten
               </Link>
             </div>
