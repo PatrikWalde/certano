@@ -96,6 +96,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
       console.log('Fallback user set immediately:', fallbackUser);
       
+      // Force re-render by setting loading to false again
+      setTimeout(() => {
+        setIsLoading(false);
+        console.log('Loading set to false again');
+      }, 100);
+      
       // Try to load user profile from database (non-blocking)
       try {
         const { data: userProfile, error: usersError } = await supabase
