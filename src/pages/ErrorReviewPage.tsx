@@ -190,11 +190,11 @@ const ErrorReviewPage: React.FC = () => {
                         <div className={`px-3 py-1 rounded-full text-sm font-medium ${
                           error.errorCount >= 3 ? 'bg-danger-100 text-danger-800' :
                           error.errorCount >= 2 ? 'bg-warning-100 text-warning-800' :
-                          'bg-info-100 text-info-800'
+                          'bg-success-100 text-success-800'
                         }`}>
                           {error.errorCount >= 3 ? 'Kritisch' :
                            error.errorCount >= 2 ? 'Verbesserung nötig' :
-                           'Leicht'}
+                           'Fast beherrscht'}
                         </div>
                       </div>
                     </div>
