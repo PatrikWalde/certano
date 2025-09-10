@@ -271,7 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     isAuthenticated: !!user,
     isLoading,
-    isAdmin: user?.role === 'admin',
+    isAdmin: user?.role === 'admin' && !isLoading,
     loading: isLoading,
     login,
     register,
