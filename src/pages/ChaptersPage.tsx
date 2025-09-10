@@ -39,6 +39,7 @@ const ChaptersPage: React.FC = () => {
   const getChapterProgress = (chapterName: string) => {
     console.log('ChaptersPage: Looking for progress for chapter:', chapterName);
     console.log('ChaptersPage: Available chapterStats:', chapterStats);
+    console.log('ChaptersPage: Chapter names in stats:', chapterStats.map(c => c.name));
     const progress = chapterStats.find(c => c.name === chapterName);
     console.log('ChaptersPage: Found progress:', progress);
     return progress;
