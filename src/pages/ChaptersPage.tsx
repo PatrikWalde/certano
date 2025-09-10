@@ -27,7 +27,7 @@ const ChaptersPage: React.FC = () => {
     };
 
     loadChapters();
-  }, [getChapters]);
+  }, []); // Leere dependency array - lädt nur einmal beim Mount
 
   const getChapterProgress = (chapterName: string) => {
     return chapterStats.find(c => c.name === chapterName);
