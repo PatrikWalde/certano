@@ -1,6 +1,6 @@
--- 🔒 update_chapter_with_questions Function OHNE SECURITY DEFINER
+-- 🔒 update_chapter_with_questions Function EINFACHE LÖSUNG
 -- Behebt die hartnäckige "role mutable search_path" Warnung
--- Entfernt SECURITY DEFINER komplett
+-- Verwendet einen einfachen Ansatz: Function ohne search_path Parameter
 
 -- 1. ALLE Versionen der Function löschen
 DROP FUNCTION IF EXISTS public.update_chapter_with_questions(UUID, TEXT, TEXT, TEXT, TEXT, BOOLEAN);
@@ -10,8 +10,8 @@ DROP FUNCTION IF EXISTS public.update_chapter_with_questions(UUID, TEXT, TEXT);
 DROP FUNCTION IF EXISTS public.update_chapter_with_questions(UUID, TEXT);
 DROP FUNCTION IF EXISTS public.update_chapter_with_questions(UUID);
 
--- 2. Function OHNE SECURITY DEFINER erstellen
-CREATE FUNCTION public.update_chapter_with_questions(
+-- 2. Function einfach neu erstellen
+CREATE OR REPLACE FUNCTION public.update_chapter_with_questions(
   chapter_id UUID,
   chapter_name TEXT,
   chapter_description TEXT DEFAULT NULL,
@@ -51,7 +51,7 @@ END;
 $$;
 
 -- 3. Überprüfung
-SELECT 'update_chapter_with_questions Function OHNE SECURITY DEFINER erstellt' as status;
+SELECT 'update_chapter_with_questions Function EINFACHE LÖSUNG abgeschlossen' as status;
 SELECT proname, proconfig 
 FROM pg_proc 
 WHERE proname = 'update_chapter_with_questions'
