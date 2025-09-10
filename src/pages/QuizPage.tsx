@@ -46,13 +46,9 @@ const QuizPage: React.FC = () => {
   const [quizConfig, setQuizConfig] = useState<QuizConfigData | null>(null);
 
   useEffect(() => {
-    console.log('🔍 QuizPage useEffect - location.state:', location.state);
-    
     // Prüfe ob eine Schnell-Quiz Konfiguration übergeben wurde
     if (location.state?.config && location.state?.isQuickQuiz) {
       const quickQuizConfig = location.state.config;
-      console.log('Quick Quiz Config:', quickQuizConfig);
-      console.log('Quick Quiz Questions:', quickQuizConfig.questions);
       setQuestions(quickQuizConfig.questions || []);
       setIsQuickQuiz(true);
       setQuizStarted(true);
@@ -61,11 +57,9 @@ const QuizPage: React.FC = () => {
       setAnswers([]);
     } else if (location.state?.isReviewMode) {
       // Prüfe ob es sich um eine Fehlerwiederholung handelt
-      console.log('🎯 Review-Modus erkannt via location.state, lade Fehlerwiederholung...');
       setIsReviewMode(true);
       loadErrorReviewQuestions();
     } else {
-      console.log('📚 Normaler Quiz-Modus, lade alle Fragen...');
       loadData();
     }
   }, [location.state]);
@@ -139,7 +133,6 @@ const QuizPage: React.FC = () => {
         return;
       }
       
-      console.log('Fehlerwiederholung: Lade', errorQuestions.length, 'falsch beantwortete Fragen');
       
       setQuestions(errorQuestions);
       setQuizStarted(true);
