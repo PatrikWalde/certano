@@ -30,7 +30,11 @@ const ChaptersPage: React.FC = () => {
   }, []); // Leere dependency array - lädt nur einmal beim Mount
 
   const getChapterProgress = (chapterName: string) => {
-    return chapterStats.find(c => c.name === chapterName);
+    console.log('ChaptersPage: Looking for progress for chapter:', chapterName);
+    console.log('ChaptersPage: Available chapterStats:', chapterStats);
+    const progress = chapterStats.find(c => c.name === chapterName);
+    console.log('ChaptersPage: Found progress:', progress);
+    return progress;
   };
 
   const getOverallProgress = () => {
