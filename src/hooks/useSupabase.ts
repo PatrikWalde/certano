@@ -438,7 +438,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         explanation: question.explanation || '',
         // difficulty: question.difficulty || 'easy', // Removed - difficulty column no longer exists
         tags: question.tags || [],
-        media: question.media?.url || '',
+        media: question.media || '',
         isOpenQuestion: question.is_open_question || false,
         options: question.options || [],
         matchingPairs: question.matching_pairs || [],
@@ -472,7 +472,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         fill_blank_options: questionData.fillBlankOptions,
         blank_count: questionData.blankCount,
         explanation: questionData.explanation,
-        media: questionData.media ? { url: questionData.media } : null,
+        media: questionData.media || null,
         is_open_question: questionData.isOpenQuestion,
         tags: questionData.tags
       });
