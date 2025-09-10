@@ -28,7 +28,7 @@ const ErrorReviewPage: React.FC = () => {
     };
 
     loadQuestions();
-  }, [getQuestions]);
+  }, []); // Empty dependency array - only run once on mount
   
   const errorQuestions = getErrorQuestions(selectedChapter === 'all' ? undefined : selectedChapter);
   const chapters = [...new Set(errorQuestions.map(e => e.chapter))];
