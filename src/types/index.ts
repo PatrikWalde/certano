@@ -97,7 +97,7 @@ export interface Question {
   fillBlankOptions?: FillBlankOption[]; // For fill_blank questions
   blankCount?: number; // Number of blanks in the text
   explanation?: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  // difficulty: 'easy' | 'medium' | 'hard'; // Removed - difficulty feature no longer used
   tags: string[];
   createdAt: string;
   updatedAt: string;

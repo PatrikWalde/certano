@@ -43,12 +43,7 @@ const ChaptersPage: React.FC = () => {
     return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20';
   };
 
-  const getDifficultyLevel = (progress: number) => {
-    if (progress >= 80) return { level: 'Meister', color: 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20' };
-    if (progress >= 60) return { level: 'Fortgeschritten', color: 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20' };
-    if (progress >= 40) return { level: 'Anfänger', color: 'text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/20' };
-    return { level: 'Neuling', color: 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20' };
-  };
+  // getDifficultyLevel function removed - difficulty feature no longer used
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -119,7 +114,7 @@ const ChaptersPage: React.FC = () => {
                 lastPracticed: null,
               };
               
-              const difficulty = getDifficultyLevel(progressData.progress);
+              // const difficulty = getDifficultyLevel(progressData.progress); // Removed - difficulty feature no longer used
               
               return (
                 <div key={chapter.id} className="card hover:shadow-md transition-shadow">
@@ -129,9 +124,7 @@ const ChaptersPage: React.FC = () => {
                       <span className="text-3xl">{chapter.icon}</span>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">{chapter.name}</h3>
-                        <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${difficulty.color}`}>
-                          {difficulty.level}
-                        </div>
+                        {/* Difficulty badge removed - difficulty feature no longer used */}
                       </div>
                     </div>
                   </div>

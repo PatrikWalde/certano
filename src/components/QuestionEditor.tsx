@@ -65,7 +65,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         media: question.media || '',
         isOpenQuestion: question.isOpenQuestion || false,
         questionNumber: question.questionNumber || '',
-        difficulty: question.difficulty || 'medium'
+        // difficulty: question.difficulty || 'medium' // Removed - difficulty feature no longer used
       };
     } else {
       // Default form data for new question
@@ -85,7 +85,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         media: '',
         isOpenQuestion: false,
         questionNumber: generateQuestionNumber(),
-        difficulty: 'medium'
+        // difficulty: 'medium' // Removed - difficulty feature no longer used
       };
     }
   };
@@ -109,7 +109,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
       const dataToSave = {
         ...formData,
         questionNumber: formData.questionNumber || generateQuestionNumber(),
-        difficulty: (formData.difficulty as 'easy' | 'medium' | 'hard') || 'medium'
+        // difficulty: (formData.difficulty as 'easy' | 'medium' | 'hard') || 'medium' // Removed - difficulty feature no longer used
       };
       
       await onSave(dataToSave);
