@@ -23,6 +23,7 @@ const ChaptersPage: React.FC = () => {
         console.log('ChaptersPage: Loading chapter stats from database...');
         const realChapterStats = await getChapterStats();
         console.log('ChaptersPage: Loaded chapter stats:', realChapterStats);
+        console.log('ChaptersPage: First chapter stat structure:', realChapterStats[0]);
         setChapterStats(realChapterStats);
       } catch (error) {
         console.error('ChaptersPage: Error loading data:', error);
