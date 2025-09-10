@@ -474,7 +474,7 @@ export const useSupabase = (): UseSupabaseReturn => {
         explanation: questionData.explanation,
         media: questionData.media || null,
         is_open_question: questionData.isOpenQuestion,
-        tags: questionData.tags
+        tags: Array.isArray(questionData.tags) ? questionData.tags : []
       });
       
       if (error) {

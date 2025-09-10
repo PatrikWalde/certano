@@ -41,7 +41,7 @@ INSERT INTO questions (
   'Test-Kapitel',
   '[{"id": "1", "text": "Option 1", "isCorrect": true}]',
   'Test-Erklärung',
-  '["test"]',
+  ARRAY['test'],
   false
 ) RETURNING *;
 
