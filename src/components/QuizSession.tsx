@@ -90,6 +90,11 @@ const QuizSession: React.FC<QuizSessionProps> = ({
       }
       
       // Track question errors for spaced repetition
+      console.log('🔍 QuizSession: About to call trackQuestionError:', { 
+        questionId: currentQuestion.id, 
+        chapter: currentQuestion.chapter, 
+        isCorrect: answer.isCorrect 
+      });
       trackQuestionError(currentQuestion.id, currentQuestion.chapter, answer.isCorrect);
       
       // Update quest progress
