@@ -463,10 +463,8 @@ const useQuizStatsStore = create<QuizStatsStore>()(
       },
       
       trackQuestionError: (questionId, chapter, isCorrect) => {
-        console.log('🔍 trackQuestionError called:', { questionId, chapter, isCorrect });
         set((state) => {
           const existingError = state.questionErrors.find(e => e.questionId === questionId);
-          console.log('🔍 existingError found:', existingError);
           
           if (existingError) {
             const updatedError = {
@@ -504,8 +502,6 @@ const useQuizStatsStore = create<QuizStatsStore>()(
       getErrorQuestions: (chapter, limit) => {
         const state = get();
         let errors = state.questionErrors;
-        console.log('🔍 getErrorQuestions called:', { chapter, limit, totalErrors: errors.length });
-        console.log('🔍 all questionErrors:', errors);
         
         if (chapter) {
           errors = errors.filter(e => e.chapter === chapter);

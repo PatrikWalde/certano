@@ -141,7 +141,6 @@ const QuizPage: React.FC = () => {
     timeSpent: number;
     answeredAt: string;
   }) => {
-    console.log('🔍 QuizPage handleAnswer called with:', answer);
     // Finde das Kapitel für diese Frage
     const currentQuestion = questions[currentQuestionIndex];
     const answerWithChapter = {
@@ -151,11 +150,6 @@ const QuizPage: React.FC = () => {
     setAnswers(prev => [...prev, answerWithChapter]);
     
     // Track question errors for spaced repetition
-    console.log('🔍 QuizPage: About to call trackQuestionError:', { 
-      questionId: currentQuestion.id, 
-      chapter: currentQuestion.chapter, 
-      isCorrect: answer.isCorrect 
-    });
     trackQuestionError(currentQuestion.id, currentQuestion.chapter, answer.isCorrect);
     
     // Don't automatically go to next question - let the user see the result first

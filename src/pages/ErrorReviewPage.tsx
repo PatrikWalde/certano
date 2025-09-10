@@ -33,10 +33,6 @@ const ErrorReviewPage: React.FC = () => {
   const errorQuestions = getErrorQuestions(selectedChapter === 'all' ? undefined : selectedChapter);
   const chapters = [...new Set(errorQuestions.map(e => e.chapter))];
   
-  // Debug: Log error questions
-  console.log('ErrorReviewPage: errorQuestions:', errorQuestions);
-  console.log('ErrorReviewPage: selectedChapter:', selectedChapter);
-  
   // Get question details for display
   const getQuestionDetails = (questionId: string) => {
     return questions.find(q => q.id === questionId);
