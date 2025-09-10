@@ -9,7 +9,6 @@ import ProgressRing from '../components/ProgressRing';
 import StatsCard from '../components/StatsCard';
 // import MetricCard from '../components/MetricCard';
 import RecentActivity from '../components/RecentActivity';
-import ErrorReviewSection from '../components/ErrorReviewSection';
 import QuestsSection from '../components/QuestsSection';
 import CompetenceRadar from '../components/CompetenceRadar';
 import BadgesSection from '../components/BadgesSection';
@@ -677,7 +676,6 @@ const DashboardPage: React.FC = () => {
             <QuizHistory />
 
             {/* Error Review Section */}
-            <ErrorReviewSection />
 
             {/* Quests Section */}
             <QuestsSection />
