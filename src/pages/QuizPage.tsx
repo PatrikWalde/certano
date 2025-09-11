@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSupabase } from '../hooks/useSupabase';
 import { useOfflineStorage } from '../hooks/useOfflineStorage';
 import { Question } from '../types';
@@ -7,8 +7,11 @@ import QuizConfig from '../components/QuizConfig';
 import QuizQuestion from '../components/QuizQuestion';
 import QuizResults from '../components/QuizResults';
 import QuizTimer from '../components/QuizTimer';
+import UpgradePrompt from '../components/UpgradePrompt';
 import { saveQuizSession, QuizSessionData } from '../services/quizService';
 import { useQuizStatsStore } from '../store/quizStatsStore';
+import { usageService } from '../services/usageService';
+import { useAuth } from '../hooks/useAuth';
 
 interface QuizConfigData {
   questionCount: number;
@@ -24,7 +27,9 @@ const QuizPage: React.FC = () => {
   const { getQuestions, loading, error } = useSupabase();
   const { saveQuizResult, isOnline, loadOfflineQuestions, saveOfflineQuestions } = useOfflineStorage();
   const { trackQuestionError } = useQuizStatsStore();
+  const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Array<{
@@ -44,6 +49,23 @@ const QuizPage: React.FC = () => {
   const [isQuickQuiz, setIsQuickQuiz] = useState(false);
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [quizConfig, setQuizConfig] = useState<QuizConfigData | null>(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [canStartQuiz, setCanStartQuiz] = useState(true);
+
+  // Check if user can start quiz
+  useEffect(() => {
+    const checkQuizPermission = async () => {
+      if (user?.id && !isReviewMode) {
+        const permission = await usageService.canStartQuiz(user.id);
+        setCanStartQuiz(permission.canStart);
+        if (!permission.canStart) {
+          setShowUpgradePrompt(true);
+        }
+      }
+    };
+    
+    checkQuizPermission();
+  }, [user?.id, isReviewMode]);
 
   useEffect(() => {
     // Prüfe ob eine Schnell-Quiz Konfiguration übergeben wurde
@@ -178,7 +200,7 @@ const QuizPage: React.FC = () => {
     setAnswers([]);
   };
 
-  const handleAnswer = (answer: {
+  const handleAnswer = async (answer: {
     questionId: string;
     selectedOptions?: string[];
     userAnswer?: string;
@@ -197,6 +219,19 @@ const QuizPage: React.FC = () => {
     
     // Track question errors for spaced repetition
     trackQuestionError(currentQuestion.id, currentQuestion.chapter, answer.isCorrect);
+    
+    // Increment usage for free users
+    if (user?.id && !isReviewMode) {
+      try {
+        const result = await usageService.incrementUsage(user.id);
+        if (!result.success && result.limitReached) {
+          // User reached limit, show upgrade prompt
+          setShowUpgradePrompt(true);
+        }
+      } catch (error) {
+        console.error('Error incrementing usage:', error);
+      }
+    }
     
     // Don't automatically go to next question - let the user see the result first
   };
@@ -389,6 +424,13 @@ const QuizPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-4">
+          {/* Upgrade Prompt */}
+          {showUpgradePrompt && (
+            <div className="mb-6">
+              <UpgradePrompt onClose={() => setShowUpgradePrompt(false)} />
+            </div>
+          )}
+          
           {/* Quiz Header */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-colors duration-300">
             <div className="flex justify-between items-center">

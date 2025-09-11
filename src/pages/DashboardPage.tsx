@@ -13,6 +13,7 @@ import CompetenceRadar from '../components/CompetenceRadar';
 import BadgesSection from '../components/BadgesSection';
 import ChapterProgress from '../components/ChapterProgress';
 import QuizHistory from '../components/QuizHistory';
+import UsageCounter from '../components/UsageCounter';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
@@ -232,12 +233,17 @@ const DashboardPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Willkommen zurück, {user?.firstName || user?.email?.split('@')[0] || 'Benutzer'}!
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Hier ist dein Lernfortschritt und deine Statistiken.
-          </p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Willkommen zurück, {user?.firstName || user?.email?.split('@')[0] || 'Benutzer'}!
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                Hier ist dein Lernfortschritt und deine Statistiken.
+              </p>
+            </div>
+            <UsageCounter className="mt-2" />
+          </div>
         </div>
 
         {/* Ultra-Modern Quiz Selection Cards */}

@@ -14,6 +14,7 @@ import ActivityPage from './pages/ActivityPage';
 import ChaptersPage from './pages/ChaptersPage';
 import ErrorReviewPage from './pages/ErrorReviewPage';
 import LeaderboardPage from './pages/LeaderboardPage';
+import UpgradePage from './pages/UpgradePage';
 
 // Components
 import Layout from './components/Layout';
@@ -83,6 +84,11 @@ function App() {
                 <Route path="leaderboard" element={
                   <ProtectedRoute>
                     <LeaderboardPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="upgrade" element={
+                  <ProtectedRoute>
+                    <UpgradePage />
                   </ProtectedRoute>
                 } />
               </Route>
