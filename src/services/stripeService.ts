@@ -57,25 +57,38 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
 
 class StripeService {
   /**
-   * Create a Stripe checkout session
+   * Create a Stripe checkout session (temporary direct implementation)
    */
   async createCheckoutSession(priceId: string, userId: string): Promise<StripeCheckoutSession> {
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        body: {
-          priceId,
-          userId,
-          successUrl: `${window.location.origin}/dashboard?success=true`,
-          cancelUrl: `${window.location.origin}/upgrade?canceled=true`
-        }
+      // Temporary: Create checkout session directly with Stripe
+      // In production, this should be done via Supabase Edge Functions
+      const stripe = await getStripe();
+      if (!stripe) {
+        throw new Error('Stripe ist nicht verfügbar');
+      }
+
+      // For now, we'll create a simple checkout session
+      // This is a simplified version - in production you'd want server-side validation
+      const { error, session } = await stripe.redirectToCheckout({
+        lineItems: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        successUrl: `${window.location.origin}/dashboard?success=true`,
+        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
+        customerEmail: user?.email, // We'll get this from the auth context
       });
 
       if (error) {
-        console.error('Error creating checkout session:', error);
+        console.error('Stripe checkout error:', error);
         throw new Error('Fehler beim Erstellen der Checkout-Session');
       }
 
-      return data;
+      return { id: session?.id || '', url: '' };
     } catch (error) {
       console.error('Error in createCheckoutSession:', error);
       throw error;
@@ -83,7 +96,7 @@ class StripeService {
   }
 
   /**
-   * Redirect to Stripe checkout
+   * Redirect to Stripe checkout (simplified direct implementation)
    */
   async redirectToCheckout(priceId: string, userId: string): Promise<void> {
     try {
@@ -92,10 +105,17 @@ class StripeService {
         throw new Error('Stripe ist nicht verfügbar');
       }
 
-      const session = await this.createCheckoutSession(priceId, userId);
-      
+      // Direct checkout redirect - simplified for testing
       const { error } = await stripe.redirectToCheckout({
-        sessionId: session.id
+        lineItems: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        successUrl: `${window.location.origin}/dashboard?success=true`,
+        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
       });
 
       if (error) {
