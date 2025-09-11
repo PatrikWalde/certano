@@ -163,10 +163,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       
       if (data.user && userData) {
-        console.log('Registration successful:', data.user.email);
+        console.log('✅ Registration successful:', data.user.email);
+        console.log('📝 Creating profile with data:', userData);
         
-        // Create user profile in database (EXACT same as admin uses)
-        const { error: profileError } = await supabase
+        // Create user profile in database
+        const { data: profileData, error: profileError } = await supabase
           .from('user_profiles')
           .insert({
             auth_user_id: data.user.id,
@@ -175,14 +176,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             city: userData.city,
             evu: userData.evu || '',
             role: 'user'
-          });
+          })
+          .select();
 
         if (profileError) {
-          console.error('Error creating user profile:', profileError);
-          // Don't throw here, user is still created in auth
+          console.error('❌ Error creating user profile:', profileError);
+          throw new Error(`Profile creation failed: ${profileError.message}`);
         } else {
-          console.log('User profile created in database (same as admin)');
+          console.log('✅ User profile created successfully:', profileData);
         }
+      } else {
+        console.warn('⚠️ No userData provided or no user created');
       }
     } catch (error) {
       console.error('Registration error:', error);
