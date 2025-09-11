@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const handleUserSession = async (session: Session) => {
-    console.log('Handling user session:', session.user.email);
+    console.log('🔥🔥🔥 NEW VERSION - Handling user session:', session.user.email);
     
     try {
       // Load user profile from database
