@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
@@ -18,8 +18,16 @@ const LoginPage: React.FC = () => {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordMessage, setForgotPasswordMessage] = useState('');
   
-  const { login, register } = useAuth();
+  const { login, register, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+
+  // Navigate to dashboard when user is authenticated and auth loading is complete
+  useEffect(() => {
+    if (user && !authLoading && isLogin) {
+      console.log('LoginPage: User authenticated, navigating to dashboard');
+      navigate('/dashboard');
+    }
+  }, [user, authLoading, isLogin, navigate]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +62,8 @@ const LoginPage: React.FC = () => {
     try {
       if (isLogin) {
         await login(email, password);
-        console.log('LoginPage: Login successful, navigating to dashboard');
-        // Don't set loading to false here - let useAuth handle it
-        navigate('/dashboard');
+        console.log('LoginPage: Login successful, waiting for auth state update');
+        // Don't navigate here - let useEffect handle navigation after auth state updates
       } else {
         // Validate required fields for registration
         if (!firstName.trim() || !lastName.trim() || !city.trim()) {
@@ -74,7 +81,7 @@ const LoginPage: React.FC = () => {
         
         await register(email, password, {
           firstName: firstName.trim(),
-          lastName: lastName.trim(), 
+          lastName: lastName.trim(),
           city: city.trim(),
           evu: evu.trim() || undefined
         });
@@ -102,8 +109,12 @@ const LoginPage: React.FC = () => {
       }
       
       setError(errorMessage);
-    } finally {
       setIsLoading(false);
+    } finally {
+      // Only reset loading for registration, not for login
+      if (!isLogin) {
+        setIsLoading(false);
+      }
     }
   };
 
