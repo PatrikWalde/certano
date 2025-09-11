@@ -220,7 +220,9 @@ const QuizPage: React.FC = () => {
     // Increment usage for free users
     if (user?.id && !isReviewMode) {
       try {
+        console.log('QuizPage: Incrementing usage for user:', user.id);
         const result = await usageService.incrementUsage(user.id);
+        console.log('QuizPage: Usage increment result:', result);
         if (!result.success && result.limitReached) {
           // User reached limit, show upgrade prompt
           setShowUpgradePrompt(true);
