@@ -72,7 +72,12 @@ const LoginPage: React.FC = () => {
           return;
         }
         
-        await register(email, password);
+        await register(email, password, {
+          firstName,
+          lastName,
+          city,
+          evu
+        });
         setError('Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.');
         setIsLoading(false);
       }
