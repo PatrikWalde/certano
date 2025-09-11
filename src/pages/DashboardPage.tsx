@@ -236,7 +236,7 @@ const DashboardPage: React.FC = () => {
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Willkommen zurück, {user?.firstName || user?.email?.split('@')[0] || 'Benutzer'}!
+                Willkommen zurück, {user?.firstName || 'Name'}!
               </h1>
               <p className="text-gray-600 dark:text-gray-300">
                 Hier ist dein Lernfortschritt und deine Statistiken.
