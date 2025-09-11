@@ -92,7 +92,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     }
   }, [question.id, questionNumber, shuffleOptions]);
 
-  const handleOptionSelect = (optionId: string) => {
+  const handleOptionSelect = async (optionId: string) => {
     if (showResult) return;
 
     if (question.type === 'multiple_choice') {
@@ -108,7 +108,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
       setSelectedOptions([optionId]);
       
       // Auto-submit for true/false questions immediately (no setTimeout)
-      handleSubmitWithOptions([optionId]);
+      await handleSubmitWithOptions([optionId]);
     } else {
       // For other question types, single selection
       setSelectedOptions([optionId]);
@@ -146,8 +146,27 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     setSelectedLeftItem(null);
   };
 
-  const handleSubmitWithOptions = (optionsToUse: string[]) => {
+  const handleSubmitWithOptions = async (optionsToUse: string[]) => {
     if (showResult) return;
+
+    // ⚠️ FREEMIUM CHECK: Check usage limit BEFORE processing answer
+    const { supabase } = await import('../lib/supabase');
+    const { usageService } = await import('../services/usageService');
+    
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    
+    if (currentUser && currentUser.email !== 'pw@patrikwalde.com') {
+      // Check and increment usage for free users
+      const usageResult = await usageService.incrementUsage(currentUser.id);
+      
+      if (usageResult.limitReached) {
+        alert('🚨 Tägliches Limit erreicht!\n\nDu hast deine 5 kostenlosen Fragen für heute aufgebraucht.\n\nUpgrade auf Pro für unbegrenzte Fragen!');
+        window.location.href = '/upgrade';
+        return; // Stop processing - don't count this answer
+      }
+      
+      console.log('🔥 FREEMIUM SYSTEM ACTIVE: Usage incremented to:', usageResult.newUsage, 'for user', currentUser.email);
+    }
 
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
     let correct = false;
@@ -221,12 +240,12 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (question.type === 'open_ended' && question.isOpenQuestion) {
       // For self-evaluation open questions, submit without options
-      handleSubmitWithOptions([]);
+      await handleSubmitWithOptions([]);
     } else {
-      handleSubmitWithOptions(selectedOptions);
+      await handleSubmitWithOptions(selectedOptions);
     }
   };
 
