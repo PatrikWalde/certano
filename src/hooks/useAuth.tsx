@@ -9,10 +9,13 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   loading: boolean;
+  isProUser: boolean;
+  subscriptionStatus: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, userData?: { firstName: string; lastName: string; city: string; evu?: string }) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  refreshSubscriptionStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +35,8 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProUser, setIsProUser] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for existing session on app load
@@ -99,7 +104,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const { data: userProfile, error } = await supabase
           .from('user_profiles')
-          .select('first_name, last_name, city, evu, role')
+          .select('first_name, last_name, city, evu, role, subscription_type, subscription_status')
           .eq('auth_user_id', session.user.id)
           .single();
 
@@ -117,10 +122,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           };
           
           setUser(updatedUser);
+          
+          // Update subscription status
+          const isPro = userProfile.subscription_type === 'pro' && userProfile.subscription_status === 'active';
+          setIsProUser(isPro);
+          setSubscriptionStatus(userProfile.subscription_status);
+          
           console.log('🔄 User updated with profile data:', {
             firstName: updatedUser.firstName,
             lastName: updatedUser.lastName,
-            role: updatedUser.role
+            role: updatedUser.role,
+            isPro: isPro,
+            subscriptionStatus: userProfile.subscription_status
           });
         } else {
           console.log('⚠️ No user profile found or error loading:', error);
@@ -268,16 +281,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshSubscriptionStatus = async () => {
+    if (!user) return;
+    
+    try {
+      const { data: userProfile, error } = await supabase
+        .from('user_profiles')
+        .select('subscription_type, subscription_status')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!error && userProfile) {
+        const isPro = userProfile.subscription_type === 'pro' && userProfile.subscription_status === 'active';
+        setIsProUser(isPro);
+        setSubscriptionStatus(userProfile.subscription_status);
+        console.log('Subscription status refreshed:', { isPro, status: userProfile.subscription_status });
+      }
+    } catch (error) {
+      console.error('Error refreshing subscription status:', error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
     isLoading,
     isAdmin: user?.role === 'admin',
     loading: isLoading,
+    isProUser,
+    subscriptionStatus,
     login,
     register,
     logout,
     updateUser,
+    refreshSubscriptionStatus,
   };
 
   return (
