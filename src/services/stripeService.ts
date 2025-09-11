@@ -76,10 +76,18 @@ class StripeService {
   /**
    * Redirect to Stripe checkout (using payment links)
    */
-  async redirectToCheckout(_priceId: string, _userId: string): Promise<void> {
+  async redirectToCheckout(priceId: string, _userId: string): Promise<void> {
     try {
-      // Use your payment link from Stripe dashboard
-      const paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+      // Determine which payment link to use based on priceId
+      let paymentLinkUrl: string;
+      
+      if (priceId.includes('yearly') || priceId.includes('year')) {
+        // Yearly subscription - 99.00 CHF
+        paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
+      } else {
+        // Monthly subscription - 9.90 CHF (default)
+        paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+      }
       
       // Redirect to payment link
       window.location.href = paymentLinkUrl;
