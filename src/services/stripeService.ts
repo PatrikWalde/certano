@@ -17,6 +17,9 @@ const getStripe = () => {
   return stripePromise;
 };
 
+// Export getStripe for potential future use
+export { getStripe };
+
 // Subscription Plans Configuration
 export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
