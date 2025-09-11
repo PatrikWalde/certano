@@ -18,6 +18,11 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
     }
   }, [user?.id]);
 
+  // Add refresh function
+  const refreshUsageStats = () => {
+    loadUsageStats();
+  };
+
   const loadUsageStats = async () => {
     if (!user?.id) return;
     
@@ -51,6 +56,13 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
         <div className="flex items-center space-x-1">
           <span className="text-sm text-purple-600 font-medium">Admin</span>
           <span className="text-xs text-gray-500">Unbegrenzt</span>
+          <button 
+            onClick={refreshUsageStats}
+            className="ml-2 text-xs text-gray-400 hover:text-gray-600"
+            title="Aktualisieren"
+          >
+            ↻
+          </button>
         </div>
       ) : isFreeUser ? (
         <>
