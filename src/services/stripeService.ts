@@ -26,7 +26,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     id: 'pro-monthly',
     name: 'Pro Monatlich',
     description: 'Unbegrenzte Fragen, erweiterte Statistiken und mehr',
-    price: 10.90,
+    price: 9.90,
     currency: 'CHF',
     interval: 'month',
     features: [
@@ -43,7 +43,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     id: 'pro-yearly',
     name: 'Pro Jährlich',
     description: 'Unbegrenzte Fragen, erweiterte Statistiken und mehr - 2 Monate gratis!',
-    price: 109.00,
+    price: 99.00,
     currency: 'CHF',
     interval: 'year',
     features: [
