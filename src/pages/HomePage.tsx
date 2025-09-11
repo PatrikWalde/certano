@@ -54,7 +54,7 @@ const HomePage: React.FC = () => {
               </Link>
               {!user && (
                 <Link
-                  to="/register"
+                  to="/login"
                   className="border-2 border-white dark:border-gray-300 text-white dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400 font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
                 >
                   Kostenlos registrieren
@@ -488,7 +488,7 @@ const HomePage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/register"
+                to="/login"
                 className="bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
               >
                 Kostenlos registrieren
