@@ -78,7 +78,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         .single();
 
       if (error) {
-        console.log('No user profile found or error loading:', error);
+        console.log('⚠️ No user profile found or error loading:', error);
+      } else {
+        console.log('✅ User profile loaded from database:', userProfile);
       }
 
       // Create user object with database data or defaults
@@ -104,7 +106,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Set user and stop loading
       setUser(user);
       setIsLoading(false);
-      console.log('User set with profile data:', user);
+      console.log('✅ User set with profile data:', {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
+      });
     } catch (error) {
       console.error('Error loading user profile:', error);
       
