@@ -7,7 +7,6 @@ import HomePage from './pages/HomePage';
 import QuizPage from './pages/QuizPage';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
 import ActivityPage from './pages/ActivityPage';
@@ -47,7 +46,6 @@ function App() {
               <Routes>
               {/* Public Routes */}
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
               <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
               

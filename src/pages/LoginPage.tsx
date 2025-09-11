@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [city, setCity] = useState('');
@@ -60,6 +61,13 @@ const LoginPage: React.FC = () => {
         // Validate required fields for registration
         if (!firstName.trim() || !lastName.trim() || !city.trim()) {
           setError('Bitte fülle alle Pflichtfelder aus.');
+          setIsLoading(false);
+          return;
+        }
+
+        // Validate password confirmation
+        if (password !== confirmPassword) {
+          setError('Passwörter stimmen nicht überein.');
           setIsLoading(false);
           return;
         }
@@ -248,6 +256,25 @@ const LoginPage: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {!isLogin && (
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Passwort bestätigen
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-700 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                  placeholder="Passwort wiederholen"
+                />
+              </div>
+            )}
           </div>
 
           {error && (
