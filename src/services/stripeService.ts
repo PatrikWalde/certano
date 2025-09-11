@@ -81,12 +81,25 @@ class StripeService {
       // Determine which payment link to use based on priceId
       let paymentLinkUrl: string;
       
+      // Check if we're in test mode or live mode
+      const isTestMode = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY?.includes('test');
+      
       if (priceId.includes('yearly') || priceId.includes('year') || priceId === 'price_pro_yearly') {
         // Yearly subscription - 99.00 CHF
-        paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
+        if (isTestMode) {
+          paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
+        } else {
+          // Live mode - replace with your live yearly payment link
+          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_YEARLY || 'https://buy.stripe.com/live_yearly_link_here';
+        }
       } else {
         // Monthly subscription - 9.90 CHF (default)
-        paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+        if (isTestMode) {
+          paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+        } else {
+          // Live mode - replace with your live monthly payment link
+          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_MONTHLY || 'https://buy.stripe.com/live_monthly_link_here';
+        }
       }
       
       // Redirect to payment link
