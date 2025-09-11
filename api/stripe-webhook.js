@@ -57,24 +57,82 @@ export default async function handler(req, res) {
   }
 }
 
+// Enhanced user search function
+async function findUserByEmailOrCustomerId(customerEmail, customerId) {
+  console.log('Searching for user with email:', customerEmail, 'and customer ID:', customerId);
+  
+  // First, try to find by exact email match
+  let { data: user, error: userError } = await supabase
+    .from('auth.users')
+    .select('id, email')
+    .eq('email', customerEmail)
+    .single();
+
+  if (user && !userError) {
+    console.log('Found user by exact email match:', user.email);
+    return user;
+  }
+
+  // If not found, try to find by similar email patterns
+  // This handles cases like user@personal.com vs user@business.com
+  const emailDomain = customerEmail.split('@')[0];
+  console.log('Trying to find user by email prefix:', emailDomain);
+  
+  const { data: similarUsers, error: similarError } = await supabase
+    .from('auth.users')
+    .select('id, email')
+    .ilike('email', `${emailDomain}@%`);
+
+  if (similarUsers && similarUsers.length > 0) {
+    console.log('Found similar users:', similarUsers.map(u => u.email));
+    // Return the first match (you could add more logic here)
+    return similarUsers[0];
+  }
+
+  // If still not found, try to find by customer ID in user_profiles
+  if (customerId) {
+    console.log('Trying to find user by Stripe customer ID:', customerId);
+    const { data: profileUser, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('auth_user_id, stripe_customer_id')
+      .eq('stripe_customer_id', customerId)
+      .single();
+
+    if (profileUser && !profileError) {
+      // Get the full user data
+      const { data: fullUser, error: fullUserError } = await supabase
+        .from('auth.users')
+        .select('id, email')
+        .eq('id', profileUser.auth_user_id)
+        .single();
+
+      if (fullUser && !fullUserError) {
+        console.log('Found user by Stripe customer ID:', fullUser.email);
+        return fullUser;
+      }
+    }
+  }
+
+  console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
+  return null;
+}
+
 async function handleCheckoutSessionCompleted(session) {
   console.log('Processing checkout session completed:', session.id);
   
   const customerEmail = session.customer_details?.email;
+  const customerId = session.customer;
+  
   if (!customerEmail) {
     console.error('No customer email found in session');
     return;
   }
 
-  // Find user by email
-  const { data: user, error: userError } = await supabase
-    .from('auth.users')
-    .select('id')
-    .eq('email', customerEmail)
-    .single();
-
-  if (userError || !user) {
-    console.error('User not found for email:', customerEmail);
+  // Enhanced user search
+  const user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  
+  if (!user) {
+    console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
     return;
   }
 
@@ -100,20 +158,18 @@ async function handleSubscriptionCreated(subscription) {
   console.log('Processing subscription created:', subscription.id);
   
   const customerEmail = subscription.customer_email;
+  const customerId = subscription.customer;
+  
   if (!customerEmail) {
     console.error('No customer email found in subscription');
     return;
   }
 
-  // Find user by email
-  const { data: user, error: userError } = await supabase
-    .from('auth.users')
-    .select('id')
-    .eq('email', customerEmail)
-    .single();
-
-  if (userError || !user) {
-    console.error('User not found for email:', customerEmail);
+  // Enhanced user search
+  const user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  
+  if (!user) {
+    console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
     return;
   }
 
@@ -140,20 +196,18 @@ async function handleSubscriptionUpdated(subscription) {
   console.log('Processing subscription updated:', subscription.id);
   
   const customerEmail = subscription.customer_email;
+  const customerId = subscription.customer;
+  
   if (!customerEmail) {
     console.error('No customer email found in subscription');
     return;
   }
 
-  // Find user by email
-  const { data: user, error: userError } = await supabase
-    .from('auth.users')
-    .select('id')
-    .eq('email', customerEmail)
-    .single();
-
-  if (userError || !user) {
-    console.error('User not found for email:', customerEmail);
+  // Enhanced user search
+  const user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  
+  if (!user) {
+    console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
     return;
   }
 
@@ -179,20 +233,18 @@ async function handleSubscriptionDeleted(subscription) {
   console.log('Processing subscription deleted:', subscription.id);
   
   const customerEmail = subscription.customer_email;
+  const customerId = subscription.customer;
+  
   if (!customerEmail) {
     console.error('No customer email found in subscription');
     return;
   }
 
-  // Find user by email
-  const { data: user, error: userError } = await supabase
-    .from('auth.users')
-    .select('id')
-    .eq('email', customerEmail)
-    .single();
-
-  if (userError || !user) {
-    console.error('User not found for email:', customerEmail);
+  // Enhanced user search
+  const user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  
+  if (!user) {
+    console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
     return;
   }
 
