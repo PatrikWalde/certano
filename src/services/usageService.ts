@@ -25,7 +25,7 @@ class UsageService {
     try {
       const { data: userProfile, error } = await supabase
         .from('user_profiles')
-        .select('daily_usage, subscription_type, last_usage_date')
+        .select('daily_usage, subscription_type, last_usage_date, role')
         .eq('auth_user_id', userId)
         .single();
 
@@ -36,6 +36,18 @@ class UsageService {
           subscriptionType: 'free',
           canAnswerMore: true,
           remainingQuestions: 5
+        };
+      }
+
+      // Check if user is admin
+      const isAdmin = userProfile.role === 'admin';
+      
+      if (isAdmin) {
+        return {
+          dailyUsage: 0,
+          subscriptionType: 'admin',
+          canAnswerMore: true,
+          remainingQuestions: Infinity
         };
       }
 

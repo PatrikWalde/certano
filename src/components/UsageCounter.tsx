@@ -41,11 +41,18 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
   }
 
   const isFreeUser = usageStats.subscriptionType === 'free';
+  const isAdminUser = usageStats.subscriptionType === 'admin';
+  const isProUser = usageStats.subscriptionType === 'pro';
   const isLimitReached = !usageStats.canAnswerMore;
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      {isFreeUser ? (
+      {isAdminUser ? (
+        <div className="flex items-center space-x-1">
+          <span className="text-sm text-purple-600 font-medium">Admin</span>
+          <span className="text-xs text-gray-500">Unbegrenzt</span>
+        </div>
+      ) : isFreeUser ? (
         <>
           <div className="flex items-center space-x-1">
             <span className="text-sm text-gray-600">
