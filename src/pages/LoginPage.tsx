@@ -101,8 +101,15 @@ const LoginPage: React.FC = () => {
           errorMessage = 'Bitte bestätige zuerst deine E-Mail-Adresse';
         } else if (error.message.includes('Too many requests')) {
           errorMessage = 'Zu viele Versuche. Bitte warte einen Moment';
-        } else if (error.message.includes('User already registered')) {
-          errorMessage = 'Diese E-Mail-Adresse ist bereits registriert';
+        } else if (error.message.includes('User already registered') || 
+                   error.message.includes('duplicate key value violates unique constraint')) {
+          errorMessage = 'Diese E-Mail-Adresse ist bereits registriert. Bitte melde dich an oder verwende eine andere E-Mail-Adresse.';
+        } else if (error.message.includes('Profile creation failed')) {
+          errorMessage = 'Registrierung fehlgeschlagen. Bitte versuche es erneut oder kontaktiere den Support.';
+        } else if (error.message.includes('Password should be at least')) {
+          errorMessage = 'Das Passwort muss mindestens 6 Zeichen lang sein';
+        } else if (error.message.includes('Invalid email')) {
+          errorMessage = 'Bitte gib eine gültige E-Mail-Adresse ein';
         } else {
           errorMessage = error.message;
         }
