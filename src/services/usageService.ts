@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabase';
 
 export interface UsageStats {
   dailyUsage: number;
-  subscriptionType: 'free' | 'pro';
+  subscriptionType: 'free' | 'pro' | 'admin';
   canAnswerMore: boolean;
   remainingQuestions: number;
 }

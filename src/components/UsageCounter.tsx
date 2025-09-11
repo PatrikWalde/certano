@@ -47,7 +47,6 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
 
   const isFreeUser = usageStats.subscriptionType === 'free';
   const isAdminUser = usageStats.subscriptionType === 'admin';
-  const isProUser = usageStats.subscriptionType === 'pro';
   const isLimitReached = !usageStats.canAnswerMore;
 
   return (
