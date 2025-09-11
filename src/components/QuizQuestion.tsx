@@ -165,7 +165,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
         return; // Stop processing - don't count this answer
       }
       
-      console.log('🔥 FREEMIUM SYSTEM ACTIVE: Usage incremented to:', usageResult.newUsage, 'for user', currentUser.email);
+      console.log('Usage incremented to:', usageResult.newUsage, 'for user', currentUser.email);
     }
 
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);

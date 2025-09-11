@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const handleUserSession = async (session: Session) => {
-    console.log('🔥🔥🔥 NEW VERSION - Handling user session:', session.user.email);
+    console.log('Handling user session:', session.user.email);
     
     // Create user immediately to prevent login hanging
     const fallbackUser: User = {
@@ -92,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Set user immediately - no waiting for database
     setUser(fallbackUser);
     setIsLoading(false);
-    console.log('✅ User set immediately for quick login:', fallbackUser.email);
+    console.log('User set for login:', fallbackUser.email);
     
     // Load profile data in background (non-blocking)
     setTimeout(async () => {
