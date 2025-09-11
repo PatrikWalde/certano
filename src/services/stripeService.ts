@@ -96,32 +96,16 @@ class StripeService {
   }
 
   /**
-   * Redirect to Stripe checkout (simplified direct implementation)
+   * Redirect to Stripe checkout (using payment links)
    */
   async redirectToCheckout(priceId: string, userId: string): Promise<void> {
     try {
-      const stripe = await getStripe();
-      if (!stripe) {
-        throw new Error('Stripe ist nicht verfügbar');
-      }
-
-      // Direct checkout redirect - simplified for testing
-      const { error } = await stripe.redirectToCheckout({
-        lineItems: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        successUrl: `${window.location.origin}/dashboard?success=true`,
-        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
-      });
-
-      if (error) {
-        console.error('Stripe checkout error:', error);
-        throw new Error('Fehler beim Weiterleiten zur Zahlung');
-      }
+      // Use your payment link from Stripe dashboard
+      const paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+      
+      // Redirect to payment link
+      window.location.href = paymentLinkUrl;
+      
     } catch (error) {
       console.error('Error in redirectToCheckout:', error);
       throw error;
