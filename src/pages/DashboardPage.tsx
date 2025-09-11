@@ -235,6 +235,9 @@ const DashboardPage: React.FC = () => {
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
+              <div className="bg-red-500 text-white p-4 rounded mb-4 text-center">
+                🚨🚨🚨 TESTVERSION LÄDT RICHTIG! 🚨🚨🚨
+              </div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 🔥 NEUE VERSION - Willkommen zurück, {user?.firstName || user?.email?.split('@')[0] || 'Name'}!
               </h1>
