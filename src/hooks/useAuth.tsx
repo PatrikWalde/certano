@@ -166,24 +166,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('✅ Registration successful:', data.user.email);
         console.log('📝 Creating profile with data:', userData);
         
-        // Create user profile in database
-        const { data: profileData, error: profileError } = await supabase
+        // Check if profile already exists, then insert or update
+        const { data: existingProfile } = await supabase
           .from('user_profiles')
-          .insert({
-            auth_user_id: data.user.id,
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            city: userData.city,
-            evu: userData.evu || '',
-            role: 'user'
-          })
-          .select();
+          .select('auth_user_id')
+          .eq('auth_user_id', data.user.id)
+          .single();
 
-        if (profileError) {
-          console.error('❌ Error creating user profile:', profileError);
-          throw new Error(`Profile creation failed: ${profileError.message}`);
+        if (existingProfile) {
+          // Profile exists, update it
+          console.log('🔄 Profile exists, updating...');
+          const { data: profileData, error: profileError } = await supabase
+            .from('user_profiles')
+            .update({
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              city: userData.city,
+              evu: userData.evu || '',
+              role: 'user'
+            })
+            .eq('auth_user_id', data.user.id)
+            .select();
+
+          if (profileError) {
+            console.error('❌ Error updating user profile:', profileError);
+            throw new Error(`Profile update failed: ${profileError.message}`);
+          } else {
+            console.log('✅ User profile updated successfully:', profileData);
+          }
         } else {
-          console.log('✅ User profile created successfully:', profileData);
+          // Profile doesn't exist, create it
+          console.log('🆕 Creating new profile...');
+          const { data: profileData, error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              auth_user_id: data.user.id,
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              city: userData.city,
+              evu: userData.evu || '',
+              role: 'user'
+            })
+            .select();
+
+          if (profileError) {
+            console.error('❌ Error creating user profile:', profileError);
+            throw new Error(`Profile creation failed: ${profileError.message}`);
+          } else {
+            console.log('✅ User profile created successfully:', profileData);
+          }
         }
       } else {
         console.warn('⚠️ No userData provided or no user created');
