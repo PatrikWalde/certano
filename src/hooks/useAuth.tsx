@@ -69,30 +69,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const handleUserSession = async (session: Session) => {
     console.log('Handling user session:', session.user.email);
     
-    // Create user immediately - no database calls
-    const user: User = {
-      id: session.user.id,
-      email: session.user.email || '',
-      firstName: '',
-      lastName: '',
-      city: '',
-      evu: '',
-      role: session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
-      level: 1,
-      xp: 0,
-      streak: 0,
-      privacySettings: {
-        showOnLeaderboard: true,
-        allowAnalytics: true,
-      },
-      createdAt: session.user.created_at,
-      updatedAt: session.user.created_at,
-    };
-    
-    // Set user and stop loading immediately
-    setUser(user);
-    setIsLoading(false);
-    console.log('User set immediately:', user);
+    try {
+      // Load user profile from database
+      const { data: userProfile, error } = await supabase
+        .from('user_profiles')
+        .select('first_name, last_name, city, evu, role')
+        .eq('auth_user_id', session.user.id)
+        .single();
+
+      if (error) {
+        console.log('No user profile found or error loading:', error);
+      }
+
+      // Create user object with database data or defaults
+      const user: User = {
+        id: session.user.id,
+        email: session.user.email || '',
+        firstName: userProfile?.first_name || '',
+        lastName: userProfile?.last_name || '',
+        city: userProfile?.city || '',
+        evu: userProfile?.evu || '',
+        role: userProfile?.role || (session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user'),
+        level: 1,
+        xp: 0,
+        streak: 0,
+        privacySettings: {
+          showOnLeaderboard: true,
+          allowAnalytics: true,
+        },
+        createdAt: session.user.created_at,
+        updatedAt: session.user.created_at,
+      };
+      
+      // Set user and stop loading
+      setUser(user);
+      setIsLoading(false);
+      console.log('User set with profile data:', user);
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      
+      // Fallback: Create user without profile data
+      const user: User = {
+        id: session.user.id,
+        email: session.user.email || '',
+        firstName: '',
+        lastName: '',
+        city: '',
+        evu: '',
+        role: session.user.email === 'pw@patrikwalde.com' ? 'admin' : 'user',
+        level: 1,
+        xp: 0,
+        streak: 0,
+        privacySettings: {
+          showOnLeaderboard: true,
+          allowAnalytics: true,
+        },
+        createdAt: session.user.created_at,
+        updatedAt: session.user.created_at,
+      };
+      
+      setUser(user);
+      setIsLoading(false);
+    }
   };
 
   const login = async (email: string, password: string) => {
