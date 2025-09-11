@@ -40,18 +40,18 @@ const UpgradePage: React.FC = () => {
     },
     {
       icon: '📊',
-      title: 'Erweiterte Statistiken',
+      title: 'Erweiterte Lernstatistiken',
       description: 'Detaillierte Analysen deines Lernfortschritts und Schwachstellen'
     },
     {
       icon: '🎯',
-      title: 'Intelligente Wiederholung',
-      description: 'KI-basierte Spaced Repetition für optimales Lernen'
+      title: 'Vollzugriff auf Quiz-Features',
+      description: 'Alle verfügbaren Quiz-Funktionen ohne Einschränkungen'
     },
     {
       icon: '⚡',
       title: 'Prioritäts-Support',
-      description: 'Schnelle Hilfe bei Fragen und Problemen'
+      description: 'Schnelle Hilfe bei Fragen und Problemen per E-Mail'
     },
     {
       icon: '🔮',

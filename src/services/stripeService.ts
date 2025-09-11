@@ -31,10 +31,10 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     interval: 'month',
     features: [
       'Unbegrenzte Fragen pro Tag',
-      'Erweiterte Statistiken',
-      'Prioritätssupport',
-      'Alle Kapitel freigeschaltet',
-      'Export-Funktionen'
+      'Keine täglichen Limits',
+      'Vollzugriff auf alle Quiz-Features',
+      'Erweiterte Lernstatistiken',
+      'Prioritätssupport per E-Mail'
     ],
     stripePriceId: (import.meta as any).env.VITE_STRIPE_PRICE_ID_PRO || 'price_pro_monthly',
     popular: true
@@ -48,10 +48,10 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     interval: 'year',
     features: [
       'Unbegrenzte Fragen pro Tag',
-      'Erweiterte Statistiken',
-      'Prioritätssupport',
-      'Alle Kapitel freigeschaltet',
-      'Export-Funktionen',
+      'Keine täglichen Limits',
+      'Vollzugriff auf alle Quiz-Features',
+      'Erweiterte Lernstatistiken',
+      'Prioritätssupport per E-Mail',
       '2 Monate gratis (17% Ersparnis)'
     ],
     stripePriceId: 'price_pro_yearly'
