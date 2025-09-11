@@ -15,6 +15,7 @@ import ChaptersPage from './pages/ChaptersPage';
 import ErrorReviewPage from './pages/ErrorReviewPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import UpgradePage from './pages/UpgradePage';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
 // Components
 import Layout from './components/Layout';
@@ -46,6 +47,7 @@ function App() {
               {/* Public Routes */}
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
               
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>

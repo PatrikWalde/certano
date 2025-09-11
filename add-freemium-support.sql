@@ -36,6 +36,7 @@ RETURNS INTEGER AS $$
 DECLARE
     current_usage INTEGER;
     user_subscription VARCHAR(20);
+    last_usage_date DATE;
 BEGIN
     -- Get current usage and subscription type
     SELECT daily_usage, subscription_type, last_usage_date
