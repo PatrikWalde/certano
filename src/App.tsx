@@ -16,6 +16,7 @@ import ErrorReviewPage from './pages/ErrorReviewPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import UpgradePage from './pages/UpgradePage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 // Components
 import Layout from './components/Layout';
@@ -48,6 +49,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/auth/confirm" element={<EmailConfirmationPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
               
               {/* Protected Routes */}
               <Route path="/" element={<Layout />}>
