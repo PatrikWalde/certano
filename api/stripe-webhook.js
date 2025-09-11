@@ -73,20 +73,27 @@ async function findUserByEmailOrCustomerId(customerEmail, customerId) {
     return user;
   }
 
-  // If not found, try to find by similar email patterns
-  // This handles cases like user@personal.com vs user@business.com
-  const emailDomain = customerEmail.split('@')[0];
-  console.log('Trying to find user by email prefix:', emailDomain);
-  
-  const { data: similarUsers, error: similarError } = await supabase
-    .from('auth.users')
-    .select('id, email')
-    .ilike('email', `${emailDomain}@%`);
+  // If not found by exact email, try to find by email alias (secure way)
+  console.log('Trying to find user by email alias:', customerEmail);
+  const { data: aliasUser, error: aliasError } = await supabase
+    .from('user_email_aliases')
+    .select('auth_user_id, alias_email')
+    .eq('alias_email', customerEmail)
+    .eq('is_verified', true)
+    .single();
 
-  if (similarUsers && similarUsers.length > 0) {
-    console.log('Found similar users:', similarUsers.map(u => u.email));
-    // Return the first match (you could add more logic here)
-    return similarUsers[0];
+  if (aliasUser && !aliasError) {
+    // Get the full user data
+    const { data: fullUser, error: fullUserError } = await supabase
+      .from('auth.users')
+      .select('id, email')
+      .eq('id', aliasUser.auth_user_id)
+      .single();
+
+    if (fullUser && !fullUserError) {
+      console.log('Found user by verified email alias:', fullUser.email, 'for alias:', aliasUser.alias_email);
+      return fullUser;
+    }
   }
 
   // If still not found, try to find by customer ID in user_profiles
