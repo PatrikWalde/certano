@@ -59,36 +59,11 @@ class StripeService {
   /**
    * Create a Stripe checkout session (temporary direct implementation)
    */
-  async createCheckoutSession(priceId: string, userId: string): Promise<StripeCheckoutSession> {
+  async createCheckoutSession(_priceId: string, _userId: string): Promise<StripeCheckoutSession> {
     try {
-      // Temporary: Create checkout session directly with Stripe
-      // In production, this should be done via Supabase Edge Functions
-      const stripe = await getStripe();
-      if (!stripe) {
-        throw new Error('Stripe ist nicht verfügbar');
-      }
-
-      // For now, we'll create a simple checkout session
-      // This is a simplified version - in production you'd want server-side validation
-      const { error, session } = await stripe.redirectToCheckout({
-        lineItems: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        successUrl: `${window.location.origin}/dashboard?success=true`,
-        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
-        customerEmail: user?.email, // We'll get this from the auth context
-      });
-
-      if (error) {
-        console.error('Stripe checkout error:', error);
-        throw new Error('Fehler beim Erstellen der Checkout-Session');
-      }
-
-      return { id: session?.id || '', url: '' };
+      // This method is not used in the current implementation
+      // We use direct payment links instead
+      throw new Error('This method is not implemented - use redirectToCheckout instead');
     } catch (error) {
       console.error('Error in createCheckoutSession:', error);
       throw error;
@@ -98,7 +73,7 @@ class StripeService {
   /**
    * Redirect to Stripe checkout (using payment links)
    */
-  async redirectToCheckout(priceId: string, userId: string): Promise<void> {
+  async redirectToCheckout(_priceId: string, _userId: string): Promise<void> {
     try {
       // Use your payment link from Stripe dashboard
       const paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
