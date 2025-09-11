@@ -115,7 +115,7 @@ const UpgradePage: React.FC = () => {
                   <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{plan.name}</h3>
                     <div className="flex items-baseline justify-center">
-                      <span className="text-5xl font-bold text-gray-900 dark:text-white">{plan.price} {plan.currency}</span>
+                      <span className="text-5xl font-bold text-gray-900 dark:text-white">{plan.price.toFixed(2)} {plan.currency}</span>
                       <span className="text-gray-600 dark:text-gray-300 ml-2">/{plan.interval === 'month' ? 'Monat' : 'Jahr'}</span>
                     </div>
                     <p className="text-gray-600 dark:text-gray-300 mt-2">Jederzeit kündbar</p>
@@ -154,7 +154,7 @@ const UpgradePage: React.FC = () => {
                         Wird geladen...
                       </div>
                     ) : (
-                      `Jetzt upgraden - ${plan.price} ${plan.currency}/${plan.interval === 'month' ? 'Monat' : 'Jahr'}`
+                      `Jetzt upgraden - ${plan.price.toFixed(2)} ${plan.currency}/${plan.interval === 'month' ? 'Monat' : 'Jahr'}`
                     )}
                   </button>
                   
