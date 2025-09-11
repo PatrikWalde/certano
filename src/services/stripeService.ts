@@ -78,15 +78,19 @@ class StripeService {
    */
   async redirectToCheckout(priceId: string, _userId: string): Promise<void> {
     try {
+      console.log('StripeService: redirectToCheckout called with priceId:', priceId);
+      
       // Determine which payment link to use based on priceId
       let paymentLinkUrl: string;
       
-      if (priceId.includes('yearly') || priceId.includes('year')) {
+      if (priceId.includes('yearly') || priceId.includes('year') || priceId === 'price_pro_yearly') {
         // Yearly subscription - 99.00 CHF
         paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
+        console.log('StripeService: Using YEARLY payment link');
       } else {
         // Monthly subscription - 9.90 CHF (default)
         paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+        console.log('StripeService: Using MONTHLY payment link');
       }
       
       // Redirect to payment link
