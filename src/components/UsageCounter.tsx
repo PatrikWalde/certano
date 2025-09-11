@@ -28,7 +28,9 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
     
     try {
       setLoading(true);
+      console.log('UsageCounter: Loading usage stats for user:', user.id);
       const stats = await usageService.getUsageStats(user.id);
+      console.log('UsageCounter: Usage stats loaded:', stats);
       setUsageStats(stats);
     } catch (error) {
       console.error('Error loading usage stats:', error);
