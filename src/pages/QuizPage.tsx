@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useSupabase } from '../hooks/useSupabase';
 import { useOfflineStorage } from '../hooks/useOfflineStorage';
 import { Question } from '../types';
@@ -29,7 +29,6 @@ const QuizPage: React.FC = () => {
   const { trackQuestionError } = useQuizStatsStore();
   const { user } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Array<{
@@ -50,14 +49,12 @@ const QuizPage: React.FC = () => {
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [quizConfig, setQuizConfig] = useState<QuizConfigData | null>(null);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
-  const [canStartQuiz, setCanStartQuiz] = useState(true);
 
   // Check if user can start quiz
   useEffect(() => {
     const checkQuizPermission = async () => {
       if (user?.id && !isReviewMode) {
         const permission = await usageService.canStartQuiz(user.id);
-        setCanStartQuiz(permission.canStart);
         if (!permission.canStart) {
           setShowUpgradePrompt(true);
         }

@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 
 const UpgradePage: React.FC = () => {
-  const { user } = useAuth();
 
   const features = [
     {
