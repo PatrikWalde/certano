@@ -7,8 +7,8 @@ let stripePromise: Promise<Stripe | null>;
 
 const getStripe = () => {
   if (!stripePromise) {
-    // Use test key for now
-    const publishableKey = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_51QZ8Xj2eZvKYlo2C0QZ8Xj2e';
+    // Force test key for now
+    const publishableKey = 'pk_test_51QZ8Xj2eZvKYlo2C0QZ8Xj2e';
     if (!publishableKey) {
       console.warn('Stripe publishable key not found. Stripe features will be disabled.');
       return Promise.resolve(null);
