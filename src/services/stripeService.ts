@@ -74,7 +74,7 @@ class StripeService {
   }
 
   /**
-   * Redirect to Stripe checkout (using checkout sessions with User ID)
+   * Redirect to Stripe checkout (using direct checkout with User ID in customerEmail)
    */
   async redirectToCheckout(priceId: string, userId: string): Promise<void> {
     try {
@@ -83,31 +83,20 @@ class StripeService {
         throw new Error('Stripe not initialized');
       }
 
-      console.log('Creating checkout session with User ID:', { priceId, userId });
+      console.log('Creating direct checkout with User ID:', { priceId, userId });
 
-      // Create checkout session with User ID
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId,
-          userId,
-          successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
-        }),
-      });
-
-      const session = await response.json();
-      
-      if (session.error) {
-        throw new Error(session.error);
-      }
-
-      // Redirect to Stripe Checkout
+      // Create checkout session directly with Stripe (client-side)
       const { error } = await stripe.redirectToCheckout({
-        sessionId: session.sessionId,
+        lineItems: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}&user_id=${userId}`,
+        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
+        customerEmail: userId, // Use userId as customerEmail for now
       });
 
       if (error) {
