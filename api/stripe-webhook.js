@@ -155,9 +155,18 @@ async function handleCheckoutSessionCompleted(session) {
     }
   }
   
-  // Method 2: Try to find user by customer email
+  // Method 2: Try to find user by customer email (exact match only)
   if (!user && customerEmail) {
-    user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+    const { data: userData, error: userError } = await supabase
+      .from('auth.users')
+      .select('id, email')
+      .eq('email', customerEmail)
+      .single();
+    
+    if (userData && !userError) {
+      user = userData;
+      console.log('Found user by exact email match:', user.email);
+    }
   }
   
   // Method 3: Fallback: find user by Stripe Customer ID
