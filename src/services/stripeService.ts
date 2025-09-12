@@ -74,42 +74,43 @@ class StripeService {
   }
 
   /**
-   * Redirect to Stripe checkout (using payment links)
+   * Redirect to Stripe checkout (using checkout sessions with Customer ID)
    */
-  async redirectToCheckout(priceId: string, _userId: string): Promise<void> {
+  async redirectToCheckout(priceId: string, userId: string): Promise<void> {
     try {
-      // Determine which payment link to use based on priceId
-      let paymentLinkUrl: string;
-      
-      // Check if we're in test mode or live mode
-      const isTestMode = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY?.includes('test');
-      
-      if (priceId.includes('yearly') || priceId.includes('year') || priceId === 'price_pro_yearly') {
-        // Yearly subscription - 99.00 CHF
-        if (isTestMode) {
-          paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
-        } else {
-          // Live mode - replace with your live yearly payment link
-          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_YEARLY;
-          if (!paymentLinkUrl || paymentLinkUrl.includes('_link_here')) {
-            throw new Error('Live yearly payment link not configured. Please create a yearly payment link in Stripe dashboard.');
-          }
-        }
-      } else {
-        // Monthly subscription - 9.90 CHF (default)
-        if (isTestMode) {
-          paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
-        } else {
-          // Live mode - replace with your live monthly payment link
-          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_MONTHLY;
-          if (!paymentLinkUrl || paymentLinkUrl.includes('_link_here')) {
-            throw new Error('Live monthly payment link not configured. Please create a monthly payment link in Stripe dashboard.');
-          }
-        }
+      const stripe = await getStripe();
+      if (!stripe) {
+        throw new Error('Stripe not initialized');
       }
+
+      // Create checkout session with customer ID
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId,
+          userId,
+          successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
+        }),
+      });
+
+      const session = await response.json();
       
-      // Redirect to payment link
-      window.location.href = paymentLinkUrl;
+      if (session.error) {
+        throw new Error(session.error);
+      }
+
+      // Redirect to Stripe Checkout
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: session.sessionId,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
       
     } catch (error) {
       console.error('Error in redirectToCheckout:', error);

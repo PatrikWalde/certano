@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { stripeService, SUBSCRIPTION_PLANS } from '../services/stripeService';
 
 const UpgradePage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshSubscriptionStatus } = useAuth();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Handle return from Stripe
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    const sessionId = searchParams.get('session_id');
+
+    if (success && sessionId) {
+      setSuccessMessage('🎉 Zahlung erfolgreich! Dein Pro-Abonnement ist jetzt aktiv.');
+      // Refresh subscription status
+      if (refreshSubscriptionStatus) {
+        refreshSubscriptionStatus();
+      }
+    } else if (canceled) {
+      setError('Zahlung abgebrochen. Du kannst jederzeit erneut versuchen.');
+    }
+  }, [searchParams, refreshSubscriptionStatus]);
 
   const handleUpgrade = async (planId: string) => {
     if (!user?.id) {
@@ -80,6 +99,24 @@ const UpgradePage: React.FC = () => {
             Entfessle dein volles Lernpotenzial mit unbegrenzten Fragen, erweiterten Statistiken und exklusiven Features.
           </p>
         </div>
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="max-w-md mx-auto mb-8">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-green-700 dark:text-green-300">{successMessage}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (

@@ -127,19 +127,55 @@ async function findUserByEmailOrCustomerId(customerEmail, customerId) {
 async function handleCheckoutSessionCompleted(session) {
   console.log('Processing checkout session completed:', session.id);
   
-  const customerEmail = session.customer_details?.email;
   const customerId = session.customer;
+  const userId = session.metadata?.user_id;
   
-  if (!customerEmail) {
-    console.error('No customer email found in session');
+  if (!customerId) {
+    console.error('No customer ID found in session');
     return;
   }
 
-  // Enhanced user search
-  const user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  // Find user by Customer ID (preferred) or user_id from metadata
+  let user = null;
+  
+  if (userId) {
+    // Try to find user by metadata user_id first
+    const { data: userData, error: userError } = await supabase
+      .from('auth.users')
+      .select('id, email')
+      .eq('id', userId)
+      .single();
+    
+    if (userData && !userError) {
+      user = userData;
+      console.log('Found user by metadata user_id:', user.email);
+    }
+  }
   
   if (!user) {
-    console.error('User not found for email:', customerEmail, 'or customer ID:', customerId);
+    // Fallback: find user by Stripe Customer ID
+    const { data: profileUser, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('auth_user_id, stripe_customer_id')
+      .eq('stripe_customer_id', customerId)
+      .single();
+
+    if (profileUser && !profileError) {
+      const { data: fullUser, error: fullUserError } = await supabase
+        .from('auth.users')
+        .select('id, email')
+        .eq('id', profileUser.auth_user_id)
+        .single();
+
+      if (fullUser && !fullUserError) {
+        user = fullUser;
+        console.log('Found user by Stripe Customer ID:', user.email);
+      }
+    }
+  }
+  
+  if (!user) {
+    console.error('User not found for customer ID:', customerId);
     return;
   }
 
