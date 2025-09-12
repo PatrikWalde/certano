@@ -97,9 +97,6 @@ class StripeService {
         successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
         customerEmail: userId, // Use userId as fallback
-        metadata: {
-          user_id: userId,
-        },
       });
 
       if (error) {
