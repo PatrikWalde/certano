@@ -15,7 +15,7 @@ const AdminPage: React.FC = () => {
     deleteTopic, 
     reorderTopics,
     getChapters, 
-    // createChapter, 
+    createChapter, 
     updateChapter, 
     deleteChapter, 
     reorderChapters,
@@ -370,17 +370,17 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
-  //   try {
-  //     // This is a new chapter
-  //     const newChapter = await createChapter(chapterData);
-  //     if (newChapter) {
-  //       setChapters(prev => [...prev, newChapter]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving chapter:', error);
-  //   }
-  // };
+  const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      // This is a new chapter
+      const newChapter = await createChapter(chapterData);
+      if (newChapter) {
+        setChapters(prev => [...prev, newChapter]);
+      }
+    } catch (error) {
+      console.error('Error saving chapter:', error);
+    }
+  };
 
   const handleUpdateChapter = async (chapter: ChapterData) => {
     try {
@@ -1005,6 +1005,7 @@ const AdminPage: React.FC = () => {
               chapters={chapters}
               topics={topics}
               onEdit={handleUpdateChapter}
+              onSave={handleSaveChapter}
               onDelete={handleDeleteChapter}
               onReorder={handleReorderChapters}
             />
