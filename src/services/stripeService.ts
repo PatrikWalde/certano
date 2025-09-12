@@ -36,7 +36,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       'Erweiterte Lernstatistiken',
       'Prioritätssupport per E-Mail'
     ],
-    stripePriceId: (import.meta as any).env.VITE_STRIPE_PRICE_ID_PRO || 'price_1234567890', // TODO: Replace with real Price ID
+    stripePriceId: (import.meta as any).env.VITE_STRIPE_PRICE_ID_PRO || 'price_1S69AqDWHue2lSGxN5vo5Jit',
     popular: true
   },
   {
@@ -54,7 +54,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
       'Prioritätssupport per E-Mail',
       '2 Monate gratis (17% Ersparnis)'
     ],
-    stripePriceId: 'price_0987654321' // TODO: Replace with real Price ID
+    stripePriceId: 'price_1S69BADWHue2lSGxeWmOtL5u'
   }
 ];
 
