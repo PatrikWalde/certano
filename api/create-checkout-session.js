@@ -16,18 +16,25 @@ export default async function handler(req, res) {
   try {
     const { priceId, userId, successUrl, cancelUrl } = req.body;
 
+    console.log('Create checkout session request:', { priceId, userId, successUrl, cancelUrl });
+
     if (!priceId || !userId) {
+      console.error('Missing required parameters:', { priceId, userId });
       return res.status(400).json({ error: 'Missing required parameters' });
     }
 
     // Get user data from Supabase
+    console.log('Looking for user with ID:', userId);
     const { data: user, error: userError } = await supabase
       .from('auth.users')
       .select('id, email')
       .eq('id', userId)
       .single();
 
+    console.log('User query result:', { user, userError });
+
     if (userError || !user) {
+      console.error('User not found:', { userId, userError });
       return res.status(404).json({ error: 'User not found' });
     }
 
