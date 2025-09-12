@@ -74,34 +74,48 @@ class StripeService {
   }
 
   /**
-   * Redirect to Stripe checkout (using direct checkout with User ID in customerEmail)
+   * Redirect to Stripe checkout (using payment links with User ID in success URL)
    */
   async redirectToCheckout(priceId: string, userId: string): Promise<void> {
     try {
-      const stripe = await getStripe();
-      if (!stripe) {
-        throw new Error('Stripe not initialized');
+      console.log('Using payment links with User ID in success URL:', { priceId, userId });
+      
+      // Determine which payment link to use based on priceId
+      let paymentLinkUrl: string;
+      
+      // Check if we're in test mode or live mode
+      const isTestMode = (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY?.includes('test');
+      
+      if (priceId.includes('yearly') || priceId.includes('year') || priceId === 'price_1S69BADWHue2lSGxeWmOtL5u') {
+        // Yearly subscription - 99.00 CHF
+        if (isTestMode) {
+          paymentLinkUrl = 'https://buy.stripe.com/test_14A14ne0TguufyT4KTeIw01';
+        } else {
+          // Live mode - replace with your live yearly payment link
+          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_YEARLY;
+          if (!paymentLinkUrl || paymentLinkUrl.includes('_link_here')) {
+            throw new Error('Live yearly payment link not configured. Please create a yearly payment link in Stripe dashboard.');
+          }
+        }
+      } else {
+        // Monthly subscription - 9.90 CHF (default)
+        if (isTestMode) {
+          paymentLinkUrl = 'https://buy.stripe.com/test_7sYaEX1e77XYdqLdhpeIw00';
+        } else {
+          // Live mode - replace with your live monthly payment link
+          paymentLinkUrl = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK_MONTHLY;
+          if (!paymentLinkUrl || paymentLinkUrl.includes('_link_here')) {
+            throw new Error('Live monthly payment link not configured. Please create a monthly payment link in Stripe dashboard.');
+          }
+        }
       }
-
-      console.log('Creating direct checkout with User ID:', { priceId, userId });
-
-      // Create checkout session directly with Stripe (client-side)
-      const { error } = await stripe.redirectToCheckout({
-        lineItems: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        mode: 'subscription',
-        successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}&user_id=${userId}`,
-        cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
-        // Remove customerEmail - let user enter their own email
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
+      
+      // Add user_id to the success URL
+      const successUrl = `${window.location.origin}/upgrade?success=true&user_id=${userId}`;
+      const urlWithParams = `${paymentLinkUrl}?prefilled_email=${encodeURIComponent('walde5077@gmail.com')}&success_url=${encodeURIComponent(successUrl)}`;
+      
+      // Redirect to payment link
+      window.location.href = urlWithParams;
       
     } catch (error) {
       console.error('Error in redirectToCheckout:', error);
