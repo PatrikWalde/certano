@@ -24,6 +24,7 @@ import { CSS } from '@dnd-kit/utilities';
 interface TopicTableProps {
   topics: Topic[];
   onEdit: (topic: Topic) => void;
+  onSave: (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onDelete: (topicId: string) => void;
   onReorder: (topics: Topic[]) => void;
 }
@@ -120,7 +121,7 @@ const SortableTopicRow: React.FC<SortableTopicRowProps> = ({
   );
 };
 
-const TopicTable: React.FC<TopicTableProps> = ({ topics, onEdit, onDelete, onReorder }) => {
+const TopicTable: React.FC<TopicTableProps> = ({ topics, onEdit, onSave, onDelete, onReorder }) => {
   const [editingTopic, setEditingTopic] = useState<Topic | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -157,14 +158,8 @@ const TopicTable: React.FC<TopicTableProps> = ({ topics, onEdit, onDelete, onReo
       onEdit(updatedTopic);
       setEditingTopic(null);
     } else {
-      // Create new topic
-      const newTopic: Topic = {
-        id: `temp-${Date.now()}`, // Temporary ID for new topics
-        ...topicData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      onEdit(newTopic);
+      // Create new topic - call onSave instead of onEdit
+      onSave(topicData);
       setShowAddForm(false);
     }
   };

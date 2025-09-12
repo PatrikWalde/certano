@@ -10,7 +10,7 @@ const AdminPage: React.FC = () => {
   const { isAdmin, loading } = useAuth();
   const { 
     getTopics, 
-    // createTopic, 
+    createTopic, 
     updateTopic, 
     deleteTopic, 
     reorderTopics,
@@ -311,17 +311,17 @@ const AdminPage: React.FC = () => {
   };
 
 
-  // const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
-  //   try {
-  //     // This is a new topic
-  //     const newTopic = await createTopic(topicData);
-  //     if (newTopic) {
-  //       setTopics(prev => [...prev, newTopic]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving topic:', error);
-  //   }
-  // };
+  const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      // This is a new topic
+      const newTopic = await createTopic(topicData);
+      if (newTopic) {
+        setTopics(prev => [...prev, newTopic]);
+      }
+    } catch (error) {
+      console.error('Error saving topic:', error);
+    }
+  };
 
   const handleUpdateTopic = async (topic: Topic) => {
     try {
@@ -1015,6 +1015,7 @@ const AdminPage: React.FC = () => {
             <TopicTable
               topics={topics}
               onEdit={handleUpdateTopic}
+              onSave={handleSaveTopic}
               onDelete={handleDeleteTopic}
               onReorder={handleReorderTopics}
             />
