@@ -33,6 +33,9 @@ const UpgradePage: React.FC = () => {
       return;
     }
 
+    console.log('Upgrade attempt - User ID:', user.id);
+    console.log('Upgrade attempt - User object:', user);
+
     setIsLoading(true);
     setError(null);
 
@@ -42,6 +45,7 @@ const UpgradePage: React.FC = () => {
         throw new Error('Plan nicht gefunden');
       }
 
+      console.log('Calling redirectToCheckout with:', { priceId: plan.stripePriceId, userId: user.id });
       await stripeService.redirectToCheckout(plan.stripePriceId, user.id);
     } catch (error: any) {
       console.error('Upgrade error:', error);
