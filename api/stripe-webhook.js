@@ -128,20 +128,26 @@ async function handleCheckoutSessionCompleted(session) {
   console.log('Processing checkout session completed:', session.id);
   
   const customerId = session.customer;
-  const customerEmail = session.customer_details?.email;
-  const userId = session.metadata?.user_id;
+  const successUrl = session.success_url;
   
-  console.log('Session details:', { customerId, customerEmail, userId });
+  console.log('Session details:', { customerId, successUrl });
   
   if (!customerId) {
     console.error('No customer ID found in session');
     return;
   }
 
-  // Find user by multiple methods
+  // Extract User ID from success URL
+  let userId = null;
+  if (successUrl && successUrl.includes('user_id=')) {
+    const urlParams = new URLSearchParams(successUrl.split('?')[1]);
+    userId = urlParams.get('user_id');
+    console.log('Extracted User ID from success URL:', userId);
+  }
+
+  // Find user by User ID ONLY
   let user = null;
   
-  // Method 1: Try to find user by metadata user_id first (if available)
   if (userId) {
     const { data: userData, error: userError } = await supabase
       .from('auth.users')
@@ -151,38 +157,13 @@ async function handleCheckoutSessionCompleted(session) {
     
     if (userData && !userError) {
       user = userData;
-      console.log('Found user by metadata user_id:', user.email);
+      console.log('Found user by User ID:', user.id);
+    } else {
+      console.error('User not found for User ID:', userId, userError);
     }
+  } else {
+    console.error('No User ID found in success URL');
   }
-  
-  // Method 2: Try to find user by customer email (exact match only)
-  if (!user && customerEmail) {
-    const { data: userData, error: userError } = await supabase
-      .from('auth.users')
-      .select('id, email')
-      .eq('email', customerEmail)
-      .single();
-    
-    if (userData && !userError) {
-      user = userData;
-      console.log('Found user by exact email match:', user.email);
-    }
-  }
-  
-  // Method 3: Fallback: find user by Stripe Customer ID
-  if (!user) {
-    const { data: profileUser, error: profileError } = await supabase
-      .from('user_profiles')
-      .select('auth_user_id, stripe_customer_id')
-      .eq('stripe_customer_id', customerId)
-      .single();
-
-    if (profileUser && !profileError) {
-      const { data: fullUser, error: fullUserError } = await supabase
-        .from('auth.users')
-        .select('id, email')
-        .eq('id', profileUser.auth_user_id)
-        .single();
 
       if (fullUser && !fullUserError) {
         user = fullUser;
