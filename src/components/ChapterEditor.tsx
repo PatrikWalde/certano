@@ -24,6 +24,13 @@ interface ChapterEditorProps {
 }
 
 const ChapterEditor: React.FC<ChapterEditorProps> = ({ chapter, existingChapters = [], topics = [], onClose, onSave }) => {
+  // Calculate the next order number for new chapters
+  const getNextOrder = () => {
+    if (chapter?.order) return chapter.order; // Existing chapter
+    if (existingChapters.length === 0) return 1; // First chapter
+    return Math.max(...existingChapters.map(c => c.order)) + 1; // Next order
+  };
+
   const [formData, setFormData] = useState({
     name: chapter?.name || '',
     description: chapter?.description || '',
@@ -31,7 +38,7 @@ const ChapterEditor: React.FC<ChapterEditorProps> = ({ chapter, existingChapters
     icon: chapter?.icon || '📚',
     isActive: chapter?.isActive ?? true,
     topicId: chapter?.topicId || '',
-    order: chapter?.order || 999,
+    order: getNextOrder(),
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
