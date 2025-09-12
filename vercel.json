@@ -2,6 +2,9 @@
   "functions": {
     "api/stripe-webhook.js": {
       "maxDuration": 30
+    },
+    "api/create-checkout-session.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
