@@ -96,7 +96,7 @@ class StripeService {
         mode: 'subscription',
         successUrl: `${window.location.origin}/upgrade?success=true&session_id={CHECKOUT_SESSION_ID}&user_id=${userId}`,
         cancelUrl: `${window.location.origin}/upgrade?canceled=true`,
-        customerEmail: userId, // Use userId as customerEmail for now
+        // Remove customerEmail - let user enter their own email
       });
 
       if (error) {
