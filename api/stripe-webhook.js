@@ -128,18 +128,21 @@ async function handleCheckoutSessionCompleted(session) {
   console.log('Processing checkout session completed:', session.id);
   
   const customerId = session.customer;
+  const customerEmail = session.customer_details?.email;
   const userId = session.metadata?.user_id;
+  
+  console.log('Session details:', { customerId, customerEmail, userId });
   
   if (!customerId) {
     console.error('No customer ID found in session');
     return;
   }
 
-  // Find user by Customer ID (preferred) or user_id from metadata
+  // Find user by multiple methods
   let user = null;
   
+  // Method 1: Try to find user by metadata user_id first (if available)
   if (userId) {
-    // Try to find user by metadata user_id first
     const { data: userData, error: userError } = await supabase
       .from('auth.users')
       .select('id, email')
@@ -152,8 +155,13 @@ async function handleCheckoutSessionCompleted(session) {
     }
   }
   
+  // Method 2: Try to find user by customer email
+  if (!user && customerEmail) {
+    user = await findUserByEmailOrCustomerId(customerEmail, customerId);
+  }
+  
+  // Method 3: Fallback: find user by Stripe Customer ID
   if (!user) {
-    // Fallback: find user by Stripe Customer ID
     const { data: profileUser, error: profileError } = await supabase
       .from('user_profiles')
       .select('auth_user_id, stripe_customer_id')
