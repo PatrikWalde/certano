@@ -110,12 +110,8 @@ class StripeService {
         }
       }
       
-      // Add user_id to the success URL
-      const successUrl = `${window.location.origin}/upgrade?success=true&user_id=${userId}`;
-      const urlWithParams = `${paymentLinkUrl}?prefilled_email=${encodeURIComponent('walde5077@gmail.com')}&success_url=${encodeURIComponent(successUrl)}`;
-      
-      // Redirect to payment link
-      window.location.href = urlWithParams;
+      // Redirect to payment link (User ID will be handled by webhook)
+      window.location.href = paymentLinkUrl;
       
     } catch (error) {
       console.error('Error in redirectToCheckout:', error);
