@@ -98,7 +98,7 @@ const SimpleRichTextEditor: React.FC<SimpleRichTextEditorProps> = ({
     }
   };
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+  const handleInput = () => {
     // Update value immediately for better responsiveness
     if (editorRef.current) {
       const html = editorRef.current.innerHTML;
