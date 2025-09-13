@@ -85,7 +85,23 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
         imageUploadToS3: false,
         events: {
           'image.beforeUpload': function (images: any) {
-            // Custom image upload handler
+            // Custom image upload handler - upload to Supabase
+            if (images && images.length > 0) {
+              const file = images[0];
+              handleImageUpload(file).then(imageUrl => {
+                // Insert the image with the Supabase URL
+                if (froalaInstance.current) {
+                  froalaInstance.current.image.insert(imageUrl, {
+                    width: 300,
+                    height: 200,
+                    alt: 'Uploaded image'
+                  });
+                }
+              }).catch(error => {
+                console.error('Error uploading image:', error);
+                alert('Fehler beim Hochladen des Bildes');
+              });
+            }
             return false; // Prevent default upload
           },
           'image.inserted': function (img: any) {
