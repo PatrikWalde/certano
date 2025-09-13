@@ -41,22 +41,15 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
         }
       },
-      imageUpload: false,
-      imageUploadURL: false,
-      imageUploadMethod: 'POST',
-      imageUploadToS3: false,
       events: {
-        'image.beforeUpload': function (images: any) {
+        'image.beforeUpload': function (files: any) {
           // Custom image upload handler - upload to Supabase
-          if (images && images.length > 0) {
-            const file = images[0];
+          const editor = this;
+          if (files && files.length > 0) {
+            const file = files[0];
             handleImageUpload(file).then(imageUrl => {
               // Insert the image with the Supabase URL
-              (this as any).image.insert(imageUrl, {
-                width: 300,
-                height: 200,
-                alt: 'Uploaded image'
-              });
+              editor.image.insert(imageUrl, null, null, editor.image.get());
             }).catch(error => {
               console.error('Error uploading image:', error);
               alert('Fehler beim Hochladen des Bildes');
