@@ -440,9 +440,9 @@ export const useSupabase = (): UseSupabaseReturn => {
         tags: question.tags || [],
         media: question.media || '',
         isOpenQuestion: question.is_open_question || false,
-        options: question.options || [],
-        matchingPairs: question.matching_pairs || [],
-        fillBlankOptions: question.fill_blank_options || [],
+        options: typeof question.options === 'string' ? JSON.parse(question.options) : (question.options || []),
+        matchingPairs: typeof question.matching_pairs === 'string' ? JSON.parse(question.matching_pairs) : (question.matching_pairs || []),
+        fillBlankOptions: typeof question.fill_blank_options === 'string' ? JSON.parse(question.fill_blank_options) : (question.fill_blank_options || []),
         blankCount: question.blank_count || 0,
         createdAt: question.created_at,
         updatedAt: question.updated_at
@@ -501,9 +501,9 @@ export const useSupabase = (): UseSupabaseReturn => {
         tags: newQuestion.tags || [],
         media: newQuestion.media?.url || '',
         isOpenQuestion: newQuestion.is_open_question || false,
-        options: newQuestion.options || [],
-        matchingPairs: newQuestion.matching_pairs || [],
-        fillBlankOptions: newQuestion.fill_blank_options || [],
+        options: typeof newQuestion.options === 'string' ? JSON.parse(newQuestion.options) : (newQuestion.options || []),
+        matchingPairs: typeof newQuestion.matching_pairs === 'string' ? JSON.parse(newQuestion.matching_pairs) : (newQuestion.matching_pairs || []),
+        fillBlankOptions: typeof newQuestion.fill_blank_options === 'string' ? JSON.parse(newQuestion.fill_blank_options) : (newQuestion.fill_blank_options || []),
         blankCount: newQuestion.blank_count || 0,
         createdAt: newQuestion.created_at,
         updatedAt: newQuestion.updated_at
@@ -526,9 +526,9 @@ export const useSupabase = (): UseSupabaseReturn => {
       if (questionData.type !== undefined) updateData.type = questionData.type;
       if (questionData.chapter !== undefined) updateData.chapter = questionData.chapter;
       // if (questionData.difficulty !== undefined) updateData.difficulty = questionData.difficulty; // Removed - difficulty column no longer exists
-      if (questionData.options !== undefined) updateData.options = questionData.options;
-      if (questionData.matchingPairs !== undefined) updateData.matching_pairs = questionData.matchingPairs;
-      if (questionData.fillBlankOptions !== undefined) updateData.fill_blank_options = questionData.fillBlankOptions;
+      if (questionData.options !== undefined) updateData.options = JSON.stringify(questionData.options);
+      if (questionData.matchingPairs !== undefined) updateData.matching_pairs = JSON.stringify(questionData.matchingPairs);
+      if (questionData.fillBlankOptions !== undefined) updateData.fill_blank_options = JSON.stringify(questionData.fillBlankOptions);
       if (questionData.blankCount !== undefined) updateData.blank_count = questionData.blankCount;
       if (questionData.explanation !== undefined) updateData.explanation = questionData.explanation;
       if (questionData.media !== undefined) updateData.media = questionData.media ? { url: questionData.media } : null;
@@ -553,9 +553,9 @@ export const useSupabase = (): UseSupabaseReturn => {
         tags: updatedQuestion.tags || [],
         media: updatedQuestion.media?.url || '',
         isOpenQuestion: updatedQuestion.is_open_question || false,
-        options: updatedQuestion.options || [],
-        matchingPairs: updatedQuestion.matching_pairs || [],
-        fillBlankOptions: updatedQuestion.fill_blank_options || [],
+        options: typeof updatedQuestion.options === 'string' ? JSON.parse(updatedQuestion.options) : (updatedQuestion.options || []),
+        matchingPairs: typeof updatedQuestion.matching_pairs === 'string' ? JSON.parse(updatedQuestion.matching_pairs) : (updatedQuestion.matching_pairs || []),
+        fillBlankOptions: typeof updatedQuestion.fill_blank_options === 'string' ? JSON.parse(updatedQuestion.fill_blank_options) : (updatedQuestion.fill_blank_options || []),
         blankCount: updatedQuestion.blank_count || 0,
         createdAt: updatedQuestion.created_at,
         updatedAt: updatedQuestion.updated_at

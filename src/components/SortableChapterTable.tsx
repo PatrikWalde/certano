@@ -25,6 +25,7 @@ interface SortableChapterTableProps {
   chapters: ChapterData[];
   topics?: Topic[];
   onEdit: (chapter: ChapterData) => void;
+  onSave: (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => void;
   onDelete: (chapterId: string) => void;
   onReorder: (chapters: ChapterData[]) => void;
 }
@@ -132,6 +133,7 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
   chapters, 
   topics = [], 
   onEdit, 
+  onSave,
   onDelete, 
   onReorder 
 }) => {
@@ -171,14 +173,8 @@ const SortableChapterTable: React.FC<SortableChapterTableProps> = ({
       onEdit(updatedChapter);
       setEditingChapter(null);
     } else {
-      // Create new chapter
-      const newChapter: ChapterData = {
-        id: `temp-${Date.now()}`, // Temporary ID for new chapters
-        ...chapterData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      onEdit(newChapter);
+      // Create new chapter - call onSave instead of onEdit
+      onSave(chapterData);
       setShowAddForm(false);
     }
   };

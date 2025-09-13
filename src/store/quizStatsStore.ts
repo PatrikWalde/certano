@@ -196,7 +196,7 @@ const useQuizStatsStore = create<QuizStatsStore>()(
               user_id: user.id,
               questions_answered: newAttempt.questionsAnswered,
               correct_answers: newAttempt.correctAnswers,
-              accuracy_rate: newAttempt.accuracyRate,
+              accuracy_rate: Math.round(newAttempt.accuracyRate), // Round to integer
               xp_earned: newAttempt.xpEarned,
               chapters: newAttempt.chapters,
               time_spent: Math.round(newAttempt.timeSpent)
@@ -207,7 +207,7 @@ const useQuizStatsStore = create<QuizStatsStore>()(
               user_id: user.id,
               questions_answered: newAttempt.questionsAnswered,
               correct_answers: newAttempt.correctAnswers,
-              accuracy_rate: newAttempt.accuracyRate,
+              accuracy_rate: Math.round(newAttempt.accuracyRate), // Round to integer
               xp_earned: newAttempt.xpEarned,
               chapters: newAttempt.chapters,
               time_spent: Math.round(newAttempt.timeSpent),

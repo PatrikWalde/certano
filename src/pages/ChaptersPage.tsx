@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuizStatsStore } from '../store/quizStatsStore';
 import { useSupabase } from '../hooks/useSupabase';
-import { Chapter } from '../store/chapterStore';
+import { ChapterData } from '../types';
 import { getChapterStats } from '../services/quizService';
 
 const ChaptersPage: React.FC = () => {
   const { setChapterStats } = useQuizStatsStore();
   const { getChapters } = useSupabase();
-  const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [chapterStatsData, setChapterStatsData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

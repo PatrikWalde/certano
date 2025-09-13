@@ -9,13 +9,20 @@ interface TopicEditorProps {
 }
 
 const TopicEditor: React.FC<TopicEditorProps> = ({ topic, existingTopics = [], onClose, onSave }) => {
+  // Calculate the next order number for new topics
+  const getNextOrder = () => {
+    if (topic?.orderIndex) return topic.orderIndex; // Existing topic
+    if (existingTopics.length === 0) return 1; // First topic
+    return Math.max(...existingTopics.map(t => t.orderIndex)) + 1; // Next order
+  };
+
   const [formData, setFormData] = useState({
     name: topic?.name || '',
     description: topic?.description || '',
     icon: topic?.icon || '📚',
     color: topic?.color || '#3b82f6',
     isActive: topic?.isActive ?? true,
-    orderIndex: topic?.orderIndex || 999,
+    orderIndex: getNextOrder(),
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});

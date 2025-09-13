@@ -9,10 +9,13 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   loading: boolean;
+  isProUser: boolean;
+  subscriptionStatus: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, userData?: { firstName: string; lastName: string; city: string; evu?: string }) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  refreshSubscriptionStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,6 +35,8 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProUser, setIsProUser] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<string | null>(null);
 
   useEffect(() => {
     // Check for existing session on app load
@@ -69,8 +74,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const handleUserSession = async (session: Session) => {
     console.log('Handling user session:', session.user.email);
     
-    // Create user immediately - no database calls
-    const user: User = {
+    // Create user immediately to prevent login hanging
+    const fallbackUser: User = {
       id: session.user.id,
       email: session.user.email || '',
       firstName: '',
@@ -89,10 +94,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       updatedAt: session.user.created_at,
     };
     
-    // Set user and stop loading immediately
-    setUser(user);
+    // Set user immediately - no waiting for database
+    setUser(fallbackUser);
     setIsLoading(false);
-    console.log('User set immediately:', user);
+    console.log('User set for login:', fallbackUser.email);
+    
+    // Load profile data in background (non-blocking)
+    setTimeout(async () => {
+      try {
+        const { data: userProfile, error } = await supabase
+          .from('user_profiles')
+          .select('first_name, last_name, city, evu, role, subscription_type, subscription_status')
+          .eq('auth_user_id', session.user.id)
+          .single();
+
+        if (!error && userProfile) {
+          console.log('✅ User profile loaded from database:', userProfile);
+          
+          // Update user with profile data
+          const updatedUser: User = {
+            ...fallbackUser,
+            firstName: userProfile.first_name || '',
+            lastName: userProfile.last_name || '',
+            city: userProfile.city || '',
+            evu: userProfile.evu || '',
+            role: userProfile.role || fallbackUser.role,
+          };
+          
+          setUser(updatedUser);
+          
+          // Update subscription status
+          const isPro = userProfile.subscription_type === 'pro' && userProfile.subscription_status === 'active';
+          setIsProUser(isPro);
+          setSubscriptionStatus(userProfile.subscription_status);
+          
+          console.log('🔄 User updated with profile data:', {
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            role: updatedUser.role,
+            isPro: isPro,
+            subscriptionStatus: userProfile.subscription_status
+          });
+        } else {
+          console.log('⚠️ No user profile found or error loading:', error);
+        }
+      } catch (error) {
+        console.error('Background profile loading failed:', error);
+      }
+    }, 100); // Load profile data 100ms after login
   };
 
   const login = async (email: string, password: string) => {
@@ -127,26 +176,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       
       if (data.user && userData) {
-        console.log('Registration successful:', data.user.email);
+        console.log('✅ Registration successful:', data.user.email);
+        console.log('📝 Creating profile with data:', userData);
         
-        // Create user profile in database (EXACT same as admin uses)
-        const { error: profileError } = await supabase
+        // Check if profile already exists, then insert or update
+        const { data: existingProfile } = await supabase
           .from('user_profiles')
-          .insert({
-            auth_user_id: data.user.id,
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            city: userData.city,
-            evu: userData.evu || '',
-            role: 'user'
-          });
+          .select('auth_user_id')
+          .eq('auth_user_id', data.user.id)
+          .single();
 
-        if (profileError) {
-          console.error('Error creating user profile:', profileError);
-          // Don't throw here, user is still created in auth
+        if (existingProfile) {
+          // Profile exists, update it
+          console.log('🔄 Profile exists, updating...');
+          const { data: profileData, error: profileError } = await supabase
+            .from('user_profiles')
+            .update({
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              city: userData.city,
+              evu: userData.evu || '',
+              role: 'user'
+            })
+            .eq('auth_user_id', data.user.id)
+            .select();
+
+          if (profileError) {
+            console.error('❌ Error updating user profile:', profileError);
+            throw new Error(`Profile update failed: ${profileError.message}`);
+          } else {
+            console.log('✅ User profile updated successfully:', profileData);
+          }
         } else {
-          console.log('User profile created in database (same as admin)');
+          // Profile doesn't exist, create it
+          console.log('🆕 Creating new profile...');
+          const { data: profileData, error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({
+              auth_user_id: data.user.id,
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              city: userData.city,
+              evu: userData.evu || '',
+              role: 'user'
+            })
+            .select();
+
+          if (profileError) {
+            console.error('❌ Error creating user profile:', profileError);
+            throw new Error(`Profile creation failed: ${profileError.message}`);
+          } else {
+            console.log('✅ User profile created successfully:', profileData);
+          }
         }
+      } else {
+        console.warn('⚠️ No userData provided or no user created');
       }
     } catch (error) {
       console.error('Registration error:', error);
@@ -197,16 +281,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshSubscriptionStatus = async () => {
+    if (!user) return;
+    
+    try {
+      const { data: userProfile, error } = await supabase
+        .from('user_profiles')
+        .select('subscription_type, subscription_status')
+        .eq('auth_user_id', user.id)
+        .single();
+
+      if (!error && userProfile) {
+        const isPro = userProfile.subscription_type === 'pro' && userProfile.subscription_status === 'active';
+        setIsProUser(isPro);
+        setSubscriptionStatus(userProfile.subscription_status);
+        console.log('Subscription status refreshed:', { isPro, status: userProfile.subscription_status });
+      }
+    } catch (error) {
+      console.error('Error refreshing subscription status:', error);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
     isLoading,
     isAdmin: user?.role === 'admin',
     loading: isLoading,
+    isProUser,
+    subscriptionStatus,
     login,
     register,
     logout,
     updateUser,
+    refreshSubscriptionStatus,
   };
 
   return (

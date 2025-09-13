@@ -10,12 +10,12 @@ const AdminPage: React.FC = () => {
   const { isAdmin, loading } = useAuth();
   const { 
     getTopics, 
-    // createTopic, 
+    createTopic, 
     updateTopic, 
     deleteTopic, 
     reorderTopics,
     getChapters, 
-    // createChapter, 
+    createChapter, 
     updateChapter, 
     deleteChapter, 
     reorderChapters,
@@ -311,17 +311,17 @@ const AdminPage: React.FC = () => {
   };
 
 
-  // const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
-  //   try {
-  //     // This is a new topic
-  //     const newTopic = await createTopic(topicData);
-  //     if (newTopic) {
-  //       setTopics(prev => [...prev, newTopic]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving topic:', error);
-  //   }
-  // };
+  const handleSaveTopic = async (topicData: Omit<Topic, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      // This is a new topic
+      const newTopic = await createTopic(topicData);
+      if (newTopic) {
+        setTopics(prev => [...prev, newTopic]);
+      }
+    } catch (error) {
+      console.error('Error saving topic:', error);
+    }
+  };
 
   const handleUpdateTopic = async (topic: Topic) => {
     try {
@@ -370,17 +370,17 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
-  //   try {
-  //     // This is a new chapter
-  //     const newChapter = await createChapter(chapterData);
-  //     if (newChapter) {
-  //       setChapters(prev => [...prev, newChapter]);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving chapter:', error);
-  //   }
-  // };
+  const handleSaveChapter = async (chapterData: Omit<ChapterData, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      // This is a new chapter
+      const newChapter = await createChapter(chapterData);
+      if (newChapter) {
+        setChapters(prev => [...prev, newChapter]);
+      }
+    } catch (error) {
+      console.error('Error saving chapter:', error);
+    }
+  };
 
   const handleUpdateChapter = async (chapter: ChapterData) => {
     try {
@@ -1005,6 +1005,7 @@ const AdminPage: React.FC = () => {
               chapters={chapters}
               topics={topics}
               onEdit={handleUpdateChapter}
+              onSave={handleSaveChapter}
               onDelete={handleDeleteChapter}
               onReorder={handleReorderChapters}
             />
@@ -1014,6 +1015,7 @@ const AdminPage: React.FC = () => {
             <TopicTable
               topics={topics}
               onEdit={handleUpdateTopic}
+              onSave={handleSaveTopic}
               onDelete={handleDeleteTopic}
               onReorder={handleReorderTopics}
             />

@@ -294,6 +294,31 @@ export interface QuizConfig {
   chapter?: string;
 }
 
+// Stripe Integration Types
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  currency: string;
+  interval: 'month' | 'year';
+  features: string[];
+  stripePriceId: string;
+  popular?: boolean;
+}
+
+export interface StripeCheckoutSession {
+  id: string;
+  url: string;
+}
+
+export interface SubscriptionStatus {
+  isActive: boolean;
+  plan: 'free' | 'pro';
+  currentPeriodEnd?: string;
+  cancelAtPeriodEnd?: boolean;
+}
+
 // App State
 export interface AppState {
   user: User | null;

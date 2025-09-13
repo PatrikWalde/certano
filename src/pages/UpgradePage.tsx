@@ -1,7 +1,59 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { stripeService, SUBSCRIPTION_PLANS } from '../services/stripeService';
 
 const UpgradePage: React.FC = () => {
+  const { user, refreshSubscriptionStatus } = useAuth();
+  const [searchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Handle return from Stripe
+  useEffect(() => {
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    const sessionId = searchParams.get('session_id');
+
+    if (success && sessionId) {
+      setSuccessMessage('🎉 Zahlung erfolgreich! Dein Pro-Abonnement ist jetzt aktiv.');
+      // Refresh subscription status
+      if (refreshSubscriptionStatus) {
+        refreshSubscriptionStatus();
+      }
+    } else if (canceled) {
+      setError('Zahlung abgebrochen. Du kannst jederzeit erneut versuchen.');
+    }
+  }, [searchParams, refreshSubscriptionStatus]);
+
+  const handleUpgrade = async (planId: string) => {
+    if (!user?.id) {
+      setError('Du musst angemeldet sein, um zu upgraden');
+      return;
+    }
+
+    console.log('Upgrade attempt - User ID:', user.id);
+    console.log('Upgrade attempt - User object:', user);
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const plan = SUBSCRIPTION_PLANS.find(p => p.id === planId);
+      if (!plan) {
+        throw new Error('Plan nicht gefunden');
+      }
+
+      console.log('Calling redirectToCheckout with:', { priceId: plan.stripePriceId, userId: user.id });
+      await stripeService.redirectToCheckout(plan.stripePriceId, user.id);
+    } catch (error: any) {
+      console.error('Upgrade error:', error);
+      setError(error.message || 'Fehler beim Upgrade. Bitte versuche es erneut.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -11,18 +63,18 @@ const UpgradePage: React.FC = () => {
     },
     {
       icon: '📊',
-      title: 'Erweiterte Statistiken',
+      title: 'Erweiterte Lernstatistiken',
       description: 'Detaillierte Analysen deines Lernfortschritts und Schwachstellen'
     },
     {
       icon: '🎯',
-      title: 'Intelligente Wiederholung',
-      description: 'KI-basierte Spaced Repetition für optimales Lernen'
+      title: 'Vollzugriff auf Quiz-Features',
+      description: 'Alle verfügbaren Quiz-Funktionen ohne Einschränkungen'
     },
     {
       icon: '⚡',
       title: 'Prioritäts-Support',
-      description: 'Schnelle Hilfe bei Fragen und Problemen'
+      description: 'Schnelle Hilfe bei Fragen und Problemen per E-Mail'
     },
     {
       icon: '🔮',
@@ -52,46 +104,107 @@ const UpgradePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Pricing Card */}
-        <div className="max-w-md mx-auto mb-16">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Popular Badge */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3">
-              <span className="font-semibold">🔥 Beliebteste Wahl</span>
-            </div>
-            
-            <div className="p-8">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Certano Pro</h3>
-                <div className="flex items-baseline justify-center">
-                  <span className="text-5xl font-bold text-gray-900 dark:text-white">9,99€</span>
-                  <span className="text-gray-600 dark:text-gray-300 ml-2">/Monat</span>
+        {/* Success Message */}
+        {successMessage && (
+          <div className="max-w-md mx-auto mb-8">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
                 </div>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">Jederzeit kündbar</p>
+                <div className="ml-3">
+                  <p className="text-sm text-green-700 dark:text-green-300">{successMessage}</p>
+                </div>
               </div>
-
-              {/* Features List */}
-              <ul className="space-y-4 mb-8">
-                {features.map((feature, index) => (
-                  <li key={index} className="flex items-start space-x-3">
-                    <span className="text-2xl">{feature.icon}</span>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">{feature.title}</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{feature.description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA Button */}
-              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                Jetzt upgraden - 9,99€/Monat
-              </button>
-              
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
-                Sichere Zahlung mit Stripe • Jederzeit kündbar
-              </p>
             </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="max-w-md mx-auto mb-8">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Pricing Cards */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {SUBSCRIPTION_PLANS.map((plan) => (
+              <div key={plan.id} className={`bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden relative ${plan.popular ? 'ring-2 ring-blue-500' : ''}`}>
+                {/* Popular Badge */}
+                {plan.popular && (
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white text-center py-3">
+                    <span className="font-semibold">🔥 Beliebteste Wahl</span>
+                  </div>
+                )}
+                
+                <div className="p-8">
+                  <div className="text-center mb-8">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{plan.name}</h3>
+                    <div className="flex items-baseline justify-center">
+                      <span className="text-5xl font-bold text-gray-900 dark:text-white">{plan.price.toFixed(2)} {plan.currency}</span>
+                      <span className="text-gray-600 dark:text-gray-300 ml-2">/{plan.interval === 'month' ? 'Monat' : 'Jahr'}</span>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300 mt-2">Jederzeit kündbar</p>
+                    {plan.interval === 'year' && (
+                      <p className="text-green-600 dark:text-green-400 text-sm font-semibold mt-1">
+                        💰 2 Monate gratis (17% Ersparnis)
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Features List */}
+                  <ul className="space-y-3 mb-8">
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start space-x-3">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <button 
+                    onClick={() => handleUpgrade(plan.id)}
+                    disabled={isLoading}
+                    className={`w-full font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      plan.popular 
+                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700' 
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Wird geladen...
+                      </div>
+                    ) : (
+                      `Jetzt upgraden - ${plan.price.toFixed(2)} ${plan.currency}/${plan.interval === 'month' ? 'Monat' : 'Jahr'}`
+                    )}
+                  </button>
+                  
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
+                    Sichere Zahlung mit Stripe • Jederzeit kündbar
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

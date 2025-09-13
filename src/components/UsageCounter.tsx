@@ -8,7 +8,7 @@ interface UsageCounterProps {
 }
 
 const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade = true }) => {
-  const { user } = useAuth();
+  const { user, isProUser } = useAuth();
   const [usageStats, setUsageStats] = React.useState<UsageStats | null>(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -54,6 +54,18 @@ const UsageCounter: React.FC<UsageCounterProps> = ({ className = '', showUpgrade
       {isAdminUser ? (
         <div className="flex items-center space-x-1">
           <span className="text-sm text-purple-600 font-medium">Admin</span>
+          <span className="text-xs text-gray-500">Unbegrenzt</span>
+          <button 
+            onClick={refreshUsageStats}
+            className="ml-2 text-xs text-gray-400 hover:text-gray-600"
+            title="Aktualisieren"
+          >
+            ↻
+          </button>
+        </div>
+      ) : isProUser ? (
+        <div className="flex items-center space-x-1">
+          <span className="text-sm text-green-600 font-medium">Pro</span>
           <span className="text-xs text-gray-500">Unbegrenzt</span>
           <button 
             onClick={refreshUsageStats}
