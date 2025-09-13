@@ -73,7 +73,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
     if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
       // Wait for DOM to be ready
       const timer = setTimeout(() => {
-        if (editorRef.current && window.FroalaEditor) {
+        if (editorRef.current && window.FroalaEditor && window.FroalaEditor.define) {
           const config = {
             placeholderText: placeholder,
             height: 200,
@@ -133,10 +133,12 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
 
           try {
             froalaInstance.current = new window.FroalaEditor(editorRef.current, config);
-            // Set initial content
-            if (value) {
-              froalaInstance.current.html.set(value);
-            }
+            // Wait for editor to be ready before setting content
+            setTimeout(() => {
+              if (froalaInstance.current && froalaInstance.current.html && value) {
+                froalaInstance.current.html.set(value);
+              }
+            }, 100);
           } catch (error) {
             console.error('Error initializing Froala Editor:', error);
           }
