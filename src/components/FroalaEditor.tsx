@@ -41,6 +41,20 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
         }
       },
+      toolbarButtonsXS: {
+        'moreText': {
+          'buttons': ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'textColor', 'backgroundColor']
+        },
+        'moreParagraph': {
+          'buttons': ['formatUL', 'formatOL', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']
+        },
+        'moreRich': {
+          'buttons': ['insertImage', 'insertTable', 'insertLink', 'insertHR']
+        },
+        'moreMisc': {
+          'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
+        }
+      },
       imageButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
       imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
       imageUpload: true,
