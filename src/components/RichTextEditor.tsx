@@ -16,6 +16,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const [isRichText, setIsRichText] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -92,8 +93,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const updateValue = () => {
     if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+      const html = editorRef.current.innerHTML;
+      onChange(html);
     }
+  };
+
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    // Don't update state during typing to prevent cursor jumping
+    // The value will be updated when the editor loses focus
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -116,6 +123,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   const toggleEditor = () => {
+    if (!isRichText && editorRef.current) {
+      // Initialize editor with current value
+      editorRef.current.innerHTML = value || '';
+      setIsInitialized(true);
+    }
     setIsRichText(!isRichText);
   };
 
@@ -226,13 +238,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <div
             ref={editorRef}
             contentEditable
-            onInput={updateValue}
+            onInput={handleInput}
+            onBlur={updateValue}
             onKeyDown={handleKeyDown}
             className="p-3 min-h-[200px] focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             style={{ fontSize: '14px', fontFamily: 'inherit' }}
-            dangerouslySetInnerHTML={{ __html: value }}
             suppressContentEditableWarning={true}
-          />
+          >
+            {!isInitialized && value}
+          </div>
         </div>
       ) : (
         <textarea
