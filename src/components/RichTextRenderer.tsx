@@ -36,6 +36,18 @@ const RichTextRenderer: React.FC<RichTextRendererProps> = ({
     );
   }
 
+  // Check if content is HTML
+  const isHtml = content.includes('<') && content.includes('>');
+
+  if (isHtml) {
+    return (
+      <div 
+        className={`rich-text-renderer ${className}`}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
   // Fallback to plain text
   return (
     <div className={`rich-text-renderer ${className}`}>
