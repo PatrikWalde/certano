@@ -34,22 +34,33 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
         return;
       }
 
-      // Load CSS
-      const css1 = document.createElement('link');
-      css1.rel = 'stylesheet';
-      css1.href = '/froala_editor_4/css/froala_editor.pkgd.min.css';
-      document.head.appendChild(css1);
+      // Check if already loading
+      if (document.querySelector('script[src*="froala_editor"]')) {
+        return;
+      }
 
-      const css2 = document.createElement('link');
-      css2.rel = 'stylesheet';
-      css2.href = '/froala_editor_4/css/froala_style.min.css';
-      document.head.appendChild(css2);
+      // Load CSS
+      if (!document.querySelector('link[href*="froala_editor"]')) {
+        const css1 = document.createElement('link');
+        css1.rel = 'stylesheet';
+        css1.href = '/froala_editor_4/css/froala_editor.pkgd.min.css';
+        document.head.appendChild(css1);
+
+        const css2 = document.createElement('link');
+        css2.rel = 'stylesheet';
+        css2.href = '/froala_editor_4/css/froala_style.min.css';
+        document.head.appendChild(css2);
+      }
 
       // Load JS
       const script = document.createElement('script');
       script.src = '/froala_editor_4/js/froala_editor.pkgd.min.js';
       script.onload = () => {
         setIsInitialized(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Froala Editor');
+        setIsInitialized(false);
       };
       document.head.appendChild(script);
     };
@@ -60,8 +71,8 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
   // Initialize editor
   useEffect(() => {
     if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
-      // Wait a bit for the DOM to be ready
-      setTimeout(() => {
+      // Wait for DOM to be ready
+      const timer = setTimeout(() => {
         if (editorRef.current && window.FroalaEditor) {
           const config = {
             placeholderText: placeholder,
@@ -122,11 +133,17 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
 
           try {
             froalaInstance.current = new window.FroalaEditor(editorRef.current, config);
+            // Set initial content
+            if (value) {
+              froalaInstance.current.html.set(value);
+            }
           } catch (error) {
             console.error('Error initializing Froala Editor:', error);
           }
         }
-      }, 100);
+      }, 200);
+
+      return () => clearTimeout(timer);
     }
 
     return () => {
@@ -139,7 +156,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
         froalaInstance.current = null;
       }
     };
-  }, [isInitialized, isRichText, placeholder, onChange]);
+  }, [isInitialized, isRichText, placeholder, onChange, value]);
 
   // Update editor content when value changes
   useEffect(() => {
