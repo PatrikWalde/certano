@@ -36,6 +36,13 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
 
       // Check if already loading
       if (document.querySelector('script[src*="froala_editor"]')) {
+        // Wait for existing script to load
+        const checkLoaded = setInterval(() => {
+          if (window.FroalaEditor) {
+            setIsInitialized(true);
+            clearInterval(checkLoaded);
+          }
+        }, 100);
         return;
       }
 
@@ -56,6 +63,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
       const script = document.createElement('script');
       script.src = '/froala_editor_4/js/froala_editor.pkgd.min.js';
       script.onload = () => {
+        console.log('Froala Editor loaded successfully');
         setIsInitialized(true);
       };
       script.onerror = () => {
@@ -73,7 +81,8 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
     if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
       // Wait for DOM to be ready
       const timer = setTimeout(() => {
-        if (editorRef.current && window.FroalaEditor && window.FroalaEditor.define) {
+        if (editorRef.current && window.FroalaEditor) {
+          console.log('Initializing Froala Editor...');
           const config = {
             placeholderText: placeholder,
             height: 200,
