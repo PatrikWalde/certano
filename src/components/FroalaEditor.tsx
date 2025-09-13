@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import FroalaEditor from 'react-froala-wysiwyg';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/css/froala_style.min.css';
-import { supabase } from '../lib/supabase';
 
 interface FroalaEditorProps {
   value: string;
@@ -46,13 +45,13 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
     imageManagerDeleteURL: '/api/delete-image',
     imageManagerDeleteMethod: 'DELETE',
     events: {
-      'image.beforeUpload': function (images: any) {
+      'image.beforeUpload': function () {
         // Custom image upload handler
         return false; // Prevent default upload
       },
-      'image.inserted': function (img: any) {
+      'image.inserted': function () {
         // Handle image insertion
-        console.log('Image inserted:', img);
+        console.log('Image inserted');
       },
       'contentChanged': function () {
         // Content changed event
