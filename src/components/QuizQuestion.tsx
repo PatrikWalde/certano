@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question, SessionAnswer, FillBlankOption } from '../types';
-// import RichTextRenderer from './RichTextRenderer';
+import HtmlRenderer from './HtmlRenderer';
 
 interface QuizQuestionProps {
   question: Question;
@@ -361,7 +361,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
       {/* Question Text */}
       <div>
         <div className="text-xl font-semibold text-gray-900 dark:text-white dark:text-white mb-4">
-          {question.prompt}
+          <HtmlRenderer content={question.prompt} />
         </div>
         
         {question.media && question.type === 'image_question' && (
