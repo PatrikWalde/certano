@@ -44,7 +44,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
       events: {
         'image.beforeUpload': function (files: any) {
           // Custom image upload handler - upload to Supabase
-          const editor = this;
+          const editor = this as any;
           if (files && files.length > 0) {
             const file = files[0];
             handleImageUpload(file).then(imageUrl => {
