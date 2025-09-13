@@ -108,10 +108,16 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
                 console.log('Image inserted:', img);
               },
               'contentChanged': function () {
-                if ((this as any).html) {
-                  const content = (this as any).html.get();
-                  onChange(content);
+                // Debounce content changes to prevent infinite loops
+                if (this._contentChangeTimeout) {
+                  clearTimeout(this._contentChangeTimeout);
                 }
+                this._contentChangeTimeout = setTimeout(() => {
+                  if ((this as any).html) {
+                    const content = (this as any).html.get();
+                    onChange(content);
+                  }
+                }, 300);
               }
             }
           };
@@ -147,12 +153,15 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
         froalaInstance.current = null;
       }
     };
-  }, [isInitialized, isRichText, placeholder, onChange, value]);
+  }, [isInitialized, isRichText, placeholder]);
 
-  // Update editor content when value changes
+  // Update editor content when value changes (only if different)
   useEffect(() => {
-    if (froalaInstance.current && froalaInstance.current.html && value !== froalaInstance.current.html.get()) {
-      froalaInstance.current.html.set(value);
+    if (froalaInstance.current && froalaInstance.current.html) {
+      const currentContent = froalaInstance.current.html.get();
+      if (value !== currentContent) {
+        froalaInstance.current.html.set(value);
+      }
     }
   }, [value]);
 
