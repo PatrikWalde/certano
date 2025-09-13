@@ -109,12 +109,13 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
               },
               'contentChanged': function () {
                 // Debounce content changes to prevent infinite loops
-                if (this._contentChangeTimeout) {
-                  clearTimeout(this._contentChangeTimeout);
+                const editor = this as any;
+                if (editor._contentChangeTimeout) {
+                  clearTimeout(editor._contentChangeTimeout);
                 }
-                this._contentChangeTimeout = setTimeout(() => {
-                  if ((this as any).html) {
-                    const content = (this as any).html.get();
+                editor._contentChangeTimeout = setTimeout(() => {
+                  if (editor.html) {
+                    const content = editor.html.get();
                     onChange(content);
                   }
                 }, 300);
