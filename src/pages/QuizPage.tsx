@@ -173,8 +173,20 @@ const QuizPage: React.FC = () => {
     let filteredQuestions = questions;
     
     if (config.chapter && config.chapter !== 'all') {
-      filteredQuestions = filteredQuestions.filter(q => q.chapter === config.chapter);
+      // Wenn mehrere Kapitel ausgewählt sind (comma-separated)
+      if (config.chapter.includes(',')) {
+        const selectedChapters = config.chapter.split(',').map(c => c.trim());
+        filteredQuestions = filteredQuestions.filter(q => selectedChapters.includes(q.chapter));
+      } else {
+        // Einzelnes Kapitel
+        filteredQuestions = filteredQuestions.filter(q => q.chapter === config.chapter);
+      }
     }
+
+    console.log('Config chapter:', config.chapter);
+    console.log('Available questions before filter:', questions.length);
+    console.log('Filtered questions:', filteredQuestions.length);
+    console.log('Question chapters:', questions.map(q => q.chapter));
 
     // Shuffle questions if enabled
     if (config.shuffleQuestions) {
