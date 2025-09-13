@@ -932,14 +932,11 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
 
           {/* Explanation */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Erklärung
-            </label>
-            <textarea
+            <FroalaEditorComponent
               value={formData.explanation}
-              onChange={(e) => setFormData(prev => ({ ...prev, explanation: e.target.value }))}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              rows={2}
+              onChange={(value) => setFormData(prev => ({ ...prev, explanation: value }))}
+              placeholder="Erklärung eingeben..."
+              className="mb-4"
             />
           </div>
 
