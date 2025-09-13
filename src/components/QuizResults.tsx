@@ -187,7 +187,11 @@ const QuizResults: React.FC<QuizResultsProps> = ({
                 
                 {question.explanation && (
                   <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                    <strong>Erklärung:</strong> {question.explanation}
+                    <strong>Erklärung:</strong>
+                    <div 
+                      className="mt-1 prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: question.explanation }}
+                    />
                   </div>
                 )}
               </div>

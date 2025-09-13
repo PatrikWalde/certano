@@ -651,9 +651,13 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           {/* Explanation */}
           {question.explanation && (
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-gray-700">
-                <strong>Erklärung:</strong> {question.explanation}
-              </p>
+              <div className="text-gray-700">
+                <strong>Erklärung:</strong>
+                <div 
+                  className="mt-2 prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: question.explanation }}
+                />
+              </div>
             </div>
           )}
           
@@ -749,9 +753,13 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           </div>
           
           {showExplanations && question.explanation && (
-            <p className="text-gray-700">
-              <strong>Erklärung:</strong> {question.explanation}
-            </p>
+            <div className="text-gray-700">
+              <strong>Erklärung:</strong>
+              <div 
+                className="mt-2 prose prose-sm max-w-none"
+                dangerouslySetInnerHTML={{ __html: question.explanation }}
+              />
+            </div>
           )}
           
           {/* Report Error Link */}
