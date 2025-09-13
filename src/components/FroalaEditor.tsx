@@ -81,7 +81,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
     if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
       // Wait for DOM to be ready
       const timer = setTimeout(() => {
-        if (editorRef.current && window.FroalaEditor) {
+        if (editorRef.current && window.FroalaEditor && !froalaInstance.current) {
           console.log('Initializing Froala Editor...');
           const config = {
             placeholderText: placeholder,
@@ -157,10 +157,12 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
       return () => clearTimeout(timer);
     }
 
+    // Cleanup function
     return () => {
       if (froalaInstance.current) {
         try {
           froalaInstance.current.destroy();
+          console.log('Froala Editor destroyed');
         } catch (error) {
           console.error('Error destroying Froala Editor:', error);
         }
