@@ -98,7 +98,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+  const handleInput = () => {
     // Don't update state during typing to prevent cursor jumping
     // The value will be updated when the editor loses focus
   };
