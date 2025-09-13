@@ -111,9 +111,9 @@ const DashboardPage: React.FC = () => {
     }
     
     // Fallback: show active chapters with 0 progress
-    return chapters
-      .filter(chapter => chapter.isActive)
-      .map(chapter => {
+    return (dashboardData?.chapters || [])
+      .filter((chapter: any) => chapter.isActive)
+      .map((chapter: any) => {
         const stats = realChapterStats.find(stat => stat.chapter === chapter.name);
         const progress = stats?.progress || 0;
         const totalQuestions = stats?.total_questions || 0;
@@ -132,7 +132,7 @@ const DashboardPage: React.FC = () => {
   // Memoize chapter progress to prevent multiple calculations
   const chapterProgress = React.useMemo(() => {
     return getChapterProgress();
-  }, [dashboardData, realChapterStats, chapters]);
+  }, [dashboardData, realChapterStats]);
 
   // Memoize recent activity to prevent multiple calculations
   const recentActivity = React.useMemo(() => {
