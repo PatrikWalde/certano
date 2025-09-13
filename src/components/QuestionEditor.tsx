@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question, ChapterData, QuestionType, QuestionOption, FillBlankOption, WrongAnswer } from '../types';
-import RichTextEditor from './RichTextEditor';
+// import RichTextEditor from './RichTextEditor';
 
 // Helper function to generate automatic question number
 const generateQuestionNumber = (): string => {
@@ -278,12 +278,14 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
           </div>
 
           {/* Question Prompt */}
-          <RichTextEditor
-            value={formData.prompt}
-            onChange={(value) => setFormData(prev => ({ ...prev, prompt: value }))}
-            placeholder="Fragentext eingeben..."
-            className="mb-6"
-          />
+        <textarea
+          value={formData.prompt}
+          onChange={(e) => setFormData(prev => ({ ...prev, prompt: e.target.value }))}
+          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-6"
+          rows={3}
+          placeholder="Fragentext eingeben..."
+          required
+        />
 
           {/* Question Type */}
           <div>
