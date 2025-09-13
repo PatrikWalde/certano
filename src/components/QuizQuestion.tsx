@@ -655,7 +655,15 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
                 <strong>Erklärung:</strong>
                 <div 
                   className="mt-2 prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: question.explanation }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: question.explanation.replace(
+                      /<p[^>]*data-f-id="pbf"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                      ''
+                    ).replace(
+                      /<p[^>]*style="[^"]*text-align:\s*center[^"]*"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                      ''
+                    )
+                  }}
                 />
               </div>
             </div>
@@ -757,7 +765,15 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
               <strong>Erklärung:</strong>
               <div 
                 className="mt-2 prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: question.explanation }}
+                dangerouslySetInnerHTML={{ 
+                  __html: question.explanation.replace(
+                    /<p[^>]*data-f-id="pbf"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                    ''
+                  ).replace(
+                    /<p[^>]*style="[^"]*text-align:\s*center[^"]*"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                    ''
+                  )
+                }}
               />
             </div>
           )}
