@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useQuizStatsStore } from '../store/quizStatsStore';
-import { useChapterStore } from '../store/chapterStore';
+// import { useChapterStore } from '../store/chapterStore'; // Removed - using Supabase instead
 import { useSupabase } from '../hooks/useSupabase';
 import { getUserStats, getChapterStats, getQuizSessions } from '../services/quizService';
 import ProgressRing from '../components/ProgressRing';
@@ -18,7 +18,7 @@ import UsageCounter from '../components/UsageCounter';
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const { userStats } = useQuizStatsStore();
-  const { chapters } = useChapterStore();
+  // const { chapters } = useChapterStore(); // Removed - using Supabase instead
   const { getChapters, getQuestions } = useSupabase();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
