@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import FroalaEditor from 'react-froala-wysiwyg';
 import { supabase } from '../lib/supabase';
 
-// Import Froala Editor CSS
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import 'froala-editor/css/froala_style.min.css';
+// Import Froala Editor CSS from local files
+import '/froala_editor_4/css/froala_editor.pkgd.min.css';
+import '/froala_editor_4/css/froala_style.min.css';
 
 interface FroalaEditorProps {
   value: string;
@@ -41,10 +41,8 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
         }
       },
-      imageUploadURL: '/api/upload-image',
-      imageUploadParams: {
-        bucket: 'images'
-      },
+      imageUpload: false,
+      imageUploadURL: false,
       imageUploadMethod: 'POST',
       imageUploadToS3: false,
       events: {
