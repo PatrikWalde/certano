@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question, SessionAnswer, FillBlankOption } from '../types';
+import RichTextRenderer from './RichTextRenderer';
 
 interface QuizQuestionProps {
   question: Question;
@@ -359,9 +360,9 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
 
       {/* Question Text */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white dark:text-white mb-4">
-          {question.prompt}
-        </h2>
+        <div className="text-xl font-semibold text-gray-900 dark:text-white dark:text-white mb-4">
+          <RichTextRenderer content={question.prompt} />
+        </div>
         
         {question.media && question.type === 'image_question' && (
           <div className="mb-6">
