@@ -41,6 +41,12 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
         }
       },
+      imageButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
+      imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
+      imageUpload: true,
+      imageUploadURL: false,
+      imageUploadMethod: 'POST',
+      imageUploadToS3: false,
       events: {
         'image.beforeUpload': function (files: any) {
           // Custom image upload handler - upload to Supabase
