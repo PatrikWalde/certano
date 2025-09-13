@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import FroalaEditor from 'react-froala-wysiwyg';
 import { supabase } from '../lib/supabase';
 
@@ -54,7 +54,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
             const file = images[0];
             handleImageUpload(file).then(imageUrl => {
               // Insert the image with the Supabase URL
-              this.image.insert(imageUrl, {
+              (this as any).image.insert(imageUrl, {
                 width: 300,
                 height: 200,
                 alt: 'Uploaded image'
@@ -71,8 +71,8 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           console.log('Image inserted:', img);
         },
         'contentChanged': function () {
-          if (this.html) {
-            const content = this.html.get();
+          if ((this as any).html) {
+            const content = (this as any).html.get();
             onChange(content);
           }
         }
