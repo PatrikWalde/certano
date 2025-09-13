@@ -28,7 +28,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       const fileName = `question-images/${timestamp}-${file.name}`;
       
       // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('images')
         .upload(fileName, file);
       
@@ -147,7 +147,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
             height={200}
             preview="edit"
             hideToolbar={false}
-            visibleDragBar={false}
+            visibleDragbar={false}
             textareaProps={{
               placeholder: placeholder,
               style: {
@@ -155,40 +155,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 fontFamily: 'inherit',
               },
             }}
-            commands={[
-              // Text formatting
-              MDEditor.commands.bold,
-              MDEditor.commands.italic,
-              MDEditor.commands.strikethrough,
-              MDEditor.commands.underline,
-              MDEditor.commands.code,
-              MDEditor.commands.codeBlock,
-              MDEditor.commands.quote,
-              MDEditor.commands.link,
-              MDEditor.commands.image,
-              MDEditor.commands.divider,
-              // Lists
-              MDEditor.commands.unorderedListCommand,
-              MDEditor.commands.orderedListCommand,
-              MDEditor.commands.checkedListCommand,
-              MDEditor.commands.divider,
-              // Headers
-              MDEditor.commands.title1,
-              MDEditor.commands.title2,
-              MDEditor.commands.title3,
-              MDEditor.commands.title4,
-              MDEditor.commands.title5,
-              MDEditor.commands.title6,
-              MDEditor.commands.divider,
-              // Alignment
-              MDEditor.commands.textAlign,
-              MDEditor.commands.divider,
-              // Math
-              MDEditor.commands.katex,
-              MDEditor.commands.divider,
-              // Full screen
-              MDEditor.commands.fullscreen,
-            ]}
           />
         </div>
       ) : (
