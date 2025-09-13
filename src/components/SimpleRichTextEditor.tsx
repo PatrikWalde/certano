@@ -98,8 +98,12 @@ const SimpleRichTextEditor: React.FC<SimpleRichTextEditorProps> = ({
     }
   };
 
-  const handleInput = () => {
-    // Don't update state during typing to prevent cursor jumping
+  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
+    // Update value immediately for better responsiveness
+    if (editorRef.current) {
+      const html = editorRef.current.innerHTML;
+      onChange(html);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -247,14 +251,12 @@ const SimpleRichTextEditor: React.FC<SimpleRichTextEditorProps> = ({
             ref={editorRef}
             contentEditable
             onInput={handleInput}
-            onBlur={updateValue}
             onKeyDown={handleKeyDown}
             className="p-3 min-h-[200px] focus:outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             style={{ fontSize: '14px', fontFamily: 'inherit' }}
             suppressContentEditableWarning={true}
-          >
-            {!isRichText && value}
-          </div>
+            dangerouslySetInnerHTML={{ __html: value }}
+          />
         </div>
       ) : (
         <textarea

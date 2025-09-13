@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question, ChapterData, QuestionType, QuestionOption, FillBlankOption, WrongAnswer } from '../types';
-import FroalaEditorComponent from './FroalaEditor';
+import SimpleRichTextEditor from './SimpleRichTextEditor';
 
 // Helper function to generate automatic question number
 const generateQuestionNumber = (): string => {
@@ -371,7 +371,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
           </div>
 
           {/* Question Prompt */}
-          <FroalaEditorComponent
+          <SimpleRichTextEditor
             value={formData.prompt}
             onChange={(value) => setFormData(prev => ({ ...prev, prompt: value }))}
             placeholder="Fragentext eingeben..."
