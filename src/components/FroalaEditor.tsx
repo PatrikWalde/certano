@@ -60,69 +60,82 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
   // Initialize editor
   useEffect(() => {
     if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
-      const config = {
-        placeholderText: placeholder,
-        height: 200,
-        toolbarButtons: {
-          'moreText': {
-            'buttons': ['bold', 'italic', 'underline', 'subscript', 'superscript', 'textColor', 'backgroundColor']
-          },
-          'moreParagraph': {
-            'buttons': ['formatUL', 'formatOL', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']
-          },
-          'moreRich': {
-            'buttons': ['insertImage', 'insertTable', 'insertLink', 'insertHR']
-          },
-          'moreMisc': {
-            'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
-          }
-        },
-        imageUploadURL: '/api/upload-image',
-        imageUploadParams: {
-          bucket: 'images'
-        },
-        imageUploadMethod: 'POST',
-        imageUploadToS3: false,
-        events: {
-          'image.beforeUpload': function (images: any) {
-            // Custom image upload handler - upload to Supabase
-            if (images && images.length > 0) {
-              const file = images[0];
-              handleImageUpload(file).then(imageUrl => {
-                // Insert the image with the Supabase URL
-                if (froalaInstance.current) {
-                  froalaInstance.current.image.insert(imageUrl, {
-                    width: 300,
-                    height: 200,
-                    alt: 'Uploaded image'
+      // Wait a bit for the DOM to be ready
+      setTimeout(() => {
+        if (editorRef.current && window.FroalaEditor) {
+          const config = {
+            placeholderText: placeholder,
+            height: 200,
+            toolbarButtons: {
+              'moreText': {
+                'buttons': ['bold', 'italic', 'underline', 'subscript', 'superscript', 'textColor', 'backgroundColor']
+              },
+              'moreParagraph': {
+                'buttons': ['formatUL', 'formatOL', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']
+              },
+              'moreRich': {
+                'buttons': ['insertImage', 'insertTable', 'insertLink', 'insertHR']
+              },
+              'moreMisc': {
+                'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
+              }
+            },
+            imageUploadURL: '/api/upload-image',
+            imageUploadParams: {
+              bucket: 'images'
+            },
+            imageUploadMethod: 'POST',
+            imageUploadToS3: false,
+            events: {
+              'image.beforeUpload': function (images: any) {
+                // Custom image upload handler - upload to Supabase
+                if (images && images.length > 0) {
+                  const file = images[0];
+                  handleImageUpload(file).then(imageUrl => {
+                    // Insert the image with the Supabase URL
+                    if (froalaInstance.current) {
+                      froalaInstance.current.image.insert(imageUrl, {
+                        width: 300,
+                        height: 200,
+                        alt: 'Uploaded image'
+                      });
+                    }
+                  }).catch(error => {
+                    console.error('Error uploading image:', error);
+                    alert('Fehler beim Hochladen des Bildes');
                   });
                 }
-              }).catch(error => {
-                console.error('Error uploading image:', error);
-                alert('Fehler beim Hochladen des Bildes');
-              });
+                return false; // Prevent default upload
+              },
+              'image.inserted': function (img: any) {
+                // Handle image insertion
+                console.log('Image inserted:', img);
+              },
+              'contentChanged': function () {
+                if (froalaInstance.current && froalaInstance.current.html) {
+                  const content = froalaInstance.current.html.get();
+                  onChange(content);
+                }
+              }
             }
-            return false; // Prevent default upload
-          },
-          'image.inserted': function (img: any) {
-            // Handle image insertion
-            console.log('Image inserted:', img);
-          },
-          'contentChanged': function () {
-            if (froalaInstance.current) {
-              const content = froalaInstance.current.html.get();
-              onChange(content);
-            }
+          };
+
+          try {
+            froalaInstance.current = new window.FroalaEditor(editorRef.current, config);
+          } catch (error) {
+            console.error('Error initializing Froala Editor:', error);
           }
         }
-      };
-
-      froalaInstance.current = new window.FroalaEditor(editorRef.current, config);
+      }, 100);
     }
 
     return () => {
       if (froalaInstance.current) {
-        froalaInstance.current.destroy();
+        try {
+          froalaInstance.current.destroy();
+        } catch (error) {
+          console.error('Error destroying Froala Editor:', error);
+        }
         froalaInstance.current = null;
       }
     };
@@ -130,7 +143,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
 
   // Update editor content when value changes
   useEffect(() => {
-    if (froalaInstance.current && value !== froalaInstance.current.html.get()) {
+    if (froalaInstance.current && froalaInstance.current.html && value !== froalaInstance.current.html.get()) {
       froalaInstance.current.html.set(value);
     }
   }, [value]);
