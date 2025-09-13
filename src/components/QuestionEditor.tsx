@@ -277,15 +277,25 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
             </p>
           </div>
 
-          {/* Question Prompt */}
-        <textarea
-          value={formData.prompt}
-          onChange={(e) => setFormData(prev => ({ ...prev, prompt: e.target.value }))}
-          className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-6"
-          rows={3}
-          placeholder="Fragentext eingeben..."
-          required
-        />
+          {/* Chapter */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Kapitel *
+            </label>
+            <select
+              value={formData.chapter}
+              onChange={(e) => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              required
+            >
+              <option value="">Kapitel auswählen</option>
+              {chapters.map(chapter => (
+                <option key={chapter.id} value={chapter.name}>
+                  {chapter.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Question Type */}
           <div>
@@ -360,26 +370,20 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
             </select>
           </div>
 
-          {/* Chapter */}
+          {/* Question Prompt */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Kapitel *
+              Fragentext *
             </label>
-            <select
-              value={formData.chapter}
-              onChange={(e) => setFormData(prev => ({ ...prev, chapter: e.target.value }))}
+            <textarea
+              value={formData.prompt}
+              onChange={(e) => setFormData(prev => ({ ...prev, prompt: e.target.value }))}
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              rows={3}
+              placeholder="Fragentext eingeben..."
               required
-            >
-              <option value="">Kapitel auswählen</option>
-              {chapters.map(chapter => (
-                <option key={chapter.id} value={chapter.name}>
-                  {chapter.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
-
 
           {/* Multiple Choice Options */}
           {formData.type === 'multiple_choice' && (
