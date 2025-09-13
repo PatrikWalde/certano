@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import FroalaEditor from 'react-froala-wysiwyg';
+import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-// Import Froala Editor CSS from local files
-import '/froala_editor_4/css/froala_editor.pkgd.min.css';
-import '/froala_editor_4/css/froala_style.min.css';
+// Load Froala Editor from local files
+declare global {
+  interface Window {
+    FroalaEditor: any;
+  }
+}
 
 interface FroalaEditorProps {
   value: string;
@@ -20,78 +22,139 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
   className = ''
 }) => {
   const [isRichText, setIsRichText] = useState(false);
-  const [editorConfig, setEditorConfig] = useState<any>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const froalaInstance = useRef<any>(null);
 
-  // Initialize editor config
+  // Load Froala Editor scripts
   useEffect(() => {
-    const config = {
-      placeholderText: placeholder,
-      height: 200,
-      toolbarButtons: {
-        'moreText': {
-          'buttons': ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'textColor', 'backgroundColor']
-        },
-        'moreParagraph': {
-          'buttons': ['formatUL', 'formatOL', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']
-        },
-        'moreRich': {
-          'buttons': ['insertImage', 'insertTable', 'insertLink', 'insertHR']
-        },
-        'moreMisc': {
-          'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
-        }
-      },
-      toolbarButtonsXS: {
-        'moreText': {
-          'buttons': ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'textColor', 'backgroundColor']
-        },
-        'moreParagraph': {
-          'buttons': ['formatUL', 'formatOL', 'indent', 'outdent', 'alignLeft', 'alignCenter', 'alignRight', 'alignJustify']
-        },
-        'moreRich': {
-          'buttons': ['insertImage', 'insertTable', 'insertLink', 'insertHR']
-        },
-        'moreMisc': {
-          'buttons': ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help']
-        }
-      },
-      imageButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
-      imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
-      imageUpload: true,
-      imageUploadURL: false,
-      imageUploadMethod: 'POST',
-      imageUploadToS3: false,
-      events: {
-        'image.beforeUpload': function (files: any) {
-          // Custom image upload handler - upload to Supabase
-          const editor = this as any;
-          if (files && files.length > 0) {
-            const file = files[0];
-            handleImageUpload(file).then(imageUrl => {
-              // Insert the image with the Supabase URL
-              editor.image.insert(imageUrl, null, null, editor.image.get());
-            }).catch(error => {
-              console.error('Error uploading image:', error);
-              alert('Fehler beim Hochladen des Bildes');
-            });
-          }
-          return false; // Prevent default upload
-        },
-        'image.inserted': function (img: any) {
-          // Handle image insertion
-          console.log('Image inserted:', img);
-        },
-        'contentChanged': function () {
-          if ((this as any).html) {
-            const content = (this as any).html.get();
-            onChange(content);
-          }
-        }
+    const loadFroala = () => {
+      if (window.FroalaEditor) {
+        setIsInitialized(true);
+        return;
       }
+
+      // Check if already loading
+      if (document.querySelector('script[src*="froala_editor"]')) {
+        // Wait for existing script to load
+        const checkLoaded = setInterval(() => {
+          if (window.FroalaEditor) {
+            setIsInitialized(true);
+            clearInterval(checkLoaded);
+          }
+        }, 100);
+        return;
+      }
+
+      // Load CSS
+      if (!document.querySelector('link[href*="froala_editor"]')) {
+        const css1 = document.createElement('link');
+        css1.rel = 'stylesheet';
+        css1.href = '/froala_editor_4/css/froala_editor.pkgd.min.css';
+        document.head.appendChild(css1);
+
+        const css2 = document.createElement('link');
+        css2.rel = 'stylesheet';
+        css2.href = '/froala_editor_4/css/froala_style.min.css';
+        document.head.appendChild(css2);
+      }
+
+      // Load JS
+      const script = document.createElement('script');
+      script.src = '/froala_editor_4/js/froala_editor.pkgd.min.js';
+      script.onload = () => {
+        console.log('Froala Editor loaded successfully');
+        setIsInitialized(true);
+      };
+      script.onerror = () => {
+        console.error('Failed to load Froala Editor');
+        setIsInitialized(false);
+      };
+      document.head.appendChild(script);
     };
 
-    setEditorConfig(config);
-  }, [placeholder, onChange]);
+    loadFroala();
+  }, []);
+
+  // Initialize editor
+  useEffect(() => {
+    if (isInitialized && isRichText && editorRef.current && !froalaInstance.current) {
+      // Wait for DOM to be ready
+      const timer = setTimeout(() => {
+        if (editorRef.current && window.FroalaEditor && !froalaInstance.current) {
+          console.log('Initializing Froala Editor...');
+          
+          const config = {
+            placeholderText: placeholder,
+            height: 200,
+            events: {
+              'image.beforeUpload': function (files: any) {
+                // Custom image upload handler - upload to Supabase
+                const editor = this as any;
+                if (files && files.length > 0) {
+                  const file = files[0];
+                  handleImageUpload(file).then(imageUrl => {
+                    // Insert the image with the Supabase URL
+                    editor.image.insert(imageUrl, null, null, editor.image.get());
+                  }).catch(error => {
+                    console.error('Error uploading image:', error);
+                    alert('Fehler beim Hochladen des Bildes');
+                  });
+                }
+                return false; // Prevent default upload
+              },
+              'image.inserted': function (img: any) {
+                // Handle image insertion
+                console.log('Image inserted:', img);
+              },
+              'contentChanged': function () {
+                if ((this as any).html) {
+                  const content = (this as any).html.get();
+                  onChange(content);
+                }
+              }
+            }
+          };
+
+          try {
+            froalaInstance.current = new window.FroalaEditor(editorRef.current, config);
+            console.log('Froala Editor initialized successfully');
+            
+            // Wait for editor to be ready before setting content
+            setTimeout(() => {
+              if (froalaInstance.current && froalaInstance.current.html && value) {
+                froalaInstance.current.html.set(value);
+              }
+            }, 100);
+          } catch (error) {
+            console.error('Error initializing Froala Editor:', error);
+          }
+        }
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Cleanup function
+    return () => {
+      if (froalaInstance.current) {
+        try {
+          froalaInstance.current.destroy();
+          console.log('Froala Editor destroyed');
+        } catch (error) {
+          console.error('Error destroying Froala Editor:', error);
+        }
+        froalaInstance.current = null;
+      }
+    };
+  }, [isInitialized, isRichText, placeholder, onChange, value]);
+
+  // Update editor content when value changes
+  useEffect(() => {
+    if (froalaInstance.current && froalaInstance.current.html && value !== froalaInstance.current.html.get()) {
+      froalaInstance.current.html.set(value);
+    }
+  }, [value]);
 
   const handleImageUpload = async (file: File): Promise<string> => {
     try {
@@ -148,14 +211,9 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
       </div>
 
       {/* Editor */}
-      {isRichText && editorConfig ? (
+      {isRichText ? (
         <div className="border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-          <FroalaEditor
-            tag="textarea"
-            model={value}
-            onModelChange={onChange}
-            config={editorConfig}
-          />
+          <div ref={editorRef}></div>
         </div>
       ) : (
         <textarea
