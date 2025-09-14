@@ -13,10 +13,15 @@ const HtmlRenderer: React.FC<HtmlRendererProps> = ({
   const isHtml = content.includes('<') && content.includes('>');
 
   if (isHtml) {
+    // Filter out Froala Editor attribution
+    const filteredContent = content
+      .replace(/<p[^>]*data-f-id="pbf"[^>]*>.*?Powered by.*?<\/p>/gi, '')
+      .replace(/<p[^>]*style="[^"]*text-align:\s*center[^"]*"[^>]*>.*?Powered by.*?<\/p>/gi, '');
+    
     return (
       <div 
         className={`html-renderer ${className}`}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: filteredContent }}
         style={{
           lineHeight: '1.6',
           fontSize: 'inherit',

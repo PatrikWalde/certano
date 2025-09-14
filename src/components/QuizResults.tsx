@@ -171,7 +171,18 @@ const QuizResults: React.FC<QuizResultsProps> = ({
                   </div>
                 </div>
                 
-                <p className="text-gray-900 dark:text-white mb-2">{question.prompt}</p>
+                <div 
+                  className="text-gray-900 dark:text-white mb-2"
+                  dangerouslySetInnerHTML={{ 
+                    __html: question.prompt.replace(
+                      /<p[^>]*data-f-id="pbf"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                      ''
+                    ).replace(
+                      /<p[^>]*style="[^"]*text-align:\s*center[^"]*"[^>]*>.*?Powered by.*?<\/p>/gi, 
+                      ''
+                    )
+                  }}
+                />
                 
                 {answer && (
                   <div className="text-sm text-gray-600 dark:text-gray-300">
