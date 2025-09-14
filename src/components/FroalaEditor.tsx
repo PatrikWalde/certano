@@ -233,7 +233,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
           className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           rows={3}
           placeholder={placeholder}
-          required
+          required={!placeholder.includes('Erklärung')}
         />
       )}
 
