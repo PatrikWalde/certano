@@ -204,7 +204,7 @@ const FroalaEditorComponent: React.FC<FroalaEditorProps> = ({
       {/* Toggle Button */}
       <div className="flex justify-between items-center mb-2">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Fragentext *
+          {placeholder.includes('Erklärung') ? 'Erklärung' : 'Fragentext *'}
         </label>
         <div className="flex items-center space-x-2">
           <button
