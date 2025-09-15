@@ -66,12 +66,23 @@ const AdminPage: React.FC = () => {
 
     // Apply search term filter
     if (questionSearchTerm.trim()) {
-      filtered = filtered.filter(question => 
-        question.questionNumber?.toLowerCase().includes(questionSearchTerm.toLowerCase()) ||
-        question.prompt.toLowerCase().includes(questionSearchTerm.toLowerCase()) ||
-        question.chapter.toLowerCase().includes(questionSearchTerm.toLowerCase()) ||
-        question.explanation?.toLowerCase().includes(questionSearchTerm.toLowerCase())
-      );
+      filtered = filtered.filter(question => {
+        const searchTerm = questionSearchTerm.toLowerCase();
+        
+        // Search in basic fields
+        const basicMatch = 
+          question.questionNumber?.toLowerCase().includes(searchTerm) ||
+          question.prompt.toLowerCase().includes(searchTerm) ||
+          question.chapter.toLowerCase().includes(searchTerm) ||
+          question.explanation?.toLowerCase().includes(searchTerm);
+        
+        // Search in answer options
+        const optionsMatch = question.options?.some(option => 
+          option.text.toLowerCase().includes(searchTerm)
+        );
+        
+        return basicMatch || optionsMatch;
+      });
     }
 
     // Apply type filter
