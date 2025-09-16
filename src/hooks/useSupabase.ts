@@ -441,7 +441,16 @@ export const useSupabase = (): UseSupabaseReturn => {
         media: question.media || '',
         isOpenQuestion: question.is_open_question || false,
         options: typeof question.options === 'string' ? JSON.parse(question.options) : (question.options || []),
-        matchingPairs: typeof question.matching_pairs === 'string' ? JSON.parse(question.matching_pairs) : (question.matching_pairs || []),
+        matchingPairs: (() => {
+          const pairs = typeof question.matching_pairs === 'string' ? JSON.parse(question.matching_pairs) : (question.matching_pairs || []);
+          // Migration: Convert old field names to new ones
+          return pairs.map((pair: any) => ({
+            ...pair,
+            leftText: pair.leftText || pair.left || '',
+            rightText: pair.rightText || pair.right || '',
+            isCorrect: pair.isCorrect !== undefined ? pair.isCorrect : true
+          }));
+        })(),
         fillBlankOptions: typeof question.fill_blank_options === 'string' ? JSON.parse(question.fill_blank_options) : (question.fill_blank_options || []),
         blankCount: question.blank_count || 0,
         createdAt: question.created_at,
