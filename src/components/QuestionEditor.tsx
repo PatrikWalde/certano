@@ -163,7 +163,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
     }));
   };
 
-  const updateMatchingPair = (id: string, field: 'left' | 'right', value: string) => {
+  const updateMatchingPair = (id: string, field: 'leftText' | 'rightText', value: string) => {
     setFormData(prev => ({
       ...prev,
       matchingPairs: prev.matchingPairs.map(pair =>
