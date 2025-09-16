@@ -152,7 +152,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
     const newId = String(formData.matchingPairs.length + 1);
     setFormData(prev => ({
       ...prev,
-      matchingPairs: [...prev.matchingPairs, { id: newId, left: '', right: '' }]
+      matchingPairs: [...prev.matchingPairs, { id: newId, leftText: '', rightText: '', isCorrect: true }]
     }));
   };
 
@@ -313,8 +313,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                       ...prev,
                       type: newType,
                       matchingPairs: [
-                        { id: '1', left: '', right: '' },
-                        { id: '2', left: '', right: '' }
+                        { id: '1', leftText: '', rightText: '', isCorrect: true },
+                        { id: '2', leftText: '', rightText: '', isCorrect: true }
                       ]
                     };
                   }
@@ -491,8 +491,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                       <label className="block text-xs text-gray-500 mb-1">Linke Seite</label>
                       <input
                         type="text"
-                        value={pair.left}
-                        onChange={(e) => updateMatchingPair(pair.id, 'left', e.target.value)}
+                        value={pair.leftText}
+                        onChange={(e) => updateMatchingPair(pair.id, 'leftText', e.target.value)}
                         placeholder={`Begriff ${index + 1}`}
                         className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
@@ -504,8 +504,8 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                       <label className="block text-xs text-gray-500 mb-1">Rechte Seite</label>
                       <input
                         type="text"
-                        value={pair.right}
-                        onChange={(e) => updateMatchingPair(pair.id, 'right', e.target.value)}
+                        value={pair.rightText}
+                        onChange={(e) => updateMatchingPair(pair.id, 'rightText', e.target.value)}
                         placeholder={`Zuordnung ${index + 1}`}
                         className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
