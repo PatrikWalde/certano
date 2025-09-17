@@ -48,6 +48,95 @@ const AdminPage: React.FC = () => {
     popularChapters: [] as any[]
   });
   const [users, setUsers] = useState<any[]>([]);
+
+  // Export functions
+  const exportQuestionsToJSON = () => {
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      version: '1.0',
+      totalQuestions: questions.length,
+      questions: questions.map(question => ({
+        id: question.id,
+        questionNumber: question.questionNumber,
+        chapter: question.chapter,
+        type: question.type,
+        prompt: question.prompt,
+        explanation: question.explanation,
+        options: question.options,
+        matchingPairs: question.matchingPairs,
+        fillBlankOptions: question.fillBlankOptions,
+        blankCount: question.blankCount,
+        tags: question.tags,
+        media: question.media,
+        isOpenQuestion: question.isOpenQuestion,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt
+      }))
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `certano-questions-export-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportQuestionsToCSV = () => {
+    const csvHeaders = [
+      'ID',
+      'Fragennummer',
+      'Kapitel',
+      'Typ',
+      'Fragentext',
+      'Erklärung',
+      'Optionen (JSON)',
+      'Zuordnungspaare (JSON)',
+      'Lückentext-Optionen (JSON)',
+      'Anzahl Lücken',
+      'Tags (JSON)',
+      'Media',
+      'Offene Frage',
+      'Erstellt am',
+      'Aktualisiert am'
+    ];
+
+    const csvRows = questions.map(question => [
+      question.id,
+      question.questionNumber || '',
+      question.chapter,
+      question.type,
+      `"${(question.prompt || '').replace(/"/g, '""')}"`,
+      `"${(question.explanation || '').replace(/"/g, '""')}"`,
+      `"${JSON.stringify(question.options || []).replace(/"/g, '""')}"`,
+      `"${JSON.stringify(question.matchingPairs || []).replace(/"/g, '""')}"`,
+      `"${JSON.stringify(question.fillBlankOptions || []).replace(/"/g, '""')}"`,
+      question.blankCount || 0,
+      `"${JSON.stringify(question.tags || []).replace(/"/g, '""')}"`,
+      question.media || '',
+      question.isOpenQuestion ? 'Ja' : 'Nein',
+      question.createdAt,
+      question.updatedAt
+    ]);
+
+    const csvContent = [csvHeaders, ...csvRows]
+      .map(row => row.join(','))
+      .join('\n');
+
+    const dataBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `certano-questions-export-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
   const [editingUser, setEditingUser] = useState<any | null>(null);
   const [showUserEditor, setShowUserEditor] = useState(false);
 
@@ -770,16 +859,61 @@ const AdminPage: React.FC = () => {
                 Hier können Sie alle Fragen der Anwendung verwalten, bearbeiten und neue hinzufügen.
               </p>
               
+              {/* Export Info */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200">Export-Funktionen</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                      Exportiere alle {questions.length} Fragen als JSON (vollständige Daten) oder CSV (tabellarisch) für Datensicherung oder Import in andere Programme.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
               {/* Fragen-Liste */}
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 dark:text-white">Alle Fragen</h3>
-                  <button 
-                    onClick={() => openQuestionEditor()}
-                    className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors"
-                  >
-                    Neue Frage hinzufügen
-                  </button>
+                  <div className="flex space-x-2">
+                    <div className="relative group">
+                      <button 
+                        className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-800 transition-colors flex items-center space-x-2"
+                        onClick={exportQuestionsToJSON}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>JSON Export</span>
+                      </button>
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Alle Fragen als JSON exportieren
+                      </div>
+                    </div>
+                    <div className="relative group">
+                      <button 
+                        className="bg-green-600 dark:bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-800 transition-colors flex items-center space-x-2"
+                        onClick={exportQuestionsToCSV}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>CSV Export</span>
+                      </button>
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        Alle Fragen als CSV exportieren
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => openQuestionEditor()}
+                      className="bg-blue-600 dark:bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors"
+                    >
+                      Neue Frage hinzufügen
+                    </button>
+                  </div>
                 </div>
 
                 {/* Suchfeld */}
