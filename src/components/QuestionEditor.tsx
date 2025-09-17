@@ -78,7 +78,9 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         tags: [] as string[],
         options: [
           { id: '1', text: '', isCorrect: false },
-          { id: '2', text: '', isCorrect: false }
+          { id: '2', text: '', isCorrect: false },
+          { id: '3', text: '', isCorrect: false },
+          { id: '4', text: '', isCorrect: false }
         ],
         matchingPairs: [] as any[],
         fillBlankOptions: [] as any[],
@@ -318,6 +320,19 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                       ]
                     };
                   }
+                  // Initialize options for multiple choice questions if needed
+                  if (newType === 'multiple_choice' && prev.options.length === 0) {
+                    return {
+                      ...prev,
+                      type: newType,
+                      options: [
+                        { id: '1', text: '', isCorrect: false },
+                        { id: '2', text: '', isCorrect: false },
+                        { id: '3', text: '', isCorrect: false },
+                        { id: '4', text: '', isCorrect: false }
+                      ]
+                    };
+                  }
                   // Initialize options for image questions if needed
                   if (newType === 'image_question' && prev.options.length === 0) {
                     return {
@@ -325,7 +340,9 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                       type: newType,
                       options: [
                         { id: '1', text: '', isCorrect: false },
-                        { id: '2', text: '', isCorrect: false }
+                        { id: '2', text: '', isCorrect: false },
+                        { id: '3', text: '', isCorrect: false },
+                        { id: '4', text: '', isCorrect: false }
                       ]
                     };
                   }
