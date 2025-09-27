@@ -116,6 +116,9 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
         // difficulty: (formData.difficulty as 'easy' | 'medium' | 'hard') || 'medium' // Removed - difficulty feature no longer used
       };
       
+      console.log('💾 Saving question data:', dataToSave);
+      console.log('📸 Media field:', dataToSave.media, 'Type:', typeof dataToSave.media);
+      
       await onSave(dataToSave);
       onClose();
     } catch (error) {
@@ -591,6 +594,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                               .from('images')
                               .getPublicUrl(fileName);
                             
+                            console.log('📸 Image uploaded, publicUrl:', publicUrl);
                             setFormData(prev => ({ ...prev, media: publicUrl }));
                           } catch (error) {
                             console.error('Error uploading image:', error);
