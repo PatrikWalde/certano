@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Question, ChapterData, QuestionType, QuestionOption, FillBlankOption, WrongAnswer } from '../types';
 import FroalaEditorComponent from './FroalaEditor';
+import { supabase } from '../lib/supabase';
 
 // Helper function to generate automatic question number
 const generateQuestionNumber = (): string => {
@@ -567,13 +568,34 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // In einer echten App würdest du das Bild zu einem Server hochladen
-                          // Hier simulieren wir es mit einem lokalen URL
-                          const imageUrl = URL.createObjectURL(file);
-                          setFormData(prev => ({ ...prev, media: imageUrl }));
+                          try {
+                            // Upload to Supabase Storage
+                            const timestamp = Date.now();
+                            const fileName = `question-images/${timestamp}-${file.name}`;
+                            
+                            const { error } = await supabase.storage
+                              .from('images')
+                              .upload(fileName, file);
+                            
+                            if (error) {
+                              console.error('Error uploading image:', error);
+                              alert('Fehler beim Hochladen des Bildes');
+                              return;
+                            }
+                            
+                            // Get public URL
+                            const { data: { publicUrl } } = supabase.storage
+                              .from('images')
+                              .getPublicUrl(fileName);
+                            
+                            setFormData(prev => ({ ...prev, media: publicUrl }));
+                          } catch (error) {
+                            console.error('Error uploading image:', error);
+                            alert('Fehler beim Hochladen des Bildes');
+                          }
                         }
                       }}
                       className="hidden"
