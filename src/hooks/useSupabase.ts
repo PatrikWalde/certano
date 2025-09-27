@@ -438,7 +438,13 @@ export const useSupabase = (): UseSupabaseReturn => {
         explanation: question.explanation || '',
         // difficulty: question.difficulty || 'easy', // Removed - difficulty column no longer exists
         tags: question.tags || [],
-        media: question.media || '',
+        media: (() => {
+          // Migration: Handle [object Object] media values
+          if (question.media === '[object Object]' || (typeof question.media === 'object' && question.media !== null)) {
+            return '';
+          }
+          return question.media || '';
+        })(),
         isOpenQuestion: question.is_open_question || false,
         options: typeof question.options === 'string' ? JSON.parse(question.options) : (question.options || []),
         matchingPairs: (() => {
