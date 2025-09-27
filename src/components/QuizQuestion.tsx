@@ -364,7 +364,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           <HtmlRenderer content={question.prompt} />
         </div>
         
-        {question.media && question.type === 'image_question' && (
+        {question.media && (question.type === 'image_question' || (question.type === 'open_ended' && question.media)) && (
           <div className="mb-6">
             <img
               src={question.media}
@@ -584,7 +584,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
             </div>
           )}
         </div>
-      ) : question.type !== 'open_ended' ? (
+      ) : (question.type === 'multiple_choice' || (question.type === 'image_question' && !question.isOpenQuestion)) ? (
         // Regular Answer Options UI
         <div className="space-y-3">
           {Array.isArray(shuffledOptions) ? shuffledOptions.map((option) => {

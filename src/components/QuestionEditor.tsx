@@ -396,7 +396,7 @@ const QuestionEditor: React.FC<QuestionEditorProps> = ({ question, chapters, onS
           />
 
           {/* Multiple Choice Options */}
-          {formData.type === 'multiple_choice' && (
+          {(formData.type === 'multiple_choice' || (formData.type === 'image_question' && !formData.isOpenQuestion)) && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Antwortoptionen * ({formData.options.length} Optionen)
