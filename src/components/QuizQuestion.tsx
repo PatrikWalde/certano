@@ -381,11 +381,6 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
               <p className="text-lg font-medium text-gray-700 mb-4">
                 Denke dir die Antwort aus und klicke dann auf "Antwort prüfen"
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-700">
-                  Du musst nichts eintippen - nur die Antwort im Kopf haben!
-                </p>
-              </div>
             </div>
           </div>
         )}
